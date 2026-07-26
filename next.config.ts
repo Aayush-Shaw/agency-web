@@ -1,7 +1,11 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  /* config options here */
+  images: {
+    // Placeholder thumbnails/avatars are our own trusted local SVGs.
+    dangerouslyAllowSVG: true,
+    contentDispositionType: "attachment",
+  },
 };
 
 export default nextConfig;

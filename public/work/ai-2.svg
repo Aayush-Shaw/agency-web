@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800" viewBox="0 0 1200 800">
+  <defs>
+    <linearGradient id="g" gradientTransform="rotate(258 0.5 0.5)">
+      <stop offset="0" stop-color="#E8A33D"/>
+      <stop offset="1" stop-color="#8A3B22"/>
+    </linearGradient>
+  </defs>
+  <rect width="1200" height="800" fill="url(#g)"/>
+  <g transform="translate(840 300) scale(1.4)" opacity="0.18">
+    <path d="M60 40c18 48 24 108 18 168M132 30c19 54 25 120 17 192M204 46c17 48 22 102 15 156" fill="none" stroke="#17120D" stroke-width="26" stroke-linecap="round"/>
+  </g>
+  <text x="72" y="640" font-family="Space Grotesk, Arial, sans-serif" font-size="34" font-weight="600" fill="#17120D" opacity="0.6" letter-spacing="4">AI VIDEO</text>
+  <text x="72" y="712" font-family="Space Grotesk, Arial, sans-serif" font-size="72" font-weight="700" fill="#17120D">Meridian Realty</text>
+</svg>

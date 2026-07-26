@@ -1,26 +1,188 @@
 @import "tailwindcss";
 
+/* ============================================================
+   Design tokens — single source of truth.
+   Light is the default; dark auto-applies via the OS/browser
+   color-scheme preference. No JS, no toggle, no flash.
+   ============================================================ */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --raw-bg: #fbf3e7; /* warm cream */
+  --raw-surface: #f3e6d3; /* card / section */
+  --raw-text: #2b1d14; /* dark umber */
+  --raw-text-muted: #6b5642;
+  --raw-accent-primary: #c9822e; /* honey amber (deepened for contrast) */
+  --raw-accent-secondary: #a8502d; /* cinnamon / rust */
+  --raw-border: rgba(43, 29, 20, 0.12);
+  --raw-glow: rgba(201, 130, 46, 0.28);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+    --raw-bg: #17120d; /* espresso / umber-black */
+    --raw-surface: #1f1810;
+    --raw-text: #f5ecdd; /* warm off-white */
+    --raw-text-muted: #c9b8a2;
+    --raw-accent-primary: #e8a33d; /* honey amber */
+    --raw-accent-secondary: #c1633b; /* cinnamon / rust */
+    --raw-border: rgba(245, 236, 221, 0.12);
+    --raw-glow: rgba(232, 163, 61, 0.24);
   }
 }
 
+/* Expose the switching tokens to Tailwind so utilities like
+   bg-bg, text-text, border-border, from-accent-primary all
+   resolve to the live (theme-aware) value. */
+@theme inline {
+  --color-bg: var(--raw-bg);
+  --color-surface: var(--raw-surface);
+  --color-text: var(--raw-text);
+  --color-text-muted: var(--raw-text-muted);
+  --color-accent-primary: var(--raw-accent-primary);
+  --color-accent-secondary: var(--raw-accent-secondary);
+  --color-border: var(--raw-border);
+
+  --font-display: var(--font-space-grotesk);
+  --font-sans: var(--font-inter);
+}
+
+/* ============================================================
+   Base
+   ============================================================ */
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-text);
+  font-family: var(--font-sans), system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  text-rendering: optimizeLegibility;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display), var(--font-sans), sans-serif;
+}
+
+/* Anchor links land below the sticky navbar. */
+section[id] {
+  scroll-margin-top: 5rem;
+}
+
+::selection {
+  background: var(--color-accent-primary);
+  color: var(--color-bg);
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-accent-primary);
+  outline-offset: 3px;
+  border-radius: 2px;
+}
+
+/* ============================================================
+   Reusable helpers (token-driven — no hardcoded color)
+   ============================================================ */
+
+/* Honey → cinnamon text fill for highlighted words. */
+.text-gradient {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-accent-primary),
+    var(--color-accent-secondary)
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Warm ambient glow for CTAs, active/hover states, the featured tier. */
+.glow {
+  box-shadow: 0 12px 44px -12px var(--raw-glow);
+}
+.glow-ring {
+  box-shadow: 0 0 0 1px var(--color-accent-primary), 0 12px 48px -14px var(--raw-glow);
+}
+
+/* The signature claw mark: three tapered strokes. */
+.claw {
+  display: inline-block;
+  width: 1em;
+  height: 1em;
+  background: linear-gradient(
+    100deg,
+    var(--color-accent-primary),
+    var(--color-accent-secondary)
+  );
+  -webkit-mask: var(--claw-mask) center / contain no-repeat;
+  mask: var(--claw-mask) center / contain no-repeat;
+  --claw-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 2c1.5 4 2 9 1.5 14M12 1c1.6 4.5 2.1 10 1.4 16M19 3c1.4 4 1.8 8.5 1.2 13' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
+}
+
+/* Film-grain overlay for cinematic depth (both themes). */
+.grain {
+  position: fixed;
+  inset: 0;
+  z-index: 60;
+  pointer-events: none;
+  opacity: 0.045;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ============================================================
+   Fixed atmosphere layer.
+
+   Measured on rockstargames.com/VI: its backdrop layers are
+   position:fixed and never move (top stays 0, transform constant
+   across the whole page) while content scrolls past at 1:1. The
+   depth is composition, not animation — no parallax, no scrub,
+   nothing that can fight native scroll on a phone.
+   ============================================================ */
+.atmosphere {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      60% 50% at 12% 0%,
+      color-mix(in oklab, var(--color-accent-primary) 20%, transparent),
+      transparent 70%
+    ),
+    radial-gradient(
+      55% 45% at 88% 12%,
+      color-mix(in oklab, var(--color-accent-secondary) 16%, transparent),
+      transparent 70%
+    );
+}
+
+@keyframes scroll-cue {
+  0% { transform: translateY(0); opacity: 0; }
+  40% { opacity: 1; }
+  100% { transform: translateY(9px); opacity: 0; }
+}
+.animate-scroll-cue {
+  animation: scroll-cue 1.8s ease-in-out infinite;
+}
+
+/* ============================================================
+   Lenis smooth scroll (required rules) + reduced motion
+   ============================================================ */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-smooth [data-lenis-prevent] {
+  overscroll-behavior: contain;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }
