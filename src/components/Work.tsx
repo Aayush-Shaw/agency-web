@@ -2,7 +2,8 @@
 
 import { useRef, useState } from "react";
 import Image from "next/image";
-import { gsap, useGSAP } from "@/lib/gsap";
+import { motion } from "motion/react";
+import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import Eyebrow from "@/components/Eyebrow";
 import Reveal from "@/components/Reveal";
 
@@ -33,6 +34,12 @@ export default function Work() {
   // Desktop only: on a phone this competes with native scroll for no gain.
   useGSAP(
     () => {
+      // Filtering removes rows, so every section below this one just moved up.
+      // ScrollTrigger caches start/end as document offsets and has no way to
+      // know — without this, the Process line and the Trust counters keep
+      // firing against positions that no longer exist until the next resize.
+      ScrollTrigger.refresh();
+
       const mm = gsap.matchMedia();
       mm.add(
         "(min-width: 768px) and (prefers-reduced-motion: no-preference)",
@@ -84,9 +91,10 @@ export default function Work() {
           className="mt-10 flex flex-wrap gap-2"
         >
           {TABS.map((tab) => (
-            <button
+            <motion.button
               key={tab}
               type="button"
+              whileTap={{ scale: 0.94 }}
               aria-pressed={active === tab}
               onClick={() => setActive(tab)}
               className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition-colors ${
@@ -96,7 +104,7 @@ export default function Work() {
               }`}
             >
               {tab}
-            </button>
+            </motion.button>
           ))}
         </div>
 
@@ -105,9 +113,20 @@ export default function Work() {
             scrollWidth 1093 vs clientWidth 390). From sm: up, the grid.
             CSS scroll-snap only — no carousel library, no JS. */}
         <div className="-mx-5 mt-8 flex snap-x snap-mandatory gap-4 overflow-x-auto px-5 pb-3 sm:mx-0 sm:grid sm:snap-none sm:grid-cols-2 sm:overflow-visible sm:px-0 sm:pb-0 lg:grid-cols-3">
+          {/* `layout` is the one thing GSAP can't do without the paid Flip
+              plugin: surviving cards measure their old and new grid slots and
+              glide between them when the filter changes, instead of snapping. */}
           {shown.map((project, i) => (
-            <figure
+            <motion.figure
               key={project.title}
+              layout
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{
+                layout: { type: "spring", stiffness: 260, damping: 30 },
+                duration: 0.45,
+                ease: [0.22, 1, 0.36, 1],
+              }}
               className="group relative w-[78%] shrink-0 snap-center overflow-hidden rounded-2xl border border-border sm:w-auto sm:shrink"
             >
               <div className="relative aspect-[3/2] overflow-hidden">
@@ -137,7 +156,7 @@ export default function Work() {
                   {project.cat}
                 </span>
               </figcaption>
-            </figure>
+            </motion.figure>
           ))}
         </div>
       </div>

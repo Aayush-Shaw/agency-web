@@ -74,11 +74,11 @@ export default function WhyUs() {
           </h2>
         </Reveal>
 
-        <Reveal stagger className="mt-12 grid gap-4 sm:grid-cols-2">
+        <Reveal stagger variant="slide" className="mt-12 grid gap-4 sm:grid-cols-2">
           {REASONS.map((reason) => (
             <div
               key={reason.title}
-              className="rounded-2xl border border-border bg-surface p-6"
+              className="lift rounded-2xl border border-border bg-surface p-6"
             >
               <span className="text-accent-primary">{reason.icon}</span>
               <h3 className="mt-4 text-xl font-semibold tracking-tight">

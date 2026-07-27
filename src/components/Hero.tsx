@@ -3,22 +3,53 @@
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import Eyebrow from "@/components/Eyebrow";
+import Magnetic from "@/components/Magnetic";
+import Words from "@/components/Words";
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);
 
-  // Staggered entrance on load. Duration/ease come from gsap.defaults()
-  // (0.9s power3.out) — the timing measured off the reference sites.
+  // The page's one real timeline: each beat overlaps the one before it, so the
+  // hero arrives as a single move rather than five separate fades. Durations
+  // come from gsap.defaults() (0.9s power3.out) — the timing measured off the
+  // reference sites.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
         // fromTo, not from — see the note in Reveal.tsx.
-        gsap.fromTo(
-          ".hero-rise",
-          { opacity: 0, y: 28 },
-          { opacity: 1, y: 0, stagger: 0.12, delay: 0.1 }
-        );
+        const tl = gsap.timeline({ delay: 0.15 });
+
+        tl.fromTo(".hero-eyebrow", { opacity: 0, y: 18 }, { opacity: 1, y: 0 })
+          // Words tip up off their baseline. rotateX needs the perspective set
+          // on the h1, and transformOrigin at the bottom edge so they pivot
+          // rather than spin around their middle.
+          .fromTo(
+            ".hero-word",
+            { opacity: 0, yPercent: 120, rotateX: -75 },
+            {
+              opacity: 1,
+              yPercent: 0,
+              rotateX: 0,
+              duration: 1.1,
+              stagger: 0.045,
+              transformOrigin: "50% 100%",
+            },
+            "-=0.55"
+          )
+          // Opacity only: transforms don't apply to inline boxes, and this one
+          // has to stay inline to wrap. It lands as the words are still landing.
+          .fromTo(".hero-tail", { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.5")
+          .fromTo(".hero-sub", { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, "-=0.6")
+          .fromTo(
+            ".hero-cta",
+            { opacity: 0, y: 24 },
+            // clearProps for the same reason as Reveal: the buttons' CSS
+            // hover:scale is dead while GSAP's inline transform sits on them.
+            { opacity: 1, y: 0, stagger: 0.1, clearProps: "all" },
+            "-=0.7"
+          )
+          .fromTo(".hero-cue", { opacity: 0 }, { opacity: 1 }, "-=0.5");
       });
     },
     { scope: root }
@@ -34,34 +65,56 @@ export default function Hero() {
           shared by every section rather than owned by the hero. */}
 
       <div className="mx-auto w-full max-w-6xl">
-        <Eyebrow className="hero-rise">
+        <Eyebrow className="hero-eyebrow">
           Digital Studio · US / UK / EU brands
         </Eyebrow>
 
-        <h1 className="hero-rise mt-6 max-w-4xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
-          Design, motion &amp; AI video that makes brands{" "}
-          <span className="text-gradient">impossible to ignore</span>.
+        {/* perspective is what turns the words' rotateX into a tip rather than
+            a flat squash — it has to live on the parent, not the words. */}
+        <h1
+          style={{ perspective: "800px" }}
+          className="mt-6 max-w-4xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
+        >
+          <Words
+            className="hero-word"
+            text="Design, motion & AI video that makes brands"
+          />
+          {/* Stays inline, and so gets its own beat below rather than joining
+              the word stagger. An inline-block can't break across lines, and
+              this phrase is wider than the headline column — boxing it up costs
+              the headline a whole extra line. Inline also keeps `.text-gradient`
+              painting one continuous ramp across the phrase, which is the
+              design; per-word boxes would restart it on every word. */}
+          <span className="hero-tail">
+            <span className="text-gradient">impossible to ignore</span>.
+          </span>
         </h1>
 
-        <p className="hero-rise mt-7 max-w-xl text-lg leading-relaxed text-text-muted md:text-xl">
+        <p className="hero-sub mt-7 max-w-xl text-lg leading-relaxed text-text-muted md:text-xl">
           Digital Bear is a full-service studio crafting websites, social
           content, motion graphics, and AI-generated video for ambitious teams —
           premium work, fast turnarounds, on your timezone.
         </p>
 
-        <div className="hero-rise mt-9 flex flex-col gap-3 sm:flex-row">
-          <a
-            href="#contact"
-            className="glow inline-flex h-13 items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7 text-base font-semibold text-bg transition-transform hover:scale-[1.03]"
-          >
-            Start a project
-          </a>
-          <a
-            href="#work"
-            className="inline-flex h-13 items-center justify-center rounded-full border border-border px-7 text-base font-semibold text-text transition-colors hover:border-accent-primary hover:text-accent-primary"
-          >
-            See our work
-          </a>
+        {/* Magnetic owns transform on the wrapper; GSAP's entrance owns it on
+            the anchor inside. Two elements, so neither clobbers the other. */}
+        <div className="mt-9 flex flex-col gap-3 sm:flex-row">
+          <Magnetic className="w-full sm:w-auto">
+            <a
+              href="#contact"
+              className="hero-cta glow inline-flex h-13 w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7 text-base font-semibold text-bg transition-transform hover:scale-[1.03]"
+            >
+              Start a project
+            </a>
+          </Magnetic>
+          <Magnetic className="w-full sm:w-auto">
+            <a
+              href="#work"
+              className="hero-cta inline-flex h-13 w-full items-center justify-center rounded-full border border-border px-7 text-base font-semibold text-text transition-colors hover:border-accent-primary hover:text-accent-primary"
+            >
+              See our work
+            </a>
+          </Magnetic>
         </div>
       </div>
 
@@ -71,7 +124,7 @@ export default function Hero() {
       <a
         href="#services"
         aria-label="Scroll to content"
-        className="absolute inset-x-0 bottom-24 mx-auto hidden w-fit flex-col items-center gap-2 text-text-muted md:flex md:bottom-8"
+        className="hero-cue absolute inset-x-0 bottom-24 mx-auto hidden w-fit flex-col items-center gap-2 text-text-muted md:flex md:bottom-8"
       >
         <span className="text-[0.7rem] font-medium uppercase tracking-[0.25em]">
           Scroll

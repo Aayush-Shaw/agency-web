@@ -97,6 +97,22 @@ section[id] {
   box-shadow: 0 0 0 1px var(--color-accent-primary), 0 12px 48px -14px var(--raw-glow);
 }
 
+/* Card hover lift. CSS, not JS: it's a two-state hover with no sequencing, so
+   a motion library would only add a bundle to it. Reveal suspends transitions
+   while its entrance tween runs and clears its inline transform on arrival, so
+   this and GSAP never write the same property at the same time. */
+.lift {
+  transition:
+    transform 0.35s cubic-bezier(0.2, 0.7, 0.2, 1),
+    border-color 0.35s ease,
+    box-shadow 0.35s ease;
+}
+.lift:hover {
+  transform: translateY(-6px);
+  border-color: color-mix(in oklab, var(--color-accent-primary) 55%, transparent);
+  box-shadow: 0 18px 50px -18px var(--raw-glow);
+}
+
 /* The signature claw mark: three tapered strokes. */
 .claw {
   display: inline-block;

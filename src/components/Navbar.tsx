@@ -1,6 +1,7 @@
 "use client";
 
 import { Moon, Sun } from "lucide-react";
+import { AnimatePresence, motion } from "motion/react";
 import { useEffect, useState } from "react";
 
 // The <head> script in layout.tsx guarantees data-theme is always set, so this
@@ -82,17 +83,21 @@ export default function Navbar() {
         <div className="flex items-center gap-2">
           {/* Theme toggle. The DOM attribute is the state — no React state, so
               nothing to hydrate and the icon swap is pure CSS. */}
-          <button
+          <motion.button
             type="button"
             onClick={toggleTheme}
+            whileTap={{ scale: 0.85, rotate: -25 }}
+            transition={{ type: "spring", stiffness: 400, damping: 15 }}
             aria-label="Toggle light or dark theme"
             className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:text-text"
           >
             <Sun className="hidden h-5 w-5 dark:block" aria-hidden="true" />
             <Moon className="h-5 w-5 dark:hidden" aria-hidden="true" />
-          </button>
+          </motion.button>
 
-          {/* Desktop CTA — enters once the hero is behind us. */}
+          {/* Desktop CTA — enters once the hero is behind us. Deliberately not
+              Magnetic: the wrapper span would still be a flex item on mobile
+              where the pill is display:none, and the nav's gap would show it. */}
           <a
             href="#contact"
             className={`glow hidden -translate-y-2 rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-5 py-2.5 text-sm font-semibold text-bg transition-all duration-700 ease-out hover:scale-[1.03] md:inline-flex ${ctaState}`}
@@ -101,8 +106,9 @@ export default function Navbar() {
           </a>
 
           {/* Mobile hamburger — 44px tap target */}
-          <button
+          <motion.button
             type="button"
+            whileTap={{ scale: 0.9 }}
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -125,28 +131,52 @@ export default function Navbar() {
                 }`}
               />
             </span>
-          </button>
+          </motion.button>
         </div>
       </nav>
 
-      {/* Mobile menu panel */}
-      {menuOpen && (
-        <div className="border-t border-border bg-bg/95 backdrop-blur-md md:hidden">
-          <ul className="mx-auto flex max-w-6xl flex-col px-5 py-2">
-            {LINKS.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  onClick={() => setMenuOpen(false)}
-                  className="block py-3 text-base font-medium text-text"
+      {/* Mobile menu panel. AnimatePresence is the point of using Framer here:
+          it keeps the panel mounted long enough to play an exit, which a plain
+          `menuOpen && ...` can't do — it used to just vanish. */}
+      <AnimatePresence initial={false}>
+        {menuOpen && (
+          <motion.div
+            key="menu"
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
+            className="overflow-hidden border-t border-border bg-bg/95 backdrop-blur-md md:hidden"
+          >
+            <motion.ul
+              initial="closed"
+              animate="open"
+              variants={{
+                open: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } },
+              }}
+              className="mx-auto flex max-w-6xl flex-col px-5 py-2"
+            >
+              {LINKS.map((link) => (
+                <motion.li
+                  key={link.href}
+                  variants={{
+                    closed: { opacity: 0, x: -20 },
+                    open: { opacity: 1, x: 0 },
+                  }}
                 >
-                  {link.label}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </div>
-      )}
+                  <a
+                    href={link.href}
+                    onClick={() => setMenuOpen(false)}
+                    className="block py-3 text-base font-medium text-text"
+                  >
+                    {link.label}
+                  </a>
+                </motion.li>
+              ))}
+            </motion.ul>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </header>
 
     {/* Mobile counterpart: slides up from the bottom on the same gate, so it

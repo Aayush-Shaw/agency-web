@@ -66,11 +66,11 @@ export default function Reviews() {
           </h2>
         </Reveal>
 
-        <Reveal stagger className="mt-12 grid gap-4 sm:grid-cols-2">
+        <Reveal stagger variant="blur" className="mt-12 grid gap-4 sm:grid-cols-2">
           {REVIEWS.map((review) => (
             <figure
               key={review.name}
-              className="flex flex-col rounded-2xl border border-border bg-bg p-6"
+              className="lift flex flex-col rounded-2xl border border-border bg-bg p-6"
             >
               <Stars rating={review.rating} />
               <blockquote className="mt-4 flex-1 text-lg leading-relaxed">

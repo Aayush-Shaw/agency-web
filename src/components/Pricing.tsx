@@ -1,4 +1,5 @@
 import Eyebrow from "@/components/Eyebrow";
+import Magnetic from "@/components/Magnetic";
 import Reveal from "@/components/Reveal";
 
 type Tier = {
@@ -84,11 +85,15 @@ export default function Pricing() {
           </p>
         </Reveal>
 
-        <Reveal stagger className="mt-12 grid items-start gap-4 lg:grid-cols-3">
+        <Reveal
+          stagger
+          variant="scale"
+          className="mt-12 grid items-start gap-4 lg:grid-cols-3"
+        >
           {TIERS.map((tier) => (
             <div
               key={tier.name}
-              className={`relative flex flex-col rounded-2xl border bg-surface p-7 ${
+              className={`lift relative flex flex-col rounded-2xl border bg-surface p-7 ${
                 tier.featured
                   ? "glow-ring border-transparent lg:-mt-4 lg:pb-11"
                   : "border-border"
@@ -121,16 +126,18 @@ export default function Pricing() {
                 ))}
               </ul>
 
-              <a
-                href="#contact"
-                className={`mt-8 inline-flex h-12 items-center justify-center rounded-full text-sm font-semibold transition-transform hover:scale-[1.03] ${
-                  tier.featured
-                    ? "glow bg-linear-to-r from-accent-primary to-accent-secondary text-bg"
-                    : "border border-border text-text hover:border-accent-primary"
-                }`}
-              >
-                Get started
-              </a>
+              <Magnetic className="mt-8 w-full">
+                <a
+                  href="#contact"
+                  className={`inline-flex h-12 w-full items-center justify-center rounded-full text-sm font-semibold transition-transform hover:scale-[1.03] ${
+                    tier.featured
+                      ? "glow bg-linear-to-r from-accent-primary to-accent-secondary text-bg"
+                      : "border border-border text-text hover:border-accent-primary"
+                  }`}
+                >
+                  Get started
+                </a>
+              </Magnetic>
             </div>
           ))}
         </Reveal>
