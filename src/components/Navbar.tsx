@@ -1,6 +1,16 @@
 "use client";
 
+import { Moon, Sun } from "lucide-react";
 import { useEffect, useState } from "react";
+
+// The <head> script in layout.tsx guarantees data-theme is always set, so this
+// only has to flip it. localStorage is what makes the choice survive a reload.
+function toggleTheme() {
+  const root = document.documentElement;
+  const next = root.dataset.theme === "dark" ? "light" : "dark";
+  root.dataset.theme = next;
+  localStorage.theme = next;
+}
 
 const LINKS = [
   { label: "Services", href: "#services" },
@@ -69,40 +79,54 @@ export default function Navbar() {
           ))}
         </ul>
 
-        {/* Desktop CTA — enters once the hero is behind us. */}
-        <a
-          href="#contact"
-          className={`glow hidden -translate-y-2 rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-5 py-2.5 text-sm font-semibold text-bg transition-all duration-700 ease-out hover:scale-[1.03] md:inline-flex ${ctaState}`}
-        >
-          Get a Quote
-        </a>
+        <div className="flex items-center gap-2">
+          {/* Theme toggle. The DOM attribute is the state — no React state, so
+              nothing to hydrate and the icon swap is pure CSS. */}
+          <button
+            type="button"
+            onClick={toggleTheme}
+            aria-label="Toggle light or dark theme"
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:text-text"
+          >
+            <Sun className="hidden h-5 w-5 dark:block" aria-hidden="true" />
+            <Moon className="h-5 w-5 dark:hidden" aria-hidden="true" />
+          </button>
 
-        {/* Mobile hamburger — 44px tap target */}
-        <button
-          type="button"
-          onClick={() => setMenuOpen((v) => !v)}
-          aria-expanded={menuOpen}
-          aria-label={menuOpen ? "Close menu" : "Open menu"}
-          className="flex h-11 w-11 items-center justify-center rounded-full border border-border md:hidden"
-        >
-          <span className="relative block h-4 w-5">
-            <span
-              className={`absolute left-0 block h-0.5 w-5 bg-text transition-all duration-300 ${
-                menuOpen ? "top-1.5 rotate-45" : "top-0"
-              }`}
-            />
-            <span
-              className={`absolute left-0 top-1.5 block h-0.5 w-5 bg-text transition-opacity duration-300 ${
-                menuOpen ? "opacity-0" : "opacity-100"
-              }`}
-            />
-            <span
-              className={`absolute left-0 block h-0.5 w-5 bg-text transition-all duration-300 ${
-                menuOpen ? "top-1.5 -rotate-45" : "top-3"
-              }`}
-            />
-          </span>
-        </button>
+          {/* Desktop CTA — enters once the hero is behind us. */}
+          <a
+            href="#contact"
+            className={`glow hidden -translate-y-2 rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-5 py-2.5 text-sm font-semibold text-bg transition-all duration-700 ease-out hover:scale-[1.03] md:inline-flex ${ctaState}`}
+          >
+            Get a Quote
+          </a>
+
+          {/* Mobile hamburger — 44px tap target */}
+          <button
+            type="button"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-expanded={menuOpen}
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="flex h-11 w-11 items-center justify-center rounded-full border border-border md:hidden"
+          >
+            <span className="relative block h-4 w-5">
+              <span
+                className={`absolute left-0 block h-0.5 w-5 bg-text transition-all duration-300 ${
+                  menuOpen ? "top-1.5 rotate-45" : "top-0"
+                }`}
+              />
+              <span
+                className={`absolute left-0 top-1.5 block h-0.5 w-5 bg-text transition-opacity duration-300 ${
+                  menuOpen ? "opacity-0" : "opacity-100"
+                }`}
+              />
+              <span
+                className={`absolute left-0 block h-0.5 w-5 bg-text transition-all duration-300 ${
+                  menuOpen ? "top-1.5 -rotate-45" : "top-3"
+                }`}
+              />
+            </span>
+          </button>
+        </div>
       </nav>
 
       {/* Mobile menu panel */}

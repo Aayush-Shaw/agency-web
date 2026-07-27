@@ -1,33 +1,30 @@
 @import "tailwindcss";
 
+/* Tailwind's dark: variant follows our attribute, not the OS, so the icon
+   swap in the navbar toggle agrees with the tokens below. */
+@custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
+
 /* ============================================================
    Design tokens — single source of truth.
-   Light is the default; dark auto-applies via the OS/browser
-   color-scheme preference. No JS, no toggle, no flash.
+   Every pair is light-dark(light, dark) and resolves against the
+   live `color-scheme`, so the OS preference is the default and
+   [data-theme] (set by the navbar toggle) overrides it. One
+   declaration flips the whole palette.
    ============================================================ */
 :root {
-  --raw-bg: #fbf3e7; /* warm cream */
-  --raw-surface: #f3e6d3; /* card / section */
-  --raw-text: #2b1d14; /* dark umber */
-  --raw-text-muted: #6b5642;
-  --raw-accent-primary: #c9822e; /* honey amber (deepened for contrast) */
-  --raw-accent-secondary: #a8502d; /* cinnamon / rust */
-  --raw-border: rgba(43, 29, 20, 0.12);
-  --raw-glow: rgba(201, 130, 46, 0.28);
+  color-scheme: light dark;
+  --raw-bg: light-dark(#fbf3e7, #17120d); /* warm cream / espresso */
+  --raw-surface: light-dark(#f3e6d3, #1f1810); /* card / section */
+  --raw-text: light-dark(#2b1d14, #f5ecdd); /* dark umber / warm off-white */
+  --raw-text-muted: light-dark(#6b5642, #c9b8a2);
+  --raw-accent-primary: light-dark(#c9822e, #e8a33d); /* honey amber */
+  --raw-accent-secondary: light-dark(#a8502d, #c1633b); /* cinnamon / rust */
+  --raw-border: light-dark(rgba(43, 29, 20, 0.12), rgba(245, 236, 221, 0.12));
+  --raw-glow: light-dark(rgba(201, 130, 46, 0.28), rgba(232, 163, 61, 0.24));
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --raw-bg: #17120d; /* espresso / umber-black */
-    --raw-surface: #1f1810;
-    --raw-text: #f5ecdd; /* warm off-white */
-    --raw-text-muted: #c9b8a2;
-    --raw-accent-primary: #e8a33d; /* honey amber */
-    --raw-accent-secondary: #c1633b; /* cinnamon / rust */
-    --raw-border: rgba(245, 236, 221, 0.12);
-    --raw-glow: rgba(232, 163, 61, 0.24);
-  }
-}
+:root[data-theme="light"] { color-scheme: light; }
+:root[data-theme="dark"] { color-scheme: dark; }
 
 /* Expose the switching tokens to Tailwind so utilities like
    bg-bg, text-text, border-border, from-accent-primary all
