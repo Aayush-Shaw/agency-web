@@ -1,16 +1,24 @@
 import type { Metadata, Viewport } from "next";
-import { Space_Grotesk, Inter } from "next/font/google";
+import { Questrial, Poppins } from "next/font/google";
 import "./globals.css";
 import SmoothScroll from "@/components/SmoothScroll";
 
-// Display: bold, geometric grotesk. Body: Inter for long-form legibility.
-const display = Space_Grotesk({
+// Display: Questrial ships a single 400 weight — there is no bold cut, so the
+// bold on headings is the browser's synthetic emboldening (a deliberate choice:
+// keeping Questrial mattered more than crisp stems at display sizes). Anything
+// >=600 synthesises identically, so font-semibold and font-bold look the same
+// until this is swapped for a family that ships real weights.
+const display = Questrial({
   subsets: ["latin"],
-  variable: "--font-space-grotesk",
+  weight: "400",
+  variable: "--font-questrial",
 });
-const sans = Inter({
+// Body: Poppins is not a variable font, so only the weights listed here are
+// downloaded — 400 body, 500 nav/labels, 600 buttons and emphasis.
+const sans = Poppins({
   subsets: ["latin"],
-  variable: "--font-inter",
+  weight: ["400", "500", "600"],
+  variable: "--font-poppins",
 });
 
 export const metadata: Metadata = {
@@ -45,7 +53,7 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="min-h-dvh pb-24 md:pb-0">
+      <body className="min-h-dvh">
         {/* Fixed backdrop + film grain — both non-interactive, both stationary
             while the page scrolls over them. */}
         <div className="atmosphere" aria-hidden="true" />

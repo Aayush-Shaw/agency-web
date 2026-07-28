@@ -23,51 +23,47 @@ const LINKS = [
 
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
-  const [pastHero, setPastHero] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Frost the bar as soon as the page moves; hold the CTAs back until the hero
-  // is behind us. Observed on rockstargames.com/VI: the nav is logo + menu at
-  // 0%, and the pre-order pill has entered the bar by 25% — on both breakpoints.
+  // Surface-only: the pills are always mounted and always visible, so this
+  // never gates display — it only decides transparent vs. frosted. A plain
+  // passive listener, same as before: there's no scrub or timeline here, so
+  // ScrollTrigger would be a second scroll system for one boolean.
   useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 8);
-      setPastHero(y > window.innerHeight * 0.6);
-    };
+    const onScroll = () => setScrolled(window.scrollY > 24);
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Shared entrance for both CTAs: invisible also drops them from the tab order
-  // while hidden, so keyboard users don't hit a control they can't see.
-  const ctaState = pastHero
-    ? "visible translate-y-0 opacity-100"
-    : "invisible opacity-0";
+  // One shared surface so the separate pills read as a single bar that happens
+  // to be split. Frost is token-driven (bg/border/glow), never a new colour.
+  const pill = `rounded-full border transition-all duration-300 ${
+    scrolled
+      ? "border-border bg-bg/20 shadow-[0_6px_24px_-10px_var(--raw-glow)] backdrop-blur-sm"
+      : "border-transparent bg-transparent"
+  }`;
 
   return (
-    <>
-    <header
-      className={`sticky top-0 z-50 transition-colors duration-300 ${
-        scrolled
-          ? "border-b border-border bg-bg/80 backdrop-blur-md"
-          : "border-b border-transparent"
-      }`}
-    >
-      <nav className="mx-auto flex h-16 max-w-6xl items-center justify-between px-5 md:px-8">
-        {/* Logo */}
+    <header className="fixed inset-x-0 top-0 z-50">
+      <div className="relative mx-auto flex max-w-6xl items-center justify-between px-5 py-3 md:px-8">
+        {/* Left pill — logo only. */}
         <a
           href="#top"
-          className="flex items-center gap-2.5 font-display text-lg font-bold tracking-tight"
           onClick={() => setMenuOpen(false)}
+          className={`${pill} flex h-12 items-center gap-2.5 px-5 font-display text-lg font-bold tracking-tight`}
         >
           <span className="claw h-5 w-5" aria-hidden="true" />
           DIGITAL <span className="text-gradient">BEAR</span>
         </a>
 
-        {/* Desktop links */}
-        <ul className="hidden items-center gap-8 md:flex">
+        {/* Center pill — absolutely positioned so it centres on the page rather
+            than on the space left over by its siblings; the logo can grow
+            without dragging it off-centre. Reveals at lg, not md: a centred
+            pill and the logo pill collide around 768px. */}
+        <ul
+          className={`${pill} absolute left-1/2 hidden h-12 -translate-x-1/2 items-center gap-6 px-6 lg:flex`}
+        >
           {LINKS.map((link) => (
             <li key={link.href}>
               <a
@@ -80,7 +76,9 @@ export default function Navbar() {
           ))}
         </ul>
 
-        <div className="flex items-center gap-2">
+        {/* Right pill — controls. Same surface as the other two; the buttons
+            inside are borderless so the pill supplies the only outline. */}
+        <div className={`${pill} flex h-12 items-center gap-1 px-0.5`}>
           {/* Theme toggle. The DOM attribute is the state — no React state, so
               nothing to hydrate and the icon swap is pure CSS. */}
           <motion.button
@@ -89,30 +87,20 @@ export default function Navbar() {
             whileTap={{ scale: 0.85, rotate: -25 }}
             transition={{ type: "spring", stiffness: 400, damping: 15 }}
             aria-label="Toggle light or dark theme"
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-border text-text-muted transition-colors hover:text-text"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-text-muted transition-colors hover:text-text"
           >
             <Sun className="hidden h-5 w-5 dark:block" aria-hidden="true" />
             <Moon className="h-5 w-5 dark:hidden" aria-hidden="true" />
           </motion.button>
 
-          {/* Desktop CTA — enters once the hero is behind us. Deliberately not
-              Magnetic: the wrapper span would still be a flex item on mobile
-              where the pill is display:none, and the nav's gap would show it. */}
-          <a
-            href="#contact"
-            className={`glow hidden -translate-y-2 rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-5 py-2.5 text-sm font-semibold text-bg transition-all duration-700 ease-out hover:scale-[1.03] md:inline-flex ${ctaState}`}
-          >
-            Get a Quote
-          </a>
-
-          {/* Mobile hamburger — 44px tap target */}
+          {/* Hamburger — 44px tap target, hidden once the links pill appears. */}
           <motion.button
             type="button"
             whileTap={{ scale: 0.9 }}
             onClick={() => setMenuOpen((v) => !v)}
             aria-expanded={menuOpen}
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="flex h-11 w-11 items-center justify-center rounded-full border border-border md:hidden"
+            className="flex h-11 w-11 items-center justify-center rounded-full text-text lg:hidden"
           >
             <span className="relative block h-4 w-5">
               <span
@@ -133,11 +121,13 @@ export default function Navbar() {
             </span>
           </motion.button>
         </div>
-      </nav>
+      </div>
 
-      {/* Mobile menu panel. AnimatePresence is the point of using Framer here:
-          it keeps the panel mounted long enough to play an exit, which a plain
-          `menuOpen && ...` can't do — it used to just vanish. */}
+      {/* Mobile menu panel — a pill-cornered card under the bar rather than a
+          full-bleed drop-down, so it belongs to the floating pills above it.
+          AnimatePresence is the point of using Framer here: it keeps the panel
+          mounted long enough to play an exit, which a plain `menuOpen && ...`
+          can't do — it used to just vanish. */}
       <AnimatePresence initial={false}>
         {menuOpen && (
           <motion.div
@@ -146,7 +136,7 @@ export default function Navbar() {
             animate={{ height: "auto", opacity: 1 }}
             exit={{ height: 0, opacity: 0 }}
             transition={{ duration: 0.32, ease: [0.22, 1, 0.36, 1] }}
-            className="overflow-hidden border-t border-border bg-bg/95 backdrop-blur-md md:hidden"
+            className="overflow-hidden px-5 md:px-8 lg:hidden"
           >
             <motion.ul
               initial="closed"
@@ -154,7 +144,7 @@ export default function Navbar() {
               variants={{
                 open: { transition: { staggerChildren: 0.05, delayChildren: 0.1 } },
               }}
-              className="mx-auto flex max-w-6xl flex-col px-5 py-2"
+              className="mx-auto mt-2 max-w-6xl rounded-3xl border border-border bg-bg/90 px-5 py-2 backdrop-blur-xl"
             >
               {LINKS.map((link) => (
                 <motion.li
@@ -178,21 +168,5 @@ export default function Navbar() {
         )}
       </AnimatePresence>
     </header>
-
-    {/* Mobile counterpart: slides up from the bottom on the same gate, so it
-        never covers the hero on first paint. */}
-    <div
-      className={`fixed inset-x-0 bottom-0 z-40 border-t border-border bg-surface/90 p-3 backdrop-blur transition-all duration-700 ease-out md:hidden ${
-        pastHero ? "visible translate-y-0" : "invisible translate-y-full"
-      }`}
-    >
-      <a
-        href="#contact"
-        className="glow flex h-12 w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary text-base font-semibold text-bg"
-      >
-        Get a Quote
-      </a>
-    </div>
-    </>
   );
 }

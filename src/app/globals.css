@@ -26,6 +26,32 @@
 :root[data-theme="light"] { color-scheme: light; }
 :root[data-theme="dark"] { color-scheme: dark; }
 
+/* corner radii: squircle-capable browsers (Chrome/Edge 139+) get larger radii,
+   everyone else keeps the fallback. Consumed via the --radius / --radius-sm /
+   --radius-input custom properties. */
+:root {
+  --radius: 25px;
+  --radius-sm: 25px;
+  --radius-input: 15px;
+}
+@supports (corner-shape: squircle) {
+  :root {
+    --radius: 60px;
+    --radius-sm: 3rem;
+    --radius-input: 30px;
+  }
+
+  /* The bigger radii only read as squircles if the corners are actually
+     superellipses — without this they'd just be very round corners. Scoped to
+     the three utilities bound to the tokens below; rounded-full is left out on
+     purpose, so pills, icon buttons and avatars keep their circular ends. */
+  .rounded-xl,
+  .rounded-2xl,
+  .rounded-3xl {
+    corner-shape: squircle;
+  }
+}
+
 /* Expose the switching tokens to Tailwind so utilities like
    bg-bg, text-text, border-border, from-accent-primary all
    resolve to the live (theme-aware) value. */
@@ -38,8 +64,16 @@
   --color-accent-secondary: var(--raw-accent-secondary);
   --color-border: var(--raw-border);
 
-  --font-display: var(--font-space-grotesk);
-  --font-sans: var(--font-inter);
+  --font-display: var(--font-questrial);
+  --font-sans: var(--font-poppins);
+
+  /* Bind the radius steps actually used in the markup to the tokens above, so
+     every existing rounded-xl / -2xl / -3xl picks up the squircle sizes with no
+     markup churn. inline (not plain @theme) for the same reason as the colours:
+     the token it points at is reassigned inside @supports. */
+  --radius-xl: var(--radius-input);
+  --radius-2xl: var(--radius);
+  --radius-3xl: var(--radius);
 }
 
 /* ============================================================
