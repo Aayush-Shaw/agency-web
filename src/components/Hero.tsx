@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import Eyebrow from "@/components/Eyebrow";
 import Magnetic from "@/components/Magnetic";
 import Words from "@/components/Words";
 
@@ -10,7 +9,7 @@ export default function Hero() {
   const root = useRef<HTMLElement>(null);
 
   // The page's one real timeline: each beat overlaps the one before it, so the
-  // hero arrives as a single move rather than five separate fades. Durations
+  // hero arrives as a single move rather than three separate fades. Durations
   // come from gsap.defaults() (0.9s power3.out) — the timing measured off the
   // reference sites.
   useGSAP(
@@ -20,7 +19,7 @@ export default function Hero() {
         // fromTo, not from — see the note in Reveal.tsx.
         const tl = gsap.timeline({ delay: 0.15 });
 
-        tl.fromTo(".hero-eyebrow", { opacity: 0, y: 18 }, { opacity: 1, y: 0 })
+        tl
           // Words tip up off their baseline, pivoting at the bottom edge rather
           // than spinning around their middle.
           //
@@ -47,8 +46,7 @@ export default function Hero() {
               duration: 0.85,
               stagger: 0.09,
               transformOrigin: "50% 100%",
-            },
-            "-=0.55"
+            }
           )
           .fromTo(".hero-sub", { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, "-=0.6")
           .fromTo(
@@ -61,28 +59,34 @@ export default function Hero() {
             // hand the buttons straight back to that rule and hide them.
             { opacity: 1, y: 0, stagger: 0.1, clearProps: "transform" },
             "-=0.7"
-          )
-          .fromTo(".hero-cue", { opacity: 0 }, { opacity: 1 }, "-=0.5");
+          );
       });
     },
     { scope: root }
   );
 
+  // No min-height at all: the hero is exactly its content plus padding. Any
+  // floor here — min-h-dvh, or the 860px cap that replaced it — is height the
+  // content doesn't use, and with the content top-aligned every pixel of it
+  // piled up at the bottom (337px of it on an iPad mini). Height now tracks
+  // content on every device instead of the viewport.
+  //
+  // pb-8 is not spare space: the CTAs enter on y:24 and carry a `glow` shadow
+  // that reaches ~32px past their box. With overflow-hidden clipping the
+  // section and Manifesto's opaque bg-surface starting the instant it ends,
+  // zero bottom padding sliced the buttons mid-animation and cut their glow at
+  // rest. This is the travel plus the shadow, nothing more.
   return (
     <section
       id="top"
       ref={root}
-      className="relative flex min-h-dvh flex-col justify-center overflow-hidden px-5 pt-24 pb-28 md:px-8 md:pb-20"
+      className="relative overflow-hidden px-5 pt-24 pb-8 md:px-8"
     >
       {/* Backdrop lives in the root layout (.atmosphere) — fixed, ratio 0,
           shared by every section rather than owned by the hero. */}
 
       <div className="mx-auto w-full max-w-6xl">
-        <Eyebrow className="hero-eyebrow">
-          Digital Studio · US / UK / EU brands
-        </Eyebrow>
-
-        <h1 className="mt-6 max-w-4xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
+        <h1 className="max-w-4xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
           <Words
             className="hero-word"
             text="Design, motion & AI video that makes brands"
@@ -132,22 +136,6 @@ export default function Hero() {
           </Magnetic>
         </div>
       </div>
-
-      {/* Scroll-down indicator — desktop only. On mobile the hero already
-          overflows the viewport (measured 867px vs 844px on a 390×844 screen),
-          so the cut-off content is the affordance and this would sit off-screen. */}
-      <a
-        href="#services"
-        aria-label="Scroll to content"
-        className="hero-cue absolute inset-x-0 bottom-24 mx-auto hidden w-fit flex-col items-center gap-2 text-text-muted md:flex md:bottom-8"
-      >
-        <span className="text-[0.7rem] font-medium uppercase tracking-[0.25em]">
-          Scroll
-        </span>
-        <span className="flex h-9 w-6 justify-center rounded-full border border-border pt-1.5">
-          <span className="animate-scroll-cue h-1.5 w-1.5 rounded-full bg-accent-primary" />
-        </span>
-      </a>
     </section>
   );
 }

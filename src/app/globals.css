@@ -209,22 +209,11 @@ section[id] {
    where the timeline never runs. GSAP's inline opacity outranks this on arrival
    — which is also why .hero-cta clears only `transform`, not all props. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
-  .hero-eyebrow,
   .hero-word,
   .hero-sub,
-  .hero-cta,
-  .hero-cue {
+  .hero-cta {
     opacity: 0;
   }
-}
-
-@keyframes scroll-cue {
-  0% { transform: translateY(0); opacity: 0; }
-  40% { opacity: 1; }
-  100% { transform: translateY(9px); opacity: 0; }
-}
-.animate-scroll-cue {
-  animation: scroll-cue 1.8s ease-in-out infinite;
 }
 
 /* ============================================================
