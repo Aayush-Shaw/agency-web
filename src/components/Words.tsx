@@ -9,10 +9,11 @@ import { Fragment } from "react";
  * there and pushes the last word of every line over, which costs the hero
  * headline an extra line at desktop widths.
  *
- * Deliberately never wrapped around `.text-gradient` text: that class clips a
- * single background across its own text, so slicing it into per-word boxes
- * would restart the honey→cinnamon ramp on every word instead of running it
- * once across the phrase. Gradient runs stay whole and animate as one unit.
+ * Note when using this on `.text-gradient` text: that class clips a single
+ * background across its own text, so one box per word restarts the
+ * honey→cinnamon ramp on every word rather than running it once across the
+ * phrase. The hero accepts that trade to keep every word on one stagger; put
+ * the gradient on a single box if you want the ramp continuous instead.
  */
 export default function Words({
   text,

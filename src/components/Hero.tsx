@@ -24,6 +24,11 @@ export default function Hero() {
           // Words tip up off their baseline. rotateX needs the perspective set
           // on the h1, and transformOrigin at the bottom edge so they pivot
           // rather than spin around their middle.
+          //
+          // stagger vs duration is what makes this read as one-by-one rather
+          // than one wave: at the old 0.045/1.1 every word was already moving
+          // within 0.45s, so they arrived as a block. The gap is now a real
+          // fraction of the travel, and each word clearly follows the last.
           .fromTo(
             ".hero-word",
             { opacity: 0, yPercent: 120, rotateX: -75 },
@@ -31,15 +36,12 @@ export default function Hero() {
               opacity: 1,
               yPercent: 0,
               rotateX: 0,
-              duration: 1.1,
-              stagger: 0.045,
+              duration: 0.85,
+              stagger: 0.13,
               transformOrigin: "50% 100%",
             },
             "-=0.55"
           )
-          // Opacity only: transforms don't apply to inline boxes, and this one
-          // has to stay inline to wrap. It lands as the words are still landing.
-          .fromTo(".hero-tail", { opacity: 0 }, { opacity: 1, duration: 0.8 }, "-=0.5")
           .fromTo(".hero-sub", { opacity: 0, y: 24 }, { opacity: 1, y: 0 }, "-=0.6")
           .fromTo(
             ".hero-cta",
@@ -79,14 +81,21 @@ export default function Hero() {
             className="hero-word"
             text="Design, motion & AI video that makes brands"
           />
-          {/* Stays inline, and so gets its own beat below rather than joining
-              the word stagger. An inline-block can't break across lines, and
-              this phrase is wider than the headline column — boxing it up costs
-              the headline a whole extra line. Inline also keeps `.text-gradient`
-              painting one continuous ramp across the phrase, which is the
-              design; per-word boxes would restart it on every word. */}
-          <span className="hero-tail">
-            <span className="text-gradient">impossible to ignore</span>.
+          {/* Boxed per word so the tail joins the same stagger as everything
+              above it, rather than fading in as one block. The cost is that
+              `.text-gradient` clips its own background per box, so the
+              honey→cinnamon ramp now restarts on each of these three words
+              instead of running once across the phrase. Per-word boxes are
+              small enough to still wrap normally; it was boxing the *whole*
+              phrase that used to cost the headline a line. The period rides
+              inside the last box but outside the gradient span, so it stays
+              text-coloured exactly as before. */}
+          <span className="hero-word text-gradient inline-block">
+            impossible
+          </span>{" "}
+          <span className="hero-word text-gradient inline-block">to</span>{" "}
+          <span className="hero-word inline-block">
+            <span className="text-gradient">ignore</span>.
           </span>
         </h1>
 
