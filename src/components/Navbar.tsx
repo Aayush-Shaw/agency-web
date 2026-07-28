@@ -51,7 +51,7 @@ export default function Navbar() {
         <a
           href="#top"
           onClick={() => setMenuOpen(false)}
-          className={`${pill} flex h-12 items-center gap-2.5 px-5 font-display text-lg font-bold tracking-tight`}
+          className={`${pill} flex h-12 items-center gap-2 px-3 font-display text-base font-bold tracking-tight sm:gap-2.5 sm:px-5 sm:text-lg`}
         >
           <span className="claw h-5 w-5" aria-hidden="true" />
           DIGITAL <span className="text-gradient">BEAR</span>
@@ -68,7 +68,7 @@ export default function Navbar() {
             <li key={link.href}>
               <a
                 href={link.href}
-                className="text-sm font-medium text-text-muted transition-colors hover:text-text"
+                className="block py-3 text-sm font-medium text-text-muted transition-colors hover:text-text"
               >
                 {link.label}
               </a>

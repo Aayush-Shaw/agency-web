@@ -199,6 +199,25 @@ section[id] {
     );
 }
 
+/* Hero entrance — the one place Reveal.tsx's "visible by default" rule
+   backfires. Reveal can rely on it because its content is still off-screen when
+   GSAP hides it; the hero animates on load, above the fold, so the server HTML
+   paints the finished headline at full opacity and hydration then snaps it away
+   to animate it back in. Pre-hiding is safe here only because both guards match
+   the timeline's own conditions exactly: (scripting: enabled) leaves a no-JS
+   render visible, and no-preference leaves it visible under reduced motion,
+   where the timeline never runs. GSAP's inline opacity outranks this on arrival
+   — which is also why .hero-cta clears only `transform`, not all props. */
+@media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
+  .hero-eyebrow,
+  .hero-word,
+  .hero-sub,
+  .hero-cta,
+  .hero-cue {
+    opacity: 0;
+  }
+}
+
 @keyframes scroll-cue {
   0% { transform: translateY(0); opacity: 0; }
   40% { opacity: 1; }

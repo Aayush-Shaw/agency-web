@@ -21,9 +21,16 @@ export default function Hero() {
         const tl = gsap.timeline({ delay: 0.15 });
 
         tl.fromTo(".hero-eyebrow", { opacity: 0, y: 18 }, { opacity: 1, y: 0 })
-          // Words tip up off their baseline. rotateX needs the perspective set
-          // on the h1, and transformOrigin at the bottom edge so they pivot
-          // rather than spin around their middle.
+          // Words tip up off their baseline, pivoting at the bottom edge rather
+          // than spinning around their middle.
+          //
+          // transformPerspective (per word), NOT `perspective` on the h1: a
+          // parent perspective gives every word one shared vanishing point at
+          // the h1's centre, so the further a word sits from that centre the
+          // more its projection slides sideways as it rotates. On a three-line
+          // headline that threw the first word of the last line clear off the
+          // left edge, where the section's overflow-hidden clipped it. Per-word
+          // perspective pivots each word about its own box — no lateral drift.
           //
           // stagger vs duration is what makes this read as one-by-one rather
           // than one wave: at the old 0.045/1.1 every word was already moving
@@ -31,13 +38,14 @@ export default function Hero() {
           // fraction of the travel, and each word clearly follows the last.
           .fromTo(
             ".hero-word",
-            { opacity: 0, yPercent: 120, rotateX: -75 },
+            { opacity: 0, yPercent: 120, rotateX: -75, transformPerspective: 800 },
             {
               opacity: 1,
               yPercent: 0,
               rotateX: 0,
+              transformPerspective: 800,
               duration: 0.85,
-              stagger: 0.13,
+              stagger: 0.09,
               transformOrigin: "50% 100%",
             },
             "-=0.55"
@@ -48,7 +56,10 @@ export default function Hero() {
             { opacity: 0, y: 24 },
             // clearProps for the same reason as Reveal: the buttons' CSS
             // hover:scale is dead while GSAP's inline transform sits on them.
-            { opacity: 1, y: 0, stagger: 0.1, clearProps: "all" },
+            // transform only, not "all": the pre-hide in globals.css leaves
+            // .hero-cta at opacity 0, so clearing the inline opacity too would
+            // hand the buttons straight back to that rule and hide them.
+            { opacity: 1, y: 0, stagger: 0.1, clearProps: "transform" },
             "-=0.7"
           )
           .fromTo(".hero-cue", { opacity: 0 }, { opacity: 1 }, "-=0.5");
@@ -71,12 +82,7 @@ export default function Hero() {
           Digital Studio · US / UK / EU brands
         </Eyebrow>
 
-        {/* perspective is what turns the words' rotateX into a tip rather than
-            a flat squash — it has to live on the parent, not the words. */}
-        <h1
-          style={{ perspective: "800px" }}
-          className="mt-6 max-w-4xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl"
-        >
+        <h1 className="mt-6 max-w-4xl text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl">
           <Words
             className="hero-word"
             text="Design, motion & AI video that makes brands"
