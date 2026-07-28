@@ -120,7 +120,11 @@ export default function Navbar() {
             ))}
           </ul>
 
-          <div className="flex items-center gap-2">
+          {/* Both controls share one pill instead of carrying their own. The
+              buttons inside are borderless so the pill supplies the only
+              outline, and it still collapses to a single circle at md where the
+              hamburger drops out. */}
+          <div className={`${control} flex h-12 items-center gap-1 px-0.5`}>
             {/* Theme toggle. The DOM attribute is the state — no React state, so
                 nothing to hydrate and the icon swap is pure CSS. */}
             <motion.button
@@ -129,7 +133,7 @@ export default function Navbar() {
               whileTap={{ scale: 0.85, rotate: -25 }}
               transition={{ type: "spring", stiffness: 400, damping: 15 }}
               aria-label="Toggle light or dark theme"
-              className={`${control} flex h-12 w-12 items-center justify-center text-text md:text-text-muted md:hover:text-text`}
+              className="flex h-11 w-11 items-center justify-center rounded-full text-text transition-colors md:text-text-muted md:hover:text-text"
             >
               <Sun className="hidden h-5 w-5 dark:block" aria-hidden="true" />
               <Moon className="h-5 w-5 dark:hidden" aria-hidden="true" />
@@ -145,7 +149,7 @@ export default function Navbar() {
               onClick={() => setMenuOpen((v) => !v)}
               aria-expanded={menuOpen}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
-              className={`${control} relative flex h-12 w-12 items-center justify-center md:hidden`}
+              className="relative flex h-11 w-11 items-center justify-center rounded-full md:hidden"
             >
               <span
                 className={`absolute h-0.5 w-4.5 rounded-full bg-text transition-transform duration-300 ${
