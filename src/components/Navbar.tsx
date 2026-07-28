@@ -4,13 +4,18 @@ import { Moon, Sun } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 
+const DARK_QUERY = "(prefers-color-scheme: dark)";
+
 // The <head> script in layout.tsx guarantees data-theme is always set, so this
-// only has to flip it. localStorage is what makes the choice survive a reload.
+// only has to flip it.
+//
+// Nothing is persisted, deliberately: the device preference is the single
+// source of truth and this is a session-only override. Saving the choice is
+// what used to pin the site to a stale value and make it ignore the OS — a
+// reload or a system change now re-resolves from the device instead.
 function toggleTheme() {
   const root = document.documentElement;
-  const next = root.dataset.theme === "dark" ? "light" : "dark";
-  root.dataset.theme = next;
-  localStorage.theme = next;
+  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
 }
 
 const LINKS = [
@@ -34,6 +39,19 @@ export default function Navbar() {
     onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
+  }, []);
+
+  // Follow the device live and unconditionally: flipping the system theme
+  // retints the page immediately, and outranks a manual toggle rather than
+  // being blocked by it. Same rule as the reload path, so the two never
+  // disagree about which theme the site should be showing.
+  useEffect(() => {
+    const mq = window.matchMedia(DARK_QUERY);
+    const onChange = () => {
+      document.documentElement.dataset.theme = mq.matches ? "dark" : "light";
+    };
+    mq.addEventListener("change", onChange);
+    return () => mq.removeEventListener("change", onChange);
   }, []);
 
   // Tap outside the bar to dismiss. pointerdown rather than click so the menu

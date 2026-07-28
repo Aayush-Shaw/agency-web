@@ -44,12 +44,17 @@ export default function RootLayout({
       suppressHydrationWarning
     >
       <head>
-        {/* Runs during HTML parsing, before first paint: no theme flash. Always
-            writes the attribute (resolving the OS pref when nothing is saved)
-            so [data-theme] is the single source both CSS and the toggle read. */}
+        {/* Runs during HTML parsing, before first paint: no theme flash. Writes
+            the attribute so [data-theme] is the single source both CSS and the
+            toggle read.
+
+            Resolved from the device every load, with nothing persisted. Reading
+            a saved value here instead is what pinned the site to a stale theme
+            and made it ignore the OS from then on; the toggle is a session-only
+            override, so a reload deliberately returns to the device preference. */}
         <script
           dangerouslySetInnerHTML={{
-            __html: `(function(){try{document.documentElement.dataset.theme=localStorage.theme||(matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light")}catch(e){}})()`,
+            __html: `(function(){var d=document.documentElement;try{d.dataset.theme=matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"}catch(e){d.dataset.theme="light"}})()`,
           }}
         />
       </head>
