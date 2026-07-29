@@ -168,7 +168,7 @@ export default function Services({
   const start = useRef<() => void>(() => {});
   // Measured in the effect below, read by the loop — never props, so the loop
   // can't hold a stale one.
-  const geo = useRef({ pitch: 0, span: 0, half: 1, sag: 0 });
+  const geo = useRef({ pitch: 0, span: 0, half: 1, sag: 0, shift: 0 });
 
   // Gate for the tilt. Live (not a one-shot read) so plugging a mouse into a
   // tablet turns it on, same as the navbar watches its theme query.
@@ -185,23 +185,60 @@ export default function Services({
     const vp = viewport.current;
     if (!vp) return;
 
+    // Card size comes from CSS, so this only reads back what CSS decided —
+    // which is why an orientation change needs nothing but a re-measure.
+    //
+    // The rail's own height is derived here rather than set in CSS. The arc
+    // sags *downward*, so nearly all the room it needs is below the centre
+    // card; a fixed height with the cards pinned at top-1/2 splits the slack
+    // evenly and leaves the entire top half as dead space under the heading.
+    // Sampling the same arc the layout draws is simpler than solving it — the
+    // extremes are a rotated card's corners, and 40 steps across the half
+    // width finds them to well under a pixel without any calculus.
     const measure = () => {
       const first = cards.current[0];
       if (!first) return;
-      // Card size comes from CSS (`aspect-video`, and the `portrait:` variant
-      // for the 9:16 swap), so the aspect ratio has one definition instead of
-      // two that can drift. This only reads back what CSS decided — which is
-      // why an orientation change needs nothing but a re-measure.
+      const w = first.offsetWidth;
+      const half = vp.clientWidth / 2 || 1;
+      const sag = (bend * half) / REF_HALF_WIDTH;
+      // Heights follow content and so differ per service — the rail has to
+      // clear the tallest one.
+      const tall = Math.max(...cards.current.map((el) => el?.offsetHeight ?? 0));
+
+      const B = Math.abs(sag);
+      const R = B ? (half * half + B * B) / (2 * B) : 0;
+      const dir = Math.sign(sag);
+      let top = -tall / 2;
+      let bottom = tall / 2;
+      for (let s = 1; R && s <= 40; s++) {
+        const ex = (half * s) / 40;
+        const y = (R - Math.sqrt(R * R - ex * ex)) * dir;
+        const rot = Math.asin(ex / R);
+        // Half-height of the card's bounding box once rotateZ has turned it —
+        // the corner reaches further than the edge did.
+        const reach = (tall * Math.cos(rot) + w * Math.sin(rot)) / 2;
+        top = Math.min(top, y - reach);
+        bottom = Math.max(bottom, y + reach);
+      }
+
       geo.current = {
-        pitch: first.offsetWidth * PITCH,
-        span: first.offsetWidth * PITCH * cards.current.length,
-        half: vp.clientWidth / 2 || 1,
-        sag: (bend * (vp.clientWidth / 2)) / REF_HALF_WIDTH,
+        pitch: w * PITCH,
+        span: w * PITCH * cards.current.length,
+        half,
+        sag,
+        // Cards are anchored at top-1/2, which centres the *centre card*.
+        // Shifting every card by this centres the arc as a whole instead, so
+        // the height above is only what the centre card actually occupies.
+        shift: -(top + bottom) / 2,
       };
+      // Overrides the h-/min-h- classes, which stay as the pre-hydration
+      // fallback so the section does not collapse before this first runs.
+      vp.style.minHeight = "0px";
+      vp.style.height = `${Math.ceil(bottom - top)}px`;
     };
 
     const layout = () => {
-      const { pitch, span, half, sag } = geo.current;
+      const { pitch, span, half, sag, shift } = geo.current;
       if (!pitch) return;
       const B = Math.abs(sag);
       // Circle through the centre card and the one sagging by B at x = ±half.
@@ -216,7 +253,7 @@ export default function Services({
         let x = (((i * pitch - scroll.current.pos) % span) + span) % span;
         if (x > span / 2) x -= span;
 
-        let y = 0;
+        let y = shift;
         let z = 0;
         let rot = 0;
         if (R) {
@@ -224,7 +261,7 @@ export default function Services({
           const arc = R - Math.sqrt(R * R - ex * ex);
           // CSS y points down and rotateZ turns clockwise — both opposite to
           // the reference's GL frame, so both signs are flipped from it.
-          y = arc * dir;
+          y += arc * dir;
           rot = Math.sign(x) * ((Math.asin(ex / R) * 180) / Math.PI) * dir;
           // The reference has no depth: its arc is a flat plane bent in y under
           // a perspective camera. Here the same sag doubles as recession, which
@@ -262,7 +299,17 @@ export default function Services({
     layout();
     window.addEventListener("resize", onResize);
 
+    // A card's height is its text, and its text is not final at mount — a
+    // webfont swapping in after hydration reflows it taller, and a rail
+    // measured before that stays too short and clips the arc. Watching the
+    // cards catches it, and every other late reflow, without guessing at
+    // which. This cannot feed back: with no max-height on the card, its
+    // height no longer depends on the rail height measure() writes.
+    const ro = new ResizeObserver(onResize);
+    cards.current.forEach((el) => el && ro.observe(el));
+
     return () => {
+      ro.disconnect();
       window.removeEventListener("resize", onResize);
       clearTimeout(snapTimer.current);
       cancelAnimationFrame(raf.current);
@@ -302,10 +349,11 @@ export default function Services({
         role="region"
         aria-roledescription="carousel"
         aria-label="Services. Drag sideways, or use the Left and Right Arrow keys, to browse."
-        // The rail is taller than its cards so the arc has room to sag, and
-        // that headroom already reads as the gap under the heading — a full
-        // mt-12 on top of it left the section looking broken in two.
-        className="relative -mx-5 mt-2 h-[70svh] min-h-[26rem] cursor-grab touch-pan-y overflow-hidden [perspective:1200px] active:cursor-grabbing md:-mx-8 md:mt-6"
+        // A real margin now, because the rail no longer carries dead headroom
+        // to borrow it from: `measure` sizes it to the arc and pins the top of
+        // it to the top of the centre card. The h-/min-h- pair is only the
+        // pre-hydration fallback, overridden inline on the first measure.
+        className="relative -mx-5 mt-10 h-[42svh] min-h-[22rem] cursor-grab touch-pan-y overflow-hidden [perspective:1200px] active:cursor-grabbing md:-mx-8 md:mt-14"
         onWheel={(e) => {
           // Vertical wheel stays with the page. The reference binds it to the
           // rail, but it is a full-screen gallery — here the rail is one
@@ -379,9 +427,14 @@ export default function Services({
               // overflow escaped out of the top — the icon floating above the
               // card) or tall (16:9 gave a 336px box for 272px of content, and
               // the slack had to be parked somewhere). Sizing to the content
-              // has neither failure. max-h-full is only a backstop against the
-              // rail, not a layout the cards are expected to reach.
-              className="absolute top-1/2 left-1/2 h-auto max-h-full w-[min(78vw,22rem)] will-change-transform landscape:w-[min(46vw,38rem)]"
+              // has neither failure.
+              //
+              // Deliberately no max-height. The rail is measured *from* these
+              // cards, so capping them against it is a cycle: on the first
+              // measure the rail is still the CSS fallback, which clamped a
+              // 363px card to 352px on a 320px phone, sized the rail from the
+              // clamped figure, and then let the card grow back out past it.
+              className="absolute top-1/2 left-1/2 h-auto w-[min(78vw,22rem)] will-change-transform landscape:w-[min(46vw,38rem)]"
               // Tilt is desktop-only by construction: on a coarse pointer no
               // handler is attached at all, so none of this runs.
               onMouseMove={
