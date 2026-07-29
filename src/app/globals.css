@@ -140,6 +140,46 @@ section[id] {
   color: transparent;
 }
 
+/* iOS-style glass text: the glyphs are cut-outs onto a filtered copy of
+   whatever sits behind them, not a fill of their own.
+
+   backdrop-filter alone can't do this — it filters the element's whole box, so
+   on its own it renders a blurred rectangle with the text sitting on it.
+   -webkit-mask-clip:text is the piece that makes it glass: it clips the entire
+   element, filtered backdrop included, to the glyph outlines. The mask image
+   itself is a flat colour; the shape comes from the clip.
+
+   brightness and saturate do the visible work here, not blur. The aurora
+   behind the hero is a smooth gradient, so blurring it returns the same
+   gradient — the lift and the colour boost are what read as glass. The small
+   blur stays only to soften the fringe the mask leaves on glyph edges.
+
+   The background-colour is the frosted sheen, and it lands on top of the
+   filtered backdrop; the mask clips it to the glyphs like everything else.
+
+   --raw-text, not --color-text, for the reason the Hero stage block records:
+   the @theme alias is declared on :root, so its light-dark() has already
+   collapsed to the site theme by the time it inherits — inside the hero's
+   .theme-dark scope it would hand back the light palette's dark umber. */
+.text-glass {
+  /* Fallback for engines without mask-clip:text (Firefox today). Plain
+     translucent glyphs — no backdrop-filter, because unclipped it would paint
+     that blurred rectangle across the headline. */
+  color: color-mix(in oklab, var(--raw-text) 62%, transparent);
+}
+
+@supports (-webkit-mask-clip: text) {
+  .text-glass {
+    color: transparent;
+    background-color: color-mix(in oklab, var(--raw-text) 26%, transparent);
+    backdrop-filter: blur(3px) brightness(5.4) saturate(1.9);
+    -webkit-mask-image: linear-gradient(#000, #000);
+    -webkit-mask-clip: text;
+    mask-image: linear-gradient(#000, #000);
+    mask-clip: text;
+  }
+}
+
 /* Warm ambient glow for CTAs, active/hover states, the featured tier. */
 .glow {
   box-shadow: 0 12px 44px -12px var(--raw-glow);

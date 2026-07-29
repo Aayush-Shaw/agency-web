@@ -170,12 +170,24 @@ export default function Hero() {
           {/* Boxed per word so the tail joins the same stagger as everything
               above it, rather than fading in as one block. The cost is that
               `.text-gradient` clips its own background per box, so the
-              honey→cinnamon ramp now restarts on each of these three words
-              instead of running once across the phrase. Per-word boxes are
-              small enough to still wrap normally; it was boxing the *whole*
-              phrase that used to cost the headline a line. The period rides
-              inside the last box but outside the gradient span, so it stays
-              text-coloured exactly as before. */}
+              honey→cinnamon ramp restarts on each of these three words instead
+              of running once across the phrase. Per-word boxes are small
+              enough to still wrap normally; it was boxing the *whole* phrase
+              that used to cost the headline a line. The period rides inside
+              the last box but outside the gradient span, so it stays
+              text-coloured. */}
+
+          {/* iOS glass alternative — swap these three in and comment the
+              gradient ones below. .text-glass is still in globals.css. Each
+              glyph becomes a cut-out onto the aurora, so unlike the gradient
+              it doesn't restart per box; the period goes inside the glass
+              because left solid against it, it reads as a stray white square.
+
+          <span className="hero-word text-glass inline-block">impossible</span>{" "}
+          <span className="hero-word text-glass inline-block">to</span>{" "}
+          <span className="hero-word text-glass inline-block">ignore.</span>
+          */}
+
           <span className="hero-word text-gradient inline-block">
             impossible
           </span>{" "}
