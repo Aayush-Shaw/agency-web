@@ -129,7 +129,7 @@ export default function Work() {
               }}
               className="group relative w-[78%] shrink-0 snap-center overflow-hidden rounded-2xl border border-border sm:w-auto sm:shrink"
             >
-              <div className="relative aspect-[3/2] overflow-hidden">
+              <div className="relative aspect-3/2 overflow-hidden">
                 {/* Exactly covers the frame. The featured card's parallax gets
                     its headroom from a GSAP-applied scale, not a percentage
                     height — percentages against an aspect-ratio parent resolve
