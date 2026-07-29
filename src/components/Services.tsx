@@ -13,8 +13,8 @@ export type ServiceItem = {
   heading: string;
   description: string;
   /** Both optional, and both rendered inline. The card is sized to hold the
-      whole service — there is no disclosure here, which is the reason the
-      aspect ratios are fixed rather than hugging their content. */
+      whole service — there is no disclosure here, so on portrait the card
+      hugs its content rather than holding a ratio it cannot fill. */
   detail?: string;
   deliverables?: string[];
 };
@@ -372,10 +372,16 @@ export default function Services({
               // Positioned from the centre; the loop's transform starts by
               // pulling back half its own size, so the arc math works in plain
               // offsets from the middle of the viewport.
-              // Sized so the tallest service fits without scrolling or
-              // truncation — the whole point of the fixed ratio is that a card
-              // never has to hide anything.
-              className="absolute top-1/2 left-1/2 aspect-video h-[60%] will-change-transform portrait:aspect-[9/16] portrait:h-[78%]"
+              // Width is set, height is whatever the service needs — no fixed
+              // ratio in either orientation. A ratio decides the height before
+              // knowing the content, so it is always either short (9:16 gave a
+              // ~360px box for ~460px of copy on a 390px phone, and the
+              // overflow escaped out of the top — the icon floating above the
+              // card) or tall (16:9 gave a 336px box for 272px of content, and
+              // the slack had to be parked somewhere). Sizing to the content
+              // has neither failure. max-h-full is only a backstop against the
+              // rail, not a layout the cards are expected to reach.
+              className="absolute top-1/2 left-1/2 h-auto max-h-full w-[min(78vw,22rem)] will-change-transform landscape:w-[min(46vw,38rem)]"
               // Tilt is desktop-only by construction: on a coarse pointer no
               // handler is attached at all, so none of this runs.
               onMouseMove={
@@ -404,26 +410,38 @@ export default function Services({
               }
             >
               <div
-                // Anchored to the bottom, not spread: a 16:9 box is wider than
-                // its content is tall, and justify-between would strand the
-                // icon at the top away from the heading it belongs to.
-                className={`pointer-events-none flex h-full w-full flex-col justify-end gap-4 border border-border bg-surface p-5 shadow-[0_28px_70px_-30px_var(--raw-glow)] transition-transform duration-200 ease-out select-none sm:p-7 ${
+                // No justify-*: the card is the height of this content, so
+                // there is no free space to distribute. It only reappears if
+                // max-h-full clamps a very long service against the rail, and
+                // the flex-start default is the right answer there too — the
+                // pills go, never the icon and heading.
+                className={`pointer-events-none flex h-full w-full flex-col gap-4 overflow-hidden border border-border bg-surface p-5 shadow-[0_28px_70px_-30px_var(--raw-glow)] transition-transform duration-200 ease-out select-none sm:p-7 ${
                   cardRadius.startsWith("rounded") ? cardRadius : ""
                 }`}
                 style={
                   cardRadius.startsWith("rounded") ? undefined : { borderRadius: cardRadius }
                 }
               >
-                {/* Accent alternates honey/cinnamon down the list, keyed to the
-                    item rather than the rendered index so a card and its copy
-                    on the far side of the rail are never different colours. */}
-                <span
-                  className={n % 2 === 0 ? "text-accent-primary" : "text-accent-secondary"}
-                >
-                  {item.icon}
-                </span>
                 <div>
-                  <h3 className="text-card font-semibold tracking-tight">{item.heading}</h3>
+                  {/* Icon and heading share one line, centred against each
+                      other so the two read as a single title however many
+                      lines the heading wraps to. The icon is a fixed square
+                      and shrink-0 — as a flex item it would otherwise be
+                      squashed narrower than its own SVG on a short heading. */}
+                  <div className="flex items-center gap-3">
+                    {/* Accent alternates honey/cinnamon down the list, keyed to
+                        the item rather than the rendered index so a card and
+                        its copy on the far side of the rail are never
+                        different colours. */}
+                    <span
+                      className={`grid size-7 shrink-0 place-items-center ${
+                        n % 2 === 0 ? "text-accent-primary" : "text-accent-secondary"
+                      }`}
+                    >
+                      {item.icon}
+                    </span>
+                    <h3 className="text-card font-semibold tracking-tight">{item.heading}</h3>
+                  </div>
                   <p className="mt-2 text-sm text-text-muted">{item.description}</p>
                 </div>
 
