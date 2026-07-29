@@ -59,9 +59,10 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-dvh">
-        {/* Fixed backdrop + film grain — both non-interactive, both stationary
-            while the page scrolls over them. */}
-        <div className="atmosphere" aria-hidden="true" />
+        {/* Film grain — non-interactive, stationary while the page scrolls
+            under it, and above the navbar (z-60 vs z-50) so nothing escapes
+            it. The .atmosphere backdrop it used to sit beside now lives inside
+            page.tsx's post-hero sheet, which is opaque; see the note there. */}
         <div className="grain" aria-hidden="true" />
 
         <SmoothScroll>{children}</SmoothScroll>

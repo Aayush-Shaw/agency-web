@@ -42,6 +42,12 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
       { scale: 1 },
       {
         scale: 1.3,
+        // Grow downward only. The layer is sticky inside the post-hero sheet
+        // now, and a centre origin pushed its top edge a few pixels above the
+        // sheet — i.e. over the pinned hero — as soon as the scrub left 1.0.
+        // Anchoring at the top also matches where these gradients start (0%
+        // and 12%), so the glow opens out from its own source.
+        transformOrigin: "50% 0%",
         ease: "none",
         scrollTrigger: {
           trigger: document.body,

@@ -4,14 +4,31 @@
    swap in the navbar toggle agrees with the tokens below. */
 @custom-variant dark (&:where([data-theme="dark"], [data-theme="dark"] *));
 
+/* Laptops, not phones. A 1366x768 panel at Windows' default 125% scaling is a
+   514px viewport once browser chrome is out, and 150% leaves 428 — short
+   enough that a full-height hero stops fitting its own content. Used by the
+   hero to tighten its stack; see the Hero stage block below for why an
+   overflowing hero is unreachable rather than merely cropped. */
+@custom-variant short (@media (height <= 44rem));
+
 /* ============================================================
    Design tokens — single source of truth.
    Every pair is light-dark(light, dark) and resolves against the
    live `color-scheme`, so the OS preference is the default and
    [data-theme] (set by the navbar toggle) overrides it. One
    declaration flips the whole palette.
+
+   The extra selectors are not decoration. light-dark() resolves against the
+   color-scheme of the element a custom property is *declared* on, never the
+   one it is used on — so setting color-scheme on a subtree does nothing to
+   tokens that came from :root. The only way down is to re-declare the same
+   pairs there, which is what these two do: the hero, and the navbar for as
+   long as the hero is still under it. Values stay written once. See "Hero
+   stage" further down.
    ============================================================ */
-:root {
+:root,
+.theme-dark,
+:root:not([data-past-hero]) header {
   color-scheme: light dark;
   --raw-bg: light-dark(#fbf3e7, #17120d); /* warm cream / espresso */
   --raw-surface: light-dark(#f3e6d3, #1f1810); /* card / section */
@@ -180,10 +197,24 @@ section[id] {
    across the whole page) while content scrolls past at 1:1. The
    depth is composition, not animation — no parallax, no scrub,
    nothing that can fight native scroll on a phone.
+
+   It now lives inside page.tsx's post-hero sheet rather than on the
+   body, and is sticky rather than fixed, for the reason below — the
+   behaviour it was measured for is unchanged.
    ============================================================ */
+/* sticky, not fixed, and it reads as fixed for the whole page it covers.
+   Fixed was right when this hung off the body; inside the post-hero sheet it
+   would still size to the viewport and so paint over the pinned hero above the
+   sheet's top edge — an orange wash across the hero for the length of the
+   overlap. Sticky is constrained to its containing block, so before the sheet
+   reaches the top it sits at the sheet's own top edge and cannot reach the
+   hero, and after that it pins at 0 and behaves exactly as fixed did.
+   The negative margin is so it claims no space in the flow. */
 .atmosphere {
-  position: fixed;
-  inset: 0;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  margin-bottom: -100vh;
   z-index: -1;
   pointer-events: none;
   background:
@@ -197,6 +228,66 @@ section[id] {
       color-mix(in oklab, var(--color-accent-secondary) 16%, transparent),
       transparent 70%
     );
+}
+
+/* ============================================================
+   Hero stage
+
+   The hero renders dark in both site themes, and the navbar borrows that
+   palette for as long as the hero is still underneath it. Both scopes carry
+   their own copy of the token block above; this is the half that pins them to
+   the dark side of every pair.
+
+   Deliberately not [data-theme]: :root has to keep reporting the theme the
+   user actually chose, because that is what the toggle's Sun/Moon icon reads
+   (via the dark: variant) and what a click flips. A local [data-theme="dark"]
+   here would make the button in the dark navbar offer to turn the light site
+   light.
+
+   [data-past-hero] lands on <html> once a full hero has scrolled past the top
+   (Hero.tsx). Absent by default, so the server HTML already paints the dark
+   navbar and there's no flash on load.
+   ============================================================ */
+.theme-dark,
+:root:not([data-past-hero]) header {
+  color-scheme: dark;
+  /* Re-declaring the tokens is necessary but not sufficient: `color` is set
+     from one once, on the body, so anything that inherits its text colour
+     (the h1, the logo) carries the resolved light value down here regardless.
+     This re-runs that one declaration against the local palette. --raw-text,
+     not --color-text: the @theme alias is declared on :root, which is where
+     its light-dark() already collapsed. */
+  color: var(--raw-text);
+}
+
+/* The one case where pinning has to be given up. A sticky element held at
+   top:0 never scrolls, so anything of it below the fold at scroll 0 stays
+   below the fold forever — the CTAs on a short laptop were cut by 24px and no
+   amount of scrolling could reach them. The `short:` tightening on the hero
+   keeps it fitting on every viewport we can, and this is the guarantee for the
+   ones we can't: if the hero is genuinely taller than the viewport it goes
+   back to scrolling normally, trading the overlap effect for reachable
+   buttons. Hero.tsx sets the attribute; it's measured, not a breakpoint, so it
+   stays right if the hero's content changes. */
+#top[data-overflows] {
+  position: relative;
+}
+
+/* The hero stays pinned in the layer stack for the whole page, so once it has
+   been buried it has to take itself out of the picture — otherwise every
+   section below that lets the body background through (Services, Pricing, Faq,
+   Trust, WhyUs, Cta all do, on purpose) would show it instead.
+   visibility, not display: the hero is in normal flow, and removing its box
+   would shorten the document by a hero and jump the scroll position. */
+:root[data-past-hero] #top {
+  visibility: hidden;
+}
+
+/* And display:none on the backdrop specifically, because visibility leaves
+   geometry intact: zeroing the canvas' intersection rect is what Aurora's own
+   IntersectionObserver is watching, and it's what stops the render loop. */
+:root[data-past-hero] .hero-backdrop {
+  display: none;
 }
 
 /* Hero entrance — the one place Reveal.tsx's "visible by default" rule
