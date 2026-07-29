@@ -30,8 +30,16 @@ export default function Home() {
             backdrop would be behind this sheet and never seen again. z-10 +
             relative makes this a stacking context, so a z-index:-1 child
             paints above the sheet's own background and below every section,
-            which is exactly where it sat on the body. */}
-        <div className="relative z-10 bg-bg">
+            which is exactly where it sat on the body.
+
+            overflow-x-clip pays for that move. .atmosphere is scrubbed from
+            scale 1 to 1.3, and as a sticky (in-flow) element it now counts
+            toward the document's scrollable width the way a fixed one never
+            did — so the page grew a horizontal scrollbar that widened as you
+            scrolled. clip, not hidden: hidden would make this a scroll
+            container and kill the sticky positioning it exists to support.
+            Work's mobile carousel keeps its own overflow-x-auto regardless. */}
+        <div className="relative z-10 overflow-x-clip bg-bg">
           <div className="atmosphere" aria-hidden="true" />
 
           <Manifesto />

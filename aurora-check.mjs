@@ -110,16 +110,23 @@ await page.close();
 // .atmosphere lives in that sheet and is sticky rather than fixed for the same
 // reason — a viewport-sized fixed layer would paint over the pinned hero above
 // the sheet's top edge.
-for (const [w, h] of [[390, 844], [430, 780], [360, 640]]) {
+// The horizontal-overflow check rides along: .atmosphere is scrubbed to
+// scale 1.3, and as a sticky element it counts toward the document's
+// scrollable width, so the page grew a scrollbar that widened as you scrolled
+// until the sheet started clipping the x axis.
+for (const [w, h] of [[390, 844], [430, 780], [360, 640], [1280, 900], [1093, 514]]) {
   const m = await browser.newPage({
     viewport: { width: w, height: h },
-    isMobile: true,
-    hasTouch: true,
+    isMobile: w < 500,
+    hasTouch: w < 500,
   });
   await m.goto(URL, { waitUntil: "networkidle" });
   await m.waitForTimeout(1200);
   const heroH = await m.evaluate(() => document.querySelector("#top").offsetHeight);
-  for (const y of [0, 200, Math.round(heroH * 0.5), heroH - 50, heroH, heroH + 400]) {
+  const maxY = await m.evaluate(() => document.body.scrollHeight - innerHeight);
+  const stops = [0, 200, Math.round(heroH * 0.5), heroH - 50, heroH, heroH + 400,
+    Math.round(maxY * 0.6), Math.round(maxY * 0.95)];
+  for (const y of stops) {
     await m.evaluate((v) => window.scrollTo(0, v), y);
     await m.waitForTimeout(350);
     const s = await m.evaluate(() => {
@@ -127,14 +134,17 @@ for (const [w, h] of [[390, 844], [430, 780], [360, 640]]) {
       const r = sheet.getBoundingClientRect();
       const a = document.querySelector(".atmosphere").getBoundingClientRect();
       const bg = getComputedStyle(sheet).backgroundColor;
+      const de = document.documentElement;
       return {
         opaque: bg !== "rgba(0, 0, 0, 0)" && !bg.endsWith(", 0)"),
         sheetTop: Math.round(r.top),
         atmLeak: Math.round(Math.max(0, r.top - a.top)),
+        hScroll: de.scrollWidth - de.clientWidth,
       };
     });
     assert(s.opaque, `post-hero sheet must be opaque (${w}x${h} @${y})`);
     assert(s.atmLeak === 0, `atmosphere ${s.atmLeak}px above sheet (${w}x${h} @${y})`);
+    assert(s.hScroll === 0, `horizontal scroll ${s.hScroll}px (${w}x${h} @${y})`);
   }
   await m.close();
 }
