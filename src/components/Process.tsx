@@ -67,7 +67,7 @@ export default function Process() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <Eyebrow>How we work</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             A simple path from{" "}
             <span className="text-gradient">idea to launch</span>.
           </h2>
@@ -89,7 +89,7 @@ export default function Process() {
                 <span className="font-display text-4xl font-bold text-gradient">
                   {step.n}
                 </span>
-                <h3 className="mt-3 text-xl font-semibold tracking-tight">
+                <h3 className="mt-3 text-card font-semibold tracking-tight">
                   {step.title}
                 </h3>
                 <p className="mt-2 leading-relaxed text-text-muted">

@@ -103,7 +103,7 @@ export default function Services() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <Eyebrow>What we do</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Five services, one <span className="text-gradient">creative team</span>.
           </h2>
         </Reveal>
@@ -143,7 +143,7 @@ export default function Services() {
                   </svg>
                 </div>
                 <div>
-                  <h3 className="text-xl font-semibold tracking-tight">
+                  <h3 className="text-card font-semibold tracking-tight">
                     {service.title}
                   </h3>
                   <p className="mt-2 text-text-muted">{service.summary}</p>

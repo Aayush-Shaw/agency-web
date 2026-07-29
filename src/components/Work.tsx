@@ -79,7 +79,7 @@ export default function Work() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <Eyebrow>Selected work</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Work we&apos;re <span className="text-gradient">proud to ship</span>.
           </h2>
         </Reveal>

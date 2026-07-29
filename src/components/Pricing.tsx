@@ -76,7 +76,7 @@ export default function Pricing() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <Eyebrow>Pricing</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Clear pricing, <span className="text-gradient">no surprises</span>.
           </h2>
           <p className="mt-4 max-w-xl text-text-muted">
@@ -105,7 +105,7 @@ export default function Pricing() {
                 </span>
               )}
 
-              <h3 className="text-lg font-semibold tracking-tight">
+              <h3 className="text-card font-semibold tracking-tight">
                 {tier.name}
               </h3>
               <p className="mt-1 text-sm text-text-muted">{tier.tagline}</p>

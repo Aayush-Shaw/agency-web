@@ -136,7 +136,7 @@ export default function Hero() {
     <section
       id="top"
       ref={root}
-      className="theme-dark sticky top-0 z-0 flex min-h-svh items-center overflow-hidden px-5 pt-24 pb-8 short:pt-20 md:px-8"
+      className="theme-dark sticky top-0 z-0 flex min-h-svh items-center overflow-hidden px-5 pt-24 pb-8 short:pt-20 short:pb-6 md:px-8"
     >
       {/* Hero-only backdrop. It clears to the bg token (opaque), which under
           theme-dark is the dark one — so inside this section it stands in for
@@ -161,12 +161,16 @@ export default function Hero() {
             the lines out is the only version that stays right at every width.
             It only engages under a handful of lines, which is the whole point
             of the headline being this short. */}
-        {/* short: caps the display size independently of width — the two are
-            unrelated on a laptop, where a wide screen is exactly the case with
-            no vertical room. It has to come after the width steps to outrank
-            them. */}
-        <h1 className="mx-auto max-w-4xl text-balance text-5xl font-bold leading-[1.02] tracking-tight sm:text-6xl md:text-7xl lg:text-8xl short:text-6xl">
-          <Words className="hero-word" text="We make brands" />
+        {/* No short: cap on the size. It was capping the headline to the
+            section-xl step on anything under 44rem tall, which is most
+            laptops — and measured, the cap is only load-bearing below about
+            520px of viewport height. At 600 and 700 the full size fits with
+            66–116px to spare. Below ~520 the hero outgrows the viewport and
+            data-overflows unpins it (see the effect above), which is the
+            graceful path: the headline stays big and the CTAs stay reachable,
+            the sticky overlap is what's traded away. */}
+        <h1 className="mx-auto max-w-4xl text-balance text-display font-bold leading-[1.02] tracking-tight">
+          <Words className="hero-word" text="We make brands" /><br />
           {/* Boxed per word so the tail joins the same stagger as everything
               above it, rather than fading in as one block. The cost is that
               `.text-gradient` clips its own background per box, so the
@@ -176,30 +180,30 @@ export default function Hero() {
               that used to cost the headline a line. The period rides inside
               the last box but outside the gradient span, so it stays
               text-coloured. */}
-
-          {/* iOS glass alternative — swap these three in and comment the
+{/* 
+          iOS glass alternative — swap these three in and comment the
               gradient ones below. .text-glass is still in globals.css. Each
               glyph becomes a cut-out onto the aurora, so unlike the gradient
               it doesn't restart per box; the period goes inside the glass
-              because left solid against it, it reads as a stray white square.
+              because left solid against it, it reads as a stray white square. */}
 
           <span className="hero-word text-glass inline-block">impossible</span>{" "}
           <span className="hero-word text-glass inline-block">to</span>{" "}
           <span className="hero-word text-glass inline-block">ignore.</span>
-          */}
+         
 
-          <span className="hero-word text-gradient inline-block">
+          {/* <span className="hero-word text-gradient inline-block">
             impossible
           </span>{" "}
           <span className="hero-word text-gradient inline-block">to</span>{" "}
           <span className="hero-word inline-block">
             <span className="text-gradient">ignore</span>.
-          </span>
+          </span> */}
         </h1>
 
         {/* The service list moved down here when the headline lost it — the
             headline now carries the promise and this carries the proof. */}
-        <p className="hero-sub mx-auto mt-7 max-w-xl text-balance text-lg leading-relaxed text-text-muted md:text-xl short:mt-5">
+        <p className="hero-sub mx-auto mt-7 max-w-xl text-balance text-lead leading-relaxed text-text-muted short:mt-4 short:max-w-2xl short:max-sm:leading-snug">
           Digital Bear is a full-service studio crafting websites, social
           content, motion graphics, and AI-generated video for ambitious teams —
           premium work, fast turnarounds, on your timezone.

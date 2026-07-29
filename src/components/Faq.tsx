@@ -31,7 +31,7 @@ export default function Faq() {
       <div className="mx-auto max-w-3xl">
         <Reveal>
           <Eyebrow>FAQ</Eyebrow>
-          <h2 className="mt-5 text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-5 text-section font-bold tracking-tight">
             Questions, <span className="text-gradient">answered</span>.
           </h2>
         </Reveal>

@@ -68,7 +68,7 @@ export default function WhyUs() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <Eyebrow>Why Digital Bear</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Built to feel like your{" "}
             <span className="text-gradient">in-house team</span>.
           </h2>
@@ -81,7 +81,7 @@ export default function WhyUs() {
               className="lift rounded-2xl border border-border bg-surface p-6"
             >
               <span className="text-accent-primary">{reason.icon}</span>
-              <h3 className="mt-4 text-xl font-semibold tracking-tight">
+              <h3 className="mt-4 text-card font-semibold tracking-tight">
                 {reason.title}
               </h3>
               <p className="mt-2 leading-relaxed text-text-muted">

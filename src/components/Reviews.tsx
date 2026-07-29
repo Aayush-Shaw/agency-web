@@ -60,7 +60,7 @@ export default function Reviews() {
       <div className="mx-auto max-w-6xl">
         <Reveal>
           <Eyebrow>Client reviews</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-4xl font-bold tracking-tight md:text-5xl">
+          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Trusted by brands that{" "}
             <span className="text-gradient">sweat the details</span>.
           </h2>

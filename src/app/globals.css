@@ -94,6 +94,37 @@
 }
 
 /* ============================================================
+   Fluid type scale.
+
+   One clamp per role instead of a breakpoint ladder (text-4xl md:text-5xl and
+   friends). The ladder jumped in steps and left every size between the
+   breakpoints wrong-by-a-bit; these interpolate continuously, so there is one
+   number per role rather than two or four.
+
+   Each is clamp(min, <intercept> + <slope>vw, max) solved so the min lands at
+   a 375px viewport and the max at 1440px. The endpoints are the sizes the
+   ladder already produced, so the hierarchy is unchanged — only the space
+   between the breakpoints moves.
+
+   Plain @theme, not inline: these are static values, nothing re-resolves them
+   per subtree the way the colour tokens do.
+   ============================================================ */
+@theme {
+  /* Hero h1. Steeper than the others on purpose: solved to hit the sizes the
+     old ladder produced (44 at 375, 72 at 768, 96 by ~1100) rather than to
+     reach its max at 1440 like the rest. Sloped for 1440 it undershot the
+     ladder by 12% at 768 and 21% at 1024 — a whole tablet-to-small-laptop band
+     where the headline stopped out-weighing the sub-heading under it. */
+  --text-display: clamp(2.75rem, 1.08rem + 7.13vw, 6rem); /* hero h1  44→96 */
+  --text-section-xl: clamp(2.25rem, 1.72rem + 2.25vw, 3.75rem); /* cta  36→60 */
+  --text-section: clamp(2.25rem, 1.99rem + 1.13vw, 3rem); /* h2       36→48 */
+  --text-statement: clamp(1.875rem, 1.48rem + 1.69vw, 3rem); /* manifesto 30→48 */
+  --text-card: clamp(1.125rem, 1.08rem + 0.19vw, 1.25rem); /* card h3  18→20 */
+  --text-card-lg: clamp(1.375rem, 1.3rem + 0.32vw, 1.5rem); /* cta h3  22→24 */
+  --text-lead: clamp(1.0625rem, 1rem + 0.28vw, 1.25rem); /* sub-head  17→20 */
+}
+
+/* ============================================================
    Base
    ============================================================ */
 body {

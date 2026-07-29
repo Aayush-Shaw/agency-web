@@ -55,11 +55,11 @@ export default function Cta() {
         {/* Pitch */}
         <div>
           <Eyebrow>Let&apos;s talk</Eyebrow>
-          <h2 className="mt-5 text-4xl font-bold leading-[1.05] tracking-tight md:text-6xl">
+          <h2 className="mt-5 text-section-xl font-bold leading-[1.05] tracking-tight">
             Ready to build something{" "}
             <span className="text-gradient">worth watching</span>?
           </h2>
-          <p className="mt-5 max-w-md text-lg text-text-muted">
+          <p className="mt-5 max-w-md text-lead text-text-muted">
             Tell us what you&apos;re working on. We&apos;ll reply within one
             business day with next steps — no pushy sales calls.
           </p>
@@ -75,7 +75,7 @@ export default function Cta() {
         {status === "success" ? (
           <div className="glow-ring flex flex-col items-start justify-center rounded-2xl border border-transparent bg-surface p-8">
             <span className="claw h-8 w-8" aria-hidden="true" />
-            <h3 className="mt-4 text-2xl font-bold tracking-tight">
+            <h3 className="mt-4 text-card-lg font-bold tracking-tight">
               Message sent — thank you.
             </h3>
             <p className="mt-2 text-text-muted">
