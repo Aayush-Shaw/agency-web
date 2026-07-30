@@ -1,6 +1,6 @@
 import type { ReactNode } from "react";
-import Eyebrow from "@/components/Eyebrow";
-import Reveal from "@/components/Reveal";
+import Eyebrow from "@/components/ui/Eyebrow";
+import Reveal from "@/components/ui/Reveal";
 
 const icon = (path: ReactNode) => (
   <svg

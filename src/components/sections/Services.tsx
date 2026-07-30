@@ -1,8 +1,8 @@
 "use client";
 
 import { useEffect, useRef, useState, type ReactNode } from "react";
-import Eyebrow from "@/components/Eyebrow";
-import Reveal from "@/components/Reveal";
+import Eyebrow from "@/components/ui/Eyebrow";
+import Reveal from "@/components/ui/Reveal";
 
 export type ServiceItem = {
   /** Typed as ReactNode, which `string` satisfies — so `{ icon: "/x.svg" }`

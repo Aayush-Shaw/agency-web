@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Questrial, Poppins } from "next/font/google";
 import "./globals.css";
-import SmoothScroll from "@/components/SmoothScroll";
+import SmoothScroll from "@/components/ui/SmoothScroll";
 
 // Display: Questrial ships a single 400 weight — there is no bold cut, so the
 // bold on headings is the browser's synthetic emboldening (a deliberate choice:

@@ -4,8 +4,8 @@ import { useRef, useState } from "react";
 import Image from "next/image";
 import { motion } from "motion/react";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
-import Eyebrow from "@/components/Eyebrow";
-import Reveal from "@/components/Reveal";
+import Eyebrow from "@/components/ui/Eyebrow";
+import Reveal from "@/components/ui/Reveal";
 
 type Category = "Website" | "Social" | "Motion" | "AI Video";
 

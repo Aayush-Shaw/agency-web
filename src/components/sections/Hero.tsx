@@ -2,9 +2,9 @@
 
 import { useEffect, useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import Aurora from "@/components/Aurora";
-import Magnetic from "@/components/Magnetic";
-import Words from "@/components/Words";
+import Aurora from "@/components/ui/Aurora";
+import Magnetic from "@/components/ui/Magnetic";
+import Words from "@/components/ui/Words";
 
 export default function Hero() {
   const root = useRef<HTMLElement>(null);

@@ -1,6 +1,6 @@
-import Eyebrow from "@/components/Eyebrow";
-import Magnetic from "@/components/Magnetic";
-import Reveal from "@/components/Reveal";
+import Eyebrow from "@/components/ui/Eyebrow";
+import Magnetic from "@/components/ui/Magnetic";
+import Reveal from "@/components/ui/Reveal";
 
 type Tier = {
   name: string;

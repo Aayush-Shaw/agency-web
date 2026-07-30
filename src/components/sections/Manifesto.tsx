@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import Words from "@/components/Words";
+import Words from "@/components/ui/Words";
 
 /**
  * Section 3 — a single bold statement that lights up word by word as you

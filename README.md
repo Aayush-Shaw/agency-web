@@ -68,27 +68,32 @@ provider-less by design (see [Contact API](#contact-api)).
 
 ## Project structure
 
+Every folder holds one kind of thing:
+
 ```
 src/
-├── app/
-│   ├── api/contact/route.ts   # POST handler — validation + honeypot
-│   ├── globals.css            # Design tokens, base styles, utilities
-│   ├── layout.tsx             # Fonts, metadata, viewport, atmosphere + grain
-│   └── page.tsx               # Composes the thirteen page sections
-├── components/                # One file per section, plus shared primitives
-│   ├── Navbar · Hero · Manifesto · Services · Work · WhyUs · Process
-│   ├── Pricing · Reviews · Trust · Faq · Cta · Footer
-│   └── Eyebrow · Reveal · SmoothScroll     # shared: label, reveal, Lenis
+├── app/                       # The page itself — wiring, not content
+│   ├── api/contact/route.ts   # Handles a submitted contact form
+│   ├── globals.css            # Colours, fonts, spacing — the whole look
+│   ├── layout.tsx             # Wrapper around every page: fonts, tab title
+│   └── page.tsx               # The running order of the thirteen sections
+├── components/
+│   ├── sections/              # One file per strip of the page ← start here
+│   └── ui/                    # Small parts reused across sections
 └── lib/
-    └── gsap.ts                # Single GSAP/ScrollTrigger registration point
+    └── gsap.ts                # Animation setup, configured once
 
-public/
-├── avatars/                   # Reviewer avatars (local SVG)
-└── work/                      # Portfolio thumbnails (local SVG)
+public/                        # Images, served as-is
+├── avatars/                   # Reviewer faces
+└── work/                      # Portfolio thumbnails
 
 docs/
-└── design-reference-notes.md  # Phase 1 research: measured motion from references
+└── design-reference-notes.md  # Research behind the motion timings
 ```
+
+Each of `sections/` and `ui/` has its own README listing every file in plain
+English — [sections](src/components/sections/README.md) ·
+[ui](src/components/ui/README.md).
 
 ## Design system
 

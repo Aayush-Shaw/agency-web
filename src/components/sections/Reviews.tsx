@@ -1,6 +1,6 @@
 import Image from "next/image";
-import Eyebrow from "@/components/Eyebrow";
-import Reveal from "@/components/Reveal";
+import Eyebrow from "@/components/ui/Eyebrow";
+import Reveal from "@/components/ui/Reveal";
 
 const REVIEWS = [
   {
