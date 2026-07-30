@@ -45,14 +45,6 @@ next-env.d.ts
 /playwright-report/
 /blob-report/
 /playwright/.cache/
-# Local Playwright checks — dev only, nothing imports them and no build step
-# runs them. Not *-check.mjs by glob: postcss.config.mjs and eslint.config.mjs
-# are also .mjs at this level and both must stay tracked. Losing the postcss
-# one is silent — the build still exits 0 and just ships the site with no
-# Tailwind at all.
-/aurora-check.mjs
-/services-check.mjs
-/hero-wall-check.mjs
 
 # editors
 .vscode/*

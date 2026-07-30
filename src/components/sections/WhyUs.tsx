@@ -66,7 +66,7 @@ export default function WhyUs() {
   return (
     <section id="why" className="px-5 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <Reveal>
+        <Reveal variant="words">
           <Eyebrow>Why Digital Bear</Eyebrow>
           <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Built to feel like your{" "}

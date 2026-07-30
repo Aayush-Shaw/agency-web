@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
+import { ArrowUp } from "lucide-react";
 import { gsap, useGSAP } from "@/lib/gsap";
+import { imageUrl, videoUrl } from "@/lib/media";
 import Aurora from "@/components/ui/Aurora";
 import Magnetic from "@/components/ui/Magnetic";
 import Words from "@/components/ui/Words";
@@ -78,12 +80,12 @@ type Tile = { type: "image" | "video"; src: string; span: number };
 
 const img = (id: string, span: number): Tile => ({
   type: "image",
-  src: `https://images.unsplash.com/${id}?w=800&q=70&auto=format&fit=crop`,
+  src: imageUrl(id),
   span,
 });
 const vid = (id: string, span: number): Tile => ({
   type: "video",
-  src: `https://videos.pexels.com/video-files/${id}/${id}-sd_640_360_30fps.mp4`,
+  src: videoUrl(id),
   span,
 });
 
@@ -470,8 +472,8 @@ export default function Hero() {
               width wants it. The 6.2vw cap above is what stops nowrap turning
               into overflow — measured, the phrase sets 7.22× its own font
               size, so it needs 7.22 × 6.2vw = 45vw of the 50 the column has.
-              hero-wall-check.mjs re-measures that ratio, so changing the
-              wording or the font is not a silent way to break it. */}
+              Re-measure that ratio if the wording or the font changes — it
+              overflows silently. */}
           <span className="whitespace-nowrap">
             <Words className="hero-word" text="We make brands" />
           </span>
@@ -525,9 +527,33 @@ export default function Hero() {
           <Magnetic className="w-full sm:w-auto">
             <a
               href="#contact"
-              className="hero-cta glow inline-flex h-[clamp(2.75rem,6.5svh,3.25rem)] w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7 text-[clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform hover:scale-[1.03]"
+              className="hero-cta glow group inline-flex h-[clamp(2.75rem,6.5svh,3.25rem)] w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7 text-[clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform hover:scale-[1.03]"
             >
-              Start a project
+              Elevate Your Brand
+              {/* Two arrows on a belt: on hover the seated one flies out and
+                  its twin — parked one trip down-left, outside the clip — takes
+                  the slot. Same duration, no delay, or it reads as two
+                  animations rather than one.
+
+                  Two things are load-bearing and neither is obvious. The 20px
+                  clip has to clear the glyph's *drawn* ink (~15.3px once turned
+                  45°, not its 16px box) while the 24px trip has to exceed
+                  clip + ink, or the flying arrow parks a sliver on the edge —
+                  so resize the icon and re-measure both. And rotate-45 only
+                  composes with the translates because Tailwind v4 emits them as
+                  separate `rotate`/`translate` properties, applied translate →
+                  rotate; as one `transform` the arrows would fly off at 90° to
+                  themselves. */}
+              <span className="relative h-5 w-5 shrink-0 overflow-hidden">
+                <ArrowUp
+                  strokeWidth={2.2}
+                  className="absolute inset-0 m-auto h-4 w-4 rotate-45 transition-transform duration-300 group-hover:translate-x-6 group-hover:-translate-y-6"
+                />
+                <ArrowUp
+                  strokeWidth={2.2}
+                  className="absolute inset-0 m-auto h-4 w-4 -translate-x-6 translate-y-6 rotate-45 transition-transform duration-300 group-hover:translate-x-0 group-hover:translate-y-0"
+                />
+              </span>
             </a>
           </Magnetic>
         </div>

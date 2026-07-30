@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import Eyebrow from "@/components/ui/Eyebrow";
+import Reveal from "@/components/ui/Reveal";
 
 type Status = "idle" | "submitting" | "success" | "error";
 
@@ -53,7 +54,7 @@ export default function Cta() {
 
       <div className="mx-auto grid max-w-6xl gap-12 lg:grid-cols-2 lg:gap-16">
         {/* Pitch */}
-        <div>
+        <Reveal variant="words">
           <Eyebrow>Let&apos;s talk</Eyebrow>
           <h2 className="mt-5 text-section-xl font-bold leading-[1.05] tracking-tight">
             Ready to build something{" "}
@@ -69,7 +70,7 @@ export default function Cta() {
           >
             {CONTACT_EMAIL}
           </a>
-        </div>
+        </Reveal>
 
         {/* Form */}
         {status === "success" ? (

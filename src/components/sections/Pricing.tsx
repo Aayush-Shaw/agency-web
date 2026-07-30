@@ -74,7 +74,7 @@ export default function Pricing() {
   return (
     <section id="pricing" className="px-5 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <Reveal>
+        <Reveal variant="words">
           <Eyebrow>Pricing</Eyebrow>
           <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Clear pricing, <span className="text-gradient">no surprises</span>.

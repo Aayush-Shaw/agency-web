@@ -29,7 +29,7 @@ export default function Faq() {
   return (
     <section id="faq" className="px-5 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-3xl">
-        <Reveal>
+        <Reveal variant="words">
           <Eyebrow>FAQ</Eyebrow>
           <h2 className="mt-5 text-section font-bold tracking-tight">
             Questions, <span className="text-gradient">answered</span>.

@@ -123,6 +123,21 @@ const PITCH = 1.18;
     that never shows, because a WebGL gallery of photos is only ever seen wide. */
 const REF_HALF_WIDTH = 13.25;
 
+/** How long a flick keeps travelling after release, in ms of its own velocity.
+    0 restores the old behaviour: let go and the rail snaps to whichever card is
+    nearest, so a hard swipe and a nudge move exactly the same distance — which
+    reads as the rail ignoring the gesture. At 160 a fast thumb crosses two or
+    three cards and a slow one still lands on the next. */
+const FLICK_MS = 160;
+
+/** A trackpad gesture counts as horizontal when deltaX dominates. Defined once
+    and read twice — the rail uses it to decide whether to move, the native
+    listener uses it to decide whether to take the gesture off the browser. The
+    two have to agree: disagree one way and a swipe navigates the page while the
+    rail sits still, disagree the other and vertical scrolling gets trapped. */
+const isHorizontal = (e: { deltaX: number; deltaY: number }) =>
+  Math.abs(e.deltaX) > Math.abs(e.deltaY);
+
 type ServicesProps = {
   items?: ServiceItem[];
   /** Arc curvature. 0 is a flat row; sign flips the arc. */
@@ -130,6 +145,9 @@ type ServicesProps = {
   /** Tailwind radius class (or any CSS length). */
   cardRadius?: string;
   scrollSpeed?: number;
+  /** Settle rate: the fraction of the remaining distance covered per frame at
+      60fps. Held to that meaning on any refresh rate — see the loop. Only the
+      wheel, the arrow keys and the post-release snap use it; a drag is 1:1. */
   scrollEase?: number;
 };
 
@@ -155,12 +173,16 @@ export default function Services({
   bend = 1,
   cardRadius = "rounded-3xl",
   scrollSpeed = 2,
-  scrollEase = 0.08,
+  // 0.08 took ~460ms to close 90% of the snap — fine as a background drift,
+  // too slow as the answer to letting go of a card. 0.12 lands it in ~300ms.
+  scrollEase = 0.12,
 }: ServicesProps) {
   const viewport = useRef<HTMLDivElement>(null);
   const cards = useRef<(HTMLDivElement | null)[]>([]);
   const scroll = useRef({ pos: 0, target: 0 });
-  const drag = useRef<{ x: number; from: number } | null>(null);
+  // `v` is rail px per ms, `t` the timestamp it was last sampled at — both only
+  // exist to size the flick on release.
+  const drag = useRef<{ x: number; from: number; v: number; t: number } | null>(null);
   const raf = useRef(0);
   const snapTimer = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   // Assigned by the effect so every handler drives the one live `tick`; the
@@ -273,14 +295,40 @@ export default function Services({
       });
     };
 
-    const tick = () => {
+    let last = 0;
+    const tick = (now: number) => {
       const s = scroll.current;
-      s.pos += (s.target - s.pos) * scrollEase;
+      // Seconds since the previous frame. `last` is cleared when the loop parks
+      // below, so a restart begins on the 1/60 fallback rather than measuring
+      // against whenever it last stopped; the clamp covers a backgrounded tab.
+      const dt = last ? Math.min((now - last) / 1000, 0.05) : 1 / 60;
+      last = now;
+
+      if (drag.current) {
+        // Under a finger the rail *is* the finger — no easing at all. Easing
+        // here is what made the drag feel slow: `target` tracked the pointer
+        // 1:1, but `pos` (the thing actually drawn) crawled after it at 8% of
+        // the remaining gap per frame, which takes ~0.5s to close 90% of it.
+        // Every pixel of that gap reads as the card lagging the thumb, and on
+        // touch — where the finger is literally on the card — that is the whole
+        // complaint. The lerp still runs for the wheel, the keys and the
+        // post-release snap, which are the cases it was actually for.
+        s.pos = s.target;
+      } else {
+        // Frame-rate independent form of `pos += (target - pos) * scrollEase`.
+        // The naive version converges in a fixed number of *frames*, so the
+        // same constant settles twice as fast on a 120Hz phone and half as fast
+        // on one dropping to 30fps — the slowest devices got the slowest
+        // easing, which is backwards and is why this felt worst on mobile.
+        s.pos += (s.target - s.pos) * (1 - Math.pow(1 - scrollEase, dt * 60));
+      }
+
       // Park the loop once it has arrived. The reference runs rAF for the life
       // of the page; this section sits two thirds of the way down a long one.
       if (Math.abs(s.target - s.pos) < 0.1 && !drag.current) {
         s.pos = s.target;
         raf.current = 0;
+        last = 0;
         layout();
         return;
       }
@@ -317,6 +365,28 @@ export default function Services({
     };
   }, [bend, scrollEase, items]);
 
+  // A two-finger horizontal swipe on a trackpad is an overscroll as far as the
+  // browser is concerned, and an overscroll sideways is back/forward navigation
+  // — so swiping the rail walked you off the page. preventDefault() on the wheel
+  // event is the fix, but it cannot live in the onWheel prop below: React
+  // registers `wheel` once on the root container as a *passive* listener, and
+  // preventDefault inside a passive listener is ignored (Chrome warns to the
+  // console and carries on). Passive is the right default — it lets the browser
+  // scroll without waiting on JS — so this claims the one gesture it must,
+  // natively and non-passively, and leaves the rest alone.
+  //
+  // Deliberately not `overscroll-behavior-x` on <html>: that works, but it kills
+  // the back-swipe for the whole site to fix one section.
+  useEffect(() => {
+    const vp = viewport.current;
+    if (!vp) return;
+    const claim = (e: WheelEvent) => {
+      if (isHorizontal(e)) e.preventDefault();
+    };
+    vp.addEventListener("wheel", claim, { passive: false });
+    return () => vp.removeEventListener("wheel", claim);
+  }, []);
+
   /** Land on a whole card, the way the reference's onCheck does. */
   const snap = () => {
     const { pitch } = geo.current;
@@ -331,7 +401,7 @@ export default function Services({
   return (
     <section id="services" className="px-5 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <Reveal>
+        <Reveal variant="words">
           <Eyebrow>What we do</Eyebrow>
           <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             Five services, one <span className="text-gradient">creative team</span>.
@@ -360,7 +430,7 @@ export default function Services({
           // section of a long scroll, so mapping deltaY to it means the cards
           // spin every time you scroll past. Only a deliberate horizontal
           // gesture (trackpad swipe, shift+wheel) drives it.
-          if (Math.abs(e.deltaX) <= Math.abs(e.deltaY)) return;
+          if (!isHorizontal(e)) return;
           // 2% of a card per notch at the default speed — the reference's ratio
           // of scroll step to card pitch, in pixels instead of world units.
           scroll.current.target += Math.sign(e.deltaX) * scrollSpeed * 0.02 * geo.current.pitch;
@@ -369,7 +439,7 @@ export default function Services({
         }}
         onPointerDown={(e) => {
           if (e.button !== 0) return;
-          drag.current = { x: e.clientX, from: scroll.current.target };
+          drag.current = { x: e.clientX, from: scroll.current.target, v: 0, t: e.timeStamp };
           // Capture, so a drag that leaves the section still tracks — and so
           // release always lands on this element. No window listeners to leak.
           e.currentTarget.setPointerCapture(e.pointerId);
@@ -377,16 +447,28 @@ export default function Services({
           start.current();
         }}
         onPointerMove={(e) => {
-          if (!drag.current) return;
+          const d = drag.current;
+          if (!d) return;
           // scrollSpeed 2 is 1:1 with the finger. The reference amplifies drag
           // ~2.7×, which on a touchscreen means the card outruns the thumb.
-          scroll.current.target =
-            drag.current.from + (drag.current.x - e.clientX) * scrollSpeed * 0.5;
+          const next = d.from + (d.x - e.clientX) * scrollSpeed * 0.5;
+          // Velocity for the flick, smoothed: the last sample before release is
+          // often the jitteriest one, and unsmoothed it decides the whole throw.
+          const dt = e.timeStamp - d.t;
+          if (dt > 0) {
+            d.v = 0.7 * ((next - scroll.current.target) / dt) + 0.3 * d.v;
+            d.t = e.timeStamp;
+          }
+          scroll.current.target = next;
           start.current();
         }}
         onPointerUp={() => {
-          if (!drag.current) return;
+          const d = drag.current;
+          if (!d) return;
           drag.current = null;
+          // Carry the throw *before* rounding, so the flick decides which card
+          // it lands on rather than being flattened to the nearest one.
+          scroll.current.target += d.v * FLICK_MS;
           snap();
         }}
         onPointerCancel={() => {

@@ -65,7 +65,7 @@ export default function Process() {
   return (
     <section id="process" className="bg-surface px-5 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-6xl">
-        <Reveal>
+        <Reveal variant="words">
           <Eyebrow>How we work</Eyebrow>
           <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
             A simple path from{" "}
