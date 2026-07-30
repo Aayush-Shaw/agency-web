@@ -463,7 +463,7 @@ export default function Hero() {
 
             No text-balance: the first line is nowrap and the balancer would be
             reasoning about a line it cannot break. */}
-        <h1 className="text-[length:clamp(2.5rem,min(6.2vw,10svh),5.25rem)] font-bold leading-[1.05] tracking-tight">
+        <h1 className="text-[clamp(2.5rem,min(6.2vw,10svh),5.25rem)] font-bold leading-[1.05] tracking-tight">
           {/* One line, always. The break used to be a hard <br> after this
               phrase, which is the same thing said less strictly: nowrap keeps
               it together and lets the *next* line break wherever the column
@@ -486,24 +486,34 @@ export default function Hero() {
               the last box but outside the gradient span, so it stays
               text-coloured.
 
-              The `.text-glass` variant that used to sit here is gone with the
-              wall's arrival, not by taste: it is a backdrop-filter clipped to
-              the glyphs, tuned (brightness 5.4) against a smooth aurora. Over
-              photographs it reads as blown-out cut-outs, and it would be
-              filtering the scrim's blur on top of that. The class is still in
-              globals.css if the wall ever comes back out. */}
-          <span className="hero-word text-gradient inline-block">
+              iOS glass alternative — swap these three in and comment the
+              gradient ones below. `.text-glass` is still in globals.css. Each
+              glyph becomes a cut-out onto whatever is behind them, so unlike
+              the gradient it doesn't restart per box; the period goes inside
+              the glass because left solid against it, it reads as a stray
+              white square.
+
+              It came out when the wall went in, not by taste: the filter is
+              tuned (brightness 5.4) against a smooth aurora, and over
+              photographs it reads as blown-out cut-outs. Put it back if the
+              wall ever comes out, or if you re-tune the brightness for it.
+*/}
+          <span className="hero-word text-glass inline-block">impossible</span>{" "}
+          <span className="hero-word text-glass inline-block">to</span>{" "}
+          <span className="hero-word text-glass inline-block">ignore.</span>
+          
+          {/* <span className="hero-word text-gradient inline-block">
             impossible
           </span>{" "}
           <span className="hero-word text-gradient inline-block">to</span>{" "}
           <span className="hero-word inline-block">
             <span className="text-gradient">ignore</span>.
-          </span>
+          </span> */}
         </h1>
 
         {/* The service list moved down here when the headline lost it — the
             headline now carries the promise and this carries the proof. */}
-        <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[length:clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
+        <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
           Digital Bear is a full-service studio crafting websites, social
           content, motion graphics, and AI-generated video for ambitious teams —
           premium work, fast turnarounds, on your timezone.
@@ -515,7 +525,7 @@ export default function Hero() {
           <Magnetic className="w-full sm:w-auto">
             <a
               href="#contact"
-              className="hero-cta glow inline-flex h-[clamp(2.75rem,6.5svh,3.25rem)] w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7 text-[length:clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform hover:scale-[1.03]"
+              className="hero-cta glow inline-flex h-[clamp(2.75rem,6.5svh,3.25rem)] w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7 text-[clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform hover:scale-[1.03]"
             >
               Start a project
             </a>

@@ -30,7 +30,7 @@
 .theme-dark,
 :root:not([data-past-hero]) header {
   color-scheme: light dark;
-  --raw-bg: light-dark(#fbf3e7, #17120d); /* warm cream / espresso */
+  --raw-bg: light-dark(#fbf3e7, #040713); /* warm cream / espresso */
   --raw-surface: light-dark(#f3e6d3, #1f1810); /* card / section */
   --raw-text: light-dark(#2b1d14, #f5ecdd); /* dark umber / warm off-white */
   --raw-text-muted: light-dark(#6b5642, #c9b8a2);
