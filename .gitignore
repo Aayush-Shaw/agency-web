@@ -52,6 +52,7 @@ next-env.d.ts
 # Tailwind at all.
 /aurora-check.mjs
 /services-check.mjs
+/hero-wall-check.mjs
 
 # editors
 .vscode/*
