@@ -42,9 +42,13 @@ next-env.d.ts
 
 # playwright (design-reference capture)
 /test-results/
-/playwright-report/
 /blob-report/
+/playwright-report/
 /playwright/.cache/
+/.playwright-mcp
+/.impeccable
+/docs
+/.claude
 
 # editors
 .vscode/*
@@ -61,4 +65,3 @@ Desktop.ini
 # markdown — README is the only doc that ships
 *.md
 !README.md
-/final.mjs

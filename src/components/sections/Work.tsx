@@ -233,7 +233,7 @@ export default function Work() {
     ));
 
   return (
-    <section id="work" className="bg-surface px-5 py-24 md:px-8 md:py-32">
+    <section id="work" className="bg-transparent px-5 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-6xl">
         <Reveal variant="words">
           <Eyebrow>Selected work</Eyebrow>

@@ -23,10 +23,12 @@ const TILT = 15;
 const SCROLL_SPEED = 30;
 /** Gutter between columns, and between tiles inside a column. */
 const GAP = "0.75rem";
-/** Where the wall's left edge sits at md+, so the wall is the remaining 55vw.
-    Below md it starts at 0 and takes the whole width. Under the text column's
-    50vw either way, which is the overlap. */
-const WALL_LEFT = "45vw";
+/** Where the wall's left edge sits at md+, as a share of the content band
+    (--bw, set on the wall itself) rather than of the viewport — that is the
+    whole cap: past 72rem the band stops growing and so does the wall. Below md
+    it starts at the band's left edge and takes the whole width. Under the text
+    column's 50% either way, which is the overlap. */
+const WALL_LEFT = "calc(var(--bw) * 0.45)";
 /** Cover margin over the exact minimum — sub-pixel rounding at the rotated
     block's corners, nothing more. Every pixel of slack is width the outermost
     columns spend outside the window, so this stays as close to 1 as it can. */
@@ -350,9 +352,13 @@ export default function Hero() {
   // still, and it is the height that is visible with the mobile chrome *open*
   // — so the hero fits the first paint, not just the scrolled state.
   //
-  // Horizontal padding stays on the section for the text column's sake and
-  // costs the wall nothing: an absolutely positioned child is placed against
-  // the padding box, so `right-0` is the true viewport edge either way.
+  // The section itself stays full-bleed, and the aurora with it — a backdrop
+  // that stops short of the edges is just a panel. The 72rem cap the navbar
+  // uses is applied to the two pieces of *content* instead: the text column
+  // takes it as a max-width, the wall as --bw. Both are min()s against the
+  // viewport, so below 72rem neither does anything and the hero is the layout
+  // it was; above it, the headline and the media stop drifting apart and stay
+  // in the same band as the bar above them.
   //
   // sticky top-0 with <main> as the containing block: the hero pins on the
   // first pixel of scroll and the rest of the page — one opaque z-10 stack in
@@ -387,18 +393,37 @@ export default function Hero() {
         />
       </div>
 
-      {/* The wall's window: full height, hard against the right edge, and
-          starting at --wl so it runs on under the text. overflow-hidden is what
-          turns the oversized rotated block into a clean rectangle, and --wall-w
-          (this box's real width) is what the cover maths above is solved
-          against. --wl is the one responsive value; everything else derives. */}
+      {/* The wall's window: full height, hard against the *band's* right edge,
+          and starting --wl into it so it runs on under the text.
+          overflow-hidden is what turns the oversized rotated block into a clean
+          rectangle, and --wall-w (this box's real width) is what the cover
+          maths above is solved against. --wl is the one responsive value;
+          everything else derives.
+
+          Sized in px rather than by max-width + mx-auto because --wall-w has to
+          come out a length: it feeds COVER_H, and a percentage in a height
+          calc resolves against the height. --gut is that same centring done
+          arithmetically, which leaves the width available as a number. */}
       <div
         aria-hidden
-        className="hero-wall pointer-events-none absolute inset-y-0 right-0 left-(--wl) z-1 overflow-hidden [--wl:0px] md:[--wl:var(--wall-left)]"
+        className="hero-wall pointer-events-none absolute inset-y-0 z-1 overflow-hidden [--wl:0px] md:[--wl:var(--wall-left)]"
         style={
           {
+            "--bw": "min(100vw, 72rem)",
+            // 100% here, 100vw above, and the difference is the scrollbar.
+            // --bw has to be a length (it feeds COVER_H), so it takes the vw;
+            // --gut only ever positions, so it takes the percentage — which
+            // resolves against the section's padding box, the same width
+            // mx-auto centres the text band in. With 100vw on both, the wall
+            // landed half a scrollbar right of the text and finished short of
+            // it. Below the cap --gut goes to zero (or slightly negative, into
+            // the section's own overflow-hidden) and the wall is edge-to-edge
+            // exactly as before.
+            "--gut": "calc((100% - var(--bw)) / 2)",
             "--wall-left": WALL_LEFT,
-            "--wall-w": "calc(100vw - var(--wl))",
+            "--wall-w": "calc(var(--bw) - var(--wl))",
+            left: "calc(var(--gut) + var(--wl))",
+            right: "var(--gut)",
             maskImage: WALL_FADE_TOP,
             WebkitMaskImage: WALL_FADE_TOP,
           } as CSSProperties
@@ -447,11 +472,23 @@ export default function Hero() {
         </div>
       </div>
 
-      {/* 50vw at md+ against the wall's 55vw, so they overlap by 5vw and the
-          wall's fade has already taken it to nothing by the time it reaches
-          any glyph. No scrim between the two — see WALL_FADE_LEFT. */}
-      <div className="relative z-10 w-full md:w-[50vw]">
-        {/* Not --text-display. That token is solved against the viewport
+      {/* Two boxes, and they are not interchangeable. The outer one is the
+          72rem band, centred — so on a 4K screen the headline sits over the
+          navbar rather than a third of a screen to its left. The inner one is
+          the half of that band the text gets.
+
+          The split has to be a width on a child, not padding on the band: a
+          percentage padding resolves against the *containing block*, which
+          here is the section's content box, not the 72rem the band settled at.
+          At 4K that is pr:50% of 3776px on an 1152px box — the text column
+          collapses to nothing.
+
+          50% of the band against the wall's 55%, so they still overlap by 5%
+          and the wall's fade has already taken it to nothing by the time it
+          reaches any glyph. No scrim — see WALL_FADE_LEFT. */}
+      <div className="relative z-10 mx-auto w-full max-w-6xl">
+        <div className="md:w-1/2">
+          {/* Not --text-display. That token is solved against the viewport
             alone, which is the right answer for a headline that owns the full
             width and the wrong one here twice over: in a 50vw column it asks
             for more width than there is between md and ~1300px, and in a hero
@@ -460,25 +497,32 @@ export default function Hero() {
             min(vw, svh) takes whichever constraint is tighter, so the same
             declaration answers both — 6.2vw is the width budget for the
             longest line, 10svh is three lines plus the rest of the stack
-            inside the viewport. The clamp ends are the old ladder's: 40px on a
-            phone, 84px on a wide desktop.
+            inside the viewport.
+
+            The 4.75rem ceiling is the band cap paying for itself, not taste.
+            Past 72rem the column stops at 576px however wide the screen gets,
+            and the nowrap line below needs 7.22× the font size — so anything
+            over ~4.98rem overflows into the section's overflow-hidden and is
+            silently trimmed. 76px is that limit with enough slack to survive a
+            font swap. The floor is still the old ladder's 40px.
 
             No text-balance: the first line is nowrap and the balancer would be
             reasoning about a line it cannot break. */}
-        <h1 className="text-[clamp(2.5rem,min(6.2vw,10svh),5.25rem)] font-bold leading-[1.05] tracking-tight">
-          {/* One line, always. The break used to be a hard <br> after this
+          <h1 className="text-[clamp(2.5rem,min(6.2vw,10svh),4.75rem)] font-bold leading-[1.05] tracking-tight">
+            {/* One line, always. The break used to be a hard <br> after this
               phrase, which is the same thing said less strictly: nowrap keeps
               it together and lets the *next* line break wherever the column
-              width wants it. The 6.2vw cap above is what stops nowrap turning
+              width wants it. The size clamp above is what stops nowrap turning
               into overflow — measured, the phrase sets 7.22× its own font
-              size, so it needs 7.22 × 6.2vw = 45vw of the 50 the column has.
-              Re-measure that ratio if the wording or the font changes — it
-              overflows silently. */}
-          <span className="whitespace-nowrap">
-            <Words className="hero-word" text="We make brands" />
-          </span>
-          <br />
-          {/* Boxed per word so the tail joins the same stagger as everything
+              size, so below the band cap it needs 7.22 × 6.2vw = 45vw of the
+              50% the column has, and above it 549px of 576. Re-measure that
+              ratio if the wording or the font changes — it overflows
+              silently. */}
+            <span className="whitespace-nowrap">
+              <Words className="hero-word" text="We make brands" />
+            </span>
+            <br />
+            {/* Boxed per word so the tail joins the same stagger as everything
               above it, rather than fading in as one block. The cost is that
               `.text-gradient` clips its own background per box, so the
               honey→cinnamon ramp restarts on each of these three words instead
@@ -500,62 +544,87 @@ export default function Hero() {
               photographs it reads as blown-out cut-outs. Put it back if the
               wall ever comes out, or if you re-tune the brightness for it.
 */}
-          <span className="hero-word text-glass inline-block">impossible</span>{" "}
-          <span className="hero-word text-glass inline-block">to</span>{" "}
-          <span className="hero-word text-glass inline-block">ignore.</span>
-          
-          {/* <span className="hero-word text-gradient inline-block">
+            <span className="hero-word text-glass inline-block">
+              impossible
+            </span>{" "}
+            <span className="hero-word text-glass inline-block">to</span>{" "}
+            <span className="hero-word text-glass inline-block">ignore.</span>
+            {/* <span className="hero-word text-gradient inline-block">
             impossible
           </span>{" "}
           <span className="hero-word text-gradient inline-block">to</span>{" "}
           <span className="hero-word inline-block">
             <span className="text-gradient">ignore</span>.
           </span> */}
-        </h1>
+          </h1>
 
-        {/* The service list moved down here when the headline lost it — the
+          {/* The service list moved down here when the headline lost it — the
             headline now carries the promise and this carries the proof. */}
-        <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
-          Digital Bear is a full-service studio crafting websites, social
-          content, motion graphics, and AI-generated video for ambitious teams —
-          premium work, fast turnarounds, on your timezone.
-        </p>
+          <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
+            Digital Bear is a full-service studio crafting websites, social
+            content, motion graphics, and AI-generated video for ambitious teams
+            — premium work, fast turnarounds, on your timezone.
+          </p>
 
-        {/* Magnetic owns transform on the wrapper; GSAP's entrance owns it on
+          {/* Magnetic owns transform on the wrapper; GSAP's entrance owns it on
             the anchor inside. Two elements, so neither clobbers the other. */}
-        <div className="mt-[clamp(1rem,3.8svh,2.25rem)] flex">
-          <Magnetic className="w-full sm:w-auto">
-            <a
-              href="#contact"
-              className="hero-cta glow group inline-flex h-[clamp(2.75rem,6.5svh,3.25rem)] w-full items-center justify-center gap-2 rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7 text-[clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform hover:scale-[1.03]"
-            >
-              Elevate Your Brand
-              {/* Two arrows on a belt: on hover the seated one flies out and
-                  its twin — parked one trip down-left, outside the clip — takes
-                  the slot. Same duration, no delay, or it reads as two
-                  animations rather than one.
+          {/* Content-width, never full-bleed — a button that spans the column
+              reads as a form field, and on a phone the column is the screen. */}
+          <div className="mt-[clamp(1rem,3.8svh,2.25rem)] flex">
+            <Magnetic>
+              {/* Two surfaces, not one: the label pill and the icon disc each
+                  carry their own background, radius and glow, and they sit flush
+                  so the seam between them is the only thing separating them.
+                  The <a> keeps the height (as --cta-h, which is also the disc's
+                  width — that is what makes it a circle rather than an oval),
+                  the text colour the arrows inherit, and the hover scale, so
+                  both halves still move as one control.
 
-                  Two things are load-bearing and neither is obvious. The 20px
-                  clip has to clear the glyph's *drawn* ink (~15.3px once turned
-                  45°, not its 16px box) while the 24px trip has to exceed
-                  clip + ink, or the flying arrow parks a sliver on the edge —
-                  so resize the icon and re-measure both. And rotate-45 only
-                  composes with the translates because Tailwind v4 emits them as
-                  separate `rotate`/`translate` properties, applied translate →
-                  rotate; as one `transform` the arrows would fly off at 90° to
-                  themselves. */}
-              <span className="relative h-5 w-5 shrink-0 overflow-hidden">
-                <ArrowUp
-                  strokeWidth={2.2}
-                  className="absolute inset-0 m-auto h-4 w-4 rotate-45 transition-transform duration-300 group-hover:translate-x-6 group-hover:-translate-y-6"
-                />
-                <ArrowUp
-                  strokeWidth={2.2}
-                  className="absolute inset-0 m-auto h-4 w-4 -translate-x-6 translate-y-6 rotate-45 transition-transform duration-300 group-hover:translate-x-0 group-hover:translate-y-0"
-                />
-              </span>
-            </a>
-          </Magnetic>
+                  items-stretch, not items-center: the two spans take the anchor's
+                  full height on their own, which is what keeps their radii
+                  identical without repeating the clamp. */}
+              <a
+                href="#contact"
+                className="hero-cta group inline-flex h-(--cta-h) items-stretch text-[clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform [--cta-h:clamp(2.75rem,6.5svh,3.25rem)] hover:scale-[1.03]"
+              >
+                <span className="glow grid place-items-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7">
+                  Elevate Your Brand
+                </span>
+
+                <span className="glow grid w-(--cta-h) shrink-0 place-items-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary">
+                  {/* Two arrows on a belt: on hover the seated one flies out
+                    and its twin — parked one trip down-left, outside the clip —
+                    takes the slot. Same duration, no delay, or it reads as two
+                    animations rather than one.
+
+                    The clip stays its own 20px box inside the disc rather than
+                    becoming the disc: the trip below is sized against it, so a
+                    clip the width of the button would let the flying arrow park
+                    in plain sight halfway to the edge.
+
+                    Two things are load-bearing and neither is obvious. The 20px
+                    clip has to clear the glyph's *drawn* ink (~15.3px once
+                    turned 45°, not its 16px box) while the 24px trip has to
+                    exceed clip + ink, or the flying arrow parks a sliver on the
+                    edge — so resize the icon and re-measure both. And rotate-45
+                    only composes with the translates because Tailwind v4 emits
+                    them as separate `rotate`/`translate` properties, applied
+                    translate → rotate; as one `transform` the arrows would fly
+                    off at 90° to themselves. */}
+                  <span className="relative h-5 w-5 overflow-hidden">
+                    <ArrowUp
+                      strokeWidth={2.2}
+                      className="absolute inset-0 m-auto h-4 w-4 rotate-45 transition-transform duration-300 group-hover:translate-x-6 group-hover:-translate-y-6"
+                    />
+                    <ArrowUp
+                      strokeWidth={2.2}
+                      className="absolute inset-0 m-auto h-4 w-4 -translate-x-6 translate-y-6 rotate-45 transition-transform duration-300 group-hover:translate-x-0 group-hover:translate-y-0"
+                    />
+                  </span>
+                </span>
+              </a>
+            </Magnetic>
+          </div>
         </div>
       </div>
     </section>

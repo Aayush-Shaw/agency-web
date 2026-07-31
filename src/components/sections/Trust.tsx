@@ -56,7 +56,7 @@ export default function Trust() {
         {STATS.map((stat) => (
           <div
             key={stat.label}
-            className="stat-card lift rounded-2xl border border-border bg-surface p-6 text-center"
+            className="stat-card lift rounded-2xl border border-border bg-bg p-6 text-center"
           >
             <div className="font-display text-4xl font-bold tracking-tight text-gradient md:text-5xl">
               <span className="stat-num" data-value={stat.value}>

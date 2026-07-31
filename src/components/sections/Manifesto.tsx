@@ -46,7 +46,7 @@ export default function Manifesto() {
   );
 
   return (
-    <section className="bg-surface px-5 py-24 md:px-8 md:py-36">
+    <section className="bg-transparent px-5 py-24 md:px-8 md:py-36">
       <p
         ref={root}
         className="mx-auto max-w-4xl text-center text-statement font-semibold leading-snug tracking-tight"

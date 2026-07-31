@@ -248,11 +248,11 @@ export default function Process() {
       id="process"
       ref={root}
       style={DIAL}
-      className="relative z-20 -mt-[10svh] overflow-hidden rounded-t-(--radius) bg-surface px-5 py-24 [corner-shape:squircle] md:px-8 md:py-32 [&.arc]:h-svh [&.arc]:py-0"
+      className="relative z-20 mt-[-10svh] overflow-hidden bg-bg px-5 py-24 [corner-shape:squircle] md:px-8 md:py-32 [&.arc]:h-svh [&.arc]:py-0"
     >
       {/* Clears the fixed navbar, which this section scrolls under rather than
           past — py-0 above took the section's own top padding away with it. */}
-      <div ref={head} className="mx-auto max-w-6xl [.arc_&]:pt-20">
+      <div ref={head} className="mx-auto max-w-6xl in-[.arc]:pt-20">
         <Reveal variant="words">
           <Eyebrow>How we work</Eyebrow>
           {/* Under `.arc` the heading stops being sized against width alone.
@@ -262,7 +262,7 @@ export default function Process() {
               a 568px screen spent on the heading. min(vw, svh) is the hero's own
               answer to the same problem: whichever axis is tighter wins, so this
               reads the same at 1440 and gets out of the way on a phone. */}
-          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight [.arc_&]:text-[clamp(1.75rem,min(4vw,5.5svh),3rem)] [.arc_&]:leading-[1.15]">
+          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight in-[.arc]:leading-[1.15]">
             A simple path from{" "}
             <span className="text-gradient">idea to launch</span>.
           </h2>
@@ -281,38 +281,38 @@ export default function Process() {
       <span
         ref={arc}
         aria-hidden="true"
-        className="absolute inset-x-5 hidden h-(--ry) border border-b-0 border-border [border-radius:50%_50%_0_0/100%_100%_0_0] md:inset-x-8 [.arc_&]:block [.arc_&]:top-[calc(var(--cy)-var(--ry))]"
+        className="absolute inset-x-5 hidden h-(--ry) border border-b-0 border-border rounded-[50%_50%_0_0/100%_100%_0_0] md:inset-x-8 in-[.arc]:block in-[.arc]:top-[calc(var(--cy)-var(--ry))]"
       />
 
       {/* Zero-size, parked at the centre of the ellipse, so every stage inside
           is placed in plain (x, y) from there. Still an <ol> — the stages are a
           sequence whatever shape they are drawn in. */}
-      <ol className="mx-auto mt-12 grid max-w-6xl gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 [.arc_&]:absolute [.arc_&]:left-1/2 [.arc_&]:top-(--cy) [.arc_&]:mt-0 [.arc_&]:block [.arc_&]:size-0">
+      <ol className="mx-auto mt-12 grid max-w-6xl gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 in-[.arc]:absolute in-[.arc]:left-1/2 in-[.arc]:top-(--cy) in-[.arc]:mt-0 in-[.arc]:block in-[.arc]:size-0">
         {STEPS.map((step) => (
           <li
             key={step.n}
-            className="proc-point border-t border-border pt-5 [.arc_&]:absolute [.arc_&]:left-0 [.arc_&]:top-0 [.arc_&]:size-0 [.arc_&]:border-0 [.arc_&]:p-0"
+            className="proc-point border-t border-border pt-5 in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:size-0 in-[.arc]:border-0 in-[.arc]:p-0"
           >
             {/* One moving piece per stage: the marker and its text together. */}
-            <div className="proc-arm [.arc_&]:absolute [.arc_&]:left-0 [.arc_&]:top-0 [.arc_&]:size-0">
-              <span className="proc-marker font-display text-4xl font-bold text-gradient [.arc_&]:absolute [.arc_&]:left-0 [.arc_&]:top-0 [.arc_&]:grid [.arc_&]:size-10 [.arc_&]:place-items-center [.arc_&]:rounded-full [.arc_&]:border [.arc_&]:border-border [.arc_&]:bg-surface [.arc_&]:text-sm">
+            <div className="proc-arm in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:size-0">
+              <span className="proc-marker font-display text-4xl font-bold text-gradient in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:grid in-[.arc]:size-10 in-[.arc]:place-items-center in-[.arc]:rounded-full in-[.arc]:border in-[.arc]:border-border in-[.arc]:bg-surface in-[.arc]:text-sm">
                 {/* "You are here". A ring rather than a filled chip because the
                     numeral is gradient text — fill it and the two gradients sit
                     on top of each other. */}
                 <span
                   aria-hidden="true"
-                  className="proc-ring absolute inset-0 hidden rounded-full border-2 border-accent-primary shadow-[0_0_0_5px_var(--raw-glow)] [.arc_&]:block"
+                  className="proc-ring absolute inset-0 hidden rounded-full border-2 border-accent-primary in-[.arc]:block"
                 />
                 {step.n}
               </span>
 
               {/* Directly under its own number — top-8 is the marker's 20px
                   radius plus STACK. */}
-              <div className="proc-panel [.arc_&]:absolute [.arc_&]:left-0 [.arc_&]:top-8 [.arc_&]:w-[min(32rem,88vw)] [.arc_&]:text-center">
-                <h3 className="mt-3 text-card font-semibold tracking-tight [.arc_&]:mt-0">
+              <div className="proc-panel in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-8 in-[.arc]:w-[min(32rem,88vw)] in-[.arc]:text-center">
+                <h3 className="mt-3 text-card font-semibold tracking-tight in-[.arc]:mt-0">
                   {step.title}
                 </h3>
-                <p className="mt-2 leading-relaxed text-text-muted [.arc_&]:text-text">
+                <p className="mt-2 leading-relaxed text-text-muted in-[.arc]:text-text">
                   {step.body}
                 </p>
               </div>
