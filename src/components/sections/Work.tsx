@@ -281,7 +281,7 @@ export default function Work() {
       <div
         ref={rail}
         aria-label="Selected work, scroll sideways to browse"
-        className="-mx-5 mt-4 flex cursor-grab overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] [scrollbar-width:none] active:cursor-grabbing md:-mx-8 md:[--fade:2rem] [&::-webkit-scrollbar]:hidden"
+        className="-mx-5 mt-4 flex cursor-grab overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] scrollbar-none active:cursor-grabbing md:-mx-8 md:[--fade:2rem] [&::-webkit-scrollbar]:hidden"
         style={{ ...RAIL_VARS, maskImage: FADE, WebkitMaskImage: FADE }}
         onPointerDown={(e) => {
           if (e.pointerType !== "mouse" || e.button !== 0) return;
@@ -314,7 +314,7 @@ export default function Work() {
             // several times taller than it should be.
             aria-hidden={copy !== 1}
             style={{ marginRight: "var(--gap)" }}
-            className="grid shrink-0 grid-flow-col gap-(--gap) [grid-auto-columns:max-content] [grid-template-rows:var(--row)]"
+            className="grid shrink-0 grid-flow-col gap-(--gap) auto-cols-max grid-rows-(--row)"
           >
             {tiles(copy)}
           </div>
