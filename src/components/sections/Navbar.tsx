@@ -22,6 +22,7 @@ const LINKS = [
   { label: "Services", href: "#services" },
   { label: "Work", href: "#work" },
   { label: "Process", href: "#process" },
+  { label: "Contact", href: "#contact" },
   // Parked with the section itself — see page.tsx.
   // { label: "Pricing", href: "#pricing" },
 ];

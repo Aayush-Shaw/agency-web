@@ -16,8 +16,13 @@ visitor reads or sees in a band of the page, open the file with that name.
 | 8     | `Reviews.tsx`      | Client quotes and faces                           |
 | 9     | `Trust.tsx`        | Logos, numbers, credibility markers               |
 | 10    | `Faq.tsx`          | Frequently asked questions                        |
-| 11    | `Cta.tsx`          | Closing "get in touch" block with the form        |
+| 11    | `Cta.tsx`          | Closing block: the step-by-step project estimator  |
 | —     | `Footer.tsx`       | Bottom bar: links, contact, small print           |
 
 The order is set in [`src/app/page.tsx`](../../app/page.tsx) — move a line there
 to move a section on the page.
+
+The estimator in `Cta.tsx` reads its questions from
+[`src/lib/configurator.ts`](../../lib/configurator.ts) and its prices from
+[`src/lib/estimatePricing.ts`](../../lib/estimatePricing.ts). Change the
+wording or the numbers there, not in the section.

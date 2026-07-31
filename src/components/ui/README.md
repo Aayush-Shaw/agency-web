@@ -12,3 +12,4 @@ own — edit one of these and it changes everywhere it's used at once.
 | `CardRail.tsx`     | The curved, draggable row of cards (Services and Why Us)      |
 | `Aurora.tsx`       | The animated colour glow behind the opening screen           |
 | `SmoothScroll.tsx` | Turns the whole page's scrolling smooth (loaded once)        |
+| `ContactDialog.tsx`| The pop-up that takes your details at the end of the estimator |
