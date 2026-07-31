@@ -22,7 +22,8 @@ const LINKS = [
   { label: "Services", href: "#services" },
   { label: "Work", href: "#work" },
   { label: "Process", href: "#process" },
-  { label: "Pricing", href: "#pricing" },
+  // Parked with the section itself — see page.tsx.
+  // { label: "Pricing", href: "#pricing" },
 ];
 
 export default function Navbar() {

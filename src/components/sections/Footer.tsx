@@ -4,7 +4,8 @@ const NAV = [
   { label: "Services", href: "#services" },
   { label: "Work", href: "#work" },
   { label: "Process", href: "#process" },
-  { label: "Pricing", href: "#pricing" },
+  // Parked with the section itself — see page.tsx.
+  // { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact" },
 ];

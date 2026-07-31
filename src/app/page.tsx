@@ -5,7 +5,9 @@ import Services from "@/components/sections/Services";
 import Work from "@/components/sections/Work";
 import WhyUs from "@/components/sections/WhyUs";
 import Process from "@/components/sections/Process";
-import Pricing from "@/components/sections/Pricing";
+// Pricing is parked, not deleted — uncomment this and the <Pricing /> below,
+// plus the "Pricing" entries in Navbar.tsx and Footer.tsx, to bring it back.
+// import Pricing from "@/components/sections/Pricing";
 import Reviews from "@/components/sections/Reviews";
 import Trust from "@/components/sections/Trust";
 import Faq from "@/components/sections/Faq";
@@ -45,9 +47,16 @@ export default function Home() {
           <Manifesto />
           <Services />
           <Work />
-          <WhyUs />
-          <Process />
-          <Pricing />
+          {/* WhyUs sticks and Process rides up over it, so the two are wrapped
+              together: sticky is bounded by its containing block, and without
+              this wrapper WhyUs would stay pinned for the whole rest of the
+              page — visible straight through Reviews, Trust, Faq and Cta,
+              which are all deliberately transparent. */}
+          <div className="relative">
+            <WhyUs />
+            <Process />
+          </div>
+          {/* <Pricing /> */}
           <Reviews />
           <Trust />
           <Faq />
