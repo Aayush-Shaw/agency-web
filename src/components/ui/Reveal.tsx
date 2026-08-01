@@ -55,7 +55,8 @@ function flipWords(el: HTMLElement, start: string, y: number) {
   // proportion to its distance from that centre, which throws the outer words of
   // a long heading off their line. Per-word perspective pivots each about its
   // own box. Same reasoning as the hero — the comment there has the long version.
-  const tl = gsap.timeline({ scrollTrigger: { trigger: el, start, once: true } });
+  // No `once: true` — see the note on the other scrollTrigger below.
+  const tl = gsap.timeline({ scrollTrigger: { trigger: el, start } });
   tl.fromTo(
     split.words,
     { opacity: 0, yPercent: 120, rotateX: -75, transformPerspective: 800 },
@@ -146,7 +147,19 @@ export default function Reveal({
           {
             ...ARRIVE,
             stagger: stagger ? 0.12 : 0,
-            scrollTrigger: { trigger: el, start, once: true },
+            // Do NOT add `once: true` here. It reads like a free optimisation
+            // and it costs the whole page: `once` makes a ScrollTrigger kill
+            // itself the moment it fires, and landing straight on a deep anchor
+            // (/#contact) fires a dozen of these at once — while Process's
+            // pinned trigger is inside refresh(), walking the same global
+            // trigger array. ScrollTrigger.js:1366 reads _triggers[i].end with
+            // no guard, the array has shrunk under it, and the throw takes the
+            // React tree down with it: a blank page, in production too.
+            //
+            // Nothing is lost by leaving it off. The default toggleActions,
+            // "play none none none", already plays on the way in and never
+            // reverses, so these still reveal exactly once.
+            scrollTrigger: { trigger: el, start },
             // Hand the element back to CSS on arrival. Without this GSAP leaves
             // an inline `transform` behind, and an inline transform outranks
             // every `hover:-translate-y-*` class on these cards — the hover

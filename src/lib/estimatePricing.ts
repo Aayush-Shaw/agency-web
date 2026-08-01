@@ -71,6 +71,9 @@ const usd = new Intl.NumberFormat("en-US", {
   maximumFractionDigits: 0,
 });
 
+/** Exported so the cards can format the figures they count up to identically. */
+export const formatUsd = (n: number) => usd.format(n);
+
 /** Quote in round numbers — $4,000, never $3,937. */
 const toNearest500 = (n: number) => Math.round(n / 500) * 500;
 
@@ -103,11 +106,16 @@ export function estimate(
   // the biggest piece sets the pace and the rest partly overlap into it.
   const weeks = longestWeeks + (totalWeeks - longestWeeks) * OVERLAP;
   const from = Math.max(1, Math.round(weeks * factor.weeks));
+  const to = from + WINDOW_WEEKS;
+  const low = toNearest500(min * factor.price);
+  const high = toNearest500(max * factor.price);
 
   return {
-    price: `${usd.format(toNearest500(min * factor.price))} – ${usd.format(
-      toNearest500(max * factor.price)
-    )}`,
-    timeline: `${from} – ${from + WINDOW_WEEKS} weeks`,
+    // Formatted, for the email the dialog sends.
+    price: `${usd.format(low)} – ${usd.format(high)}`,
+    timeline: `${from} – ${to} weeks`,
+    // The same four figures bare, because the cards count up to them.
+    priceRange: [low, high] as [number, number],
+    weekRange: [from, to] as [number, number],
   };
 }

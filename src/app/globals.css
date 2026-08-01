@@ -50,6 +50,10 @@
   --radius: 25px;
   --radius-sm: 25px;
   --radius-input: 15px;
+
+  /* Overshoots 1 and settles back — the springy curve used by the estimator's
+     picker. The motion/react springs in Cta.tsx are its JS counterpart. */
+  --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
 @supports (corner-shape: squircle) {
   :root {
@@ -149,10 +153,14 @@ section[id] {
   color: var(--color-bg);
 }
 
+/* No border-radius here. An outline already follows the shape of whatever it
+   is drawn around, so setting a radius on this rule only mattered for elements
+   that had none — and it silently overwrote the radius of every element that
+   did. Unlayered, so it outranked the .rounded-xl utility, which is how a
+   squircled input turned into a 2px-cornered box the moment it took focus. */
 :focus-visible {
   outline: 2px solid var(--color-accent-primary);
   outline-offset: 3px;
-  border-radius: 2px;
 }
 
 /* ============================================================
@@ -209,6 +217,233 @@ section[id] {
     mask-image: linear-gradient(#000, #000);
     mask-clip: text;
   }
+}
+
+/* Floating field label.
+
+   The label rests inside its field, where a placeholder would sit, and lifts
+   onto the top border once the field is focused or filled — so a labelled field
+   costs one row of height instead of two.
+
+   Here rather than in utility classes because two unrelated controls need it
+   (the dialog's text inputs, the configurator's disclosure pickers) and each
+   reports "empty" differently: an input has :placeholder-shown for free, a
+   <details> has to be told with data-empty.
+
+   .rest-only / .float-only let one label say different things in its two
+   states. That exists for the service questions: at 390px the field is 260px
+   wide, where "Website Design & Development — How big is the build?" measures
+   437px and fits in neither state. The prompt fits at rest (163px) and the
+   service name fits on the border at 12px (188px), so each state carries the
+   half that fits. A label with one span in it is unaffected. */
+.float-field {
+  position: relative;
+
+  /* One quiet hairline instead of a hard border, and no focus ring on the
+     field itself.
+
+     The ring is removed, not the focus indicator — that would fail 2.4.7 and
+     leave keyboard users with nothing. The border and the label both take the
+     accent colour on focus, which is what marks the field now. */
+  > :is(input, details) {
+    border: 1px solid color-mix(in oklab, var(--raw-text) 10%, transparent);
+    outline: none;
+  }
+
+  /* :has(details[open]) as well as :focus-within, because Safari does not
+     reliably focus a <summary> that was clicked. */
+  &:is(:focus-within, :has(details[open])) > :is(input, details) {
+    border-color: var(--color-accent-primary);
+  }
+
+  summary {
+    outline: none;
+  }
+
+  > .float-label {
+    position: absolute;
+    top: -0.625rem;
+    left: 0.5rem;
+    padding: 0.0625rem 0.5rem;
+    border: 0.5px solid var(--color-surface);
+    border-radius: 9999px;
+    background: var(--color-bg);
+    color: var(--color-text-muted);
+    font-size: 0.75rem;
+    font-weight: 500;
+    pointer-events: none;
+    transition: all 0.2s cubic-bezier(0.2, 0.7, 0.2, 1);
+
+    > .rest-only {
+      display: none;
+    }
+  }
+
+  &:is(:focus-within, :has(details[open])) > .float-label {
+    color: var(--color-accent-primary);
+  }
+
+  /* Resting: empty and unfocused. An open service picker counts as focused,
+     because Safari does not reliably focus a <summary> that was clicked. */
+  &:is(
+    :has(:placeholder-shown:not(:focus)),
+    [data-empty]:not(:focus-within, :has(details[open]))
+  ) > .float-label {
+    top: 50%;
+    translate: 0 -50%;
+    /* No pill while it sits inside the field — it only exists to notch the
+       border it straddles once floated. */
+    background: transparent;
+    border-color: transparent;
+    font-size: 1rem;
+
+    > .rest-only {
+      display: inline;
+    }
+    > .float-only {
+      display: none;
+    }
+  }
+}
+
+/* Elastic open/close for the configurator's pickers.
+
+   ::details-content is the only handle on a <details> panel, and
+   interpolate-size is what lets a height transition end at `auto` — together
+   they animate the disclosure without lifting its open/closed state into
+   React, which is the whole reason it is a <details> in the first place.
+
+   Chrome and Edge have both today. Where they are missing the panel snaps open
+   exactly as it does now, so this is additive: nothing depends on it.
+
+   The curve overshoots, so the panel opens a shade past its height and settles
+   back. overflow:clip keeps the contents from spilling while that happens, and
+   the discrete content-visibility step is what keeps them painted through the
+   close rather than vanishing on frame one. */
+@supports (interpolate-size: allow-keywords) and selector(::details-content) {
+  :root {
+    interpolate-size: allow-keywords;
+  }
+
+  /* Inside the media query, not merely transition-less outside it: the
+     reduced-motion reset at the bottom of this file is written against `*`,
+     which never matches a pseudo-element, so this has to opt in rather than be
+     opted out. Under `reduce` the rules simply don't exist and <details>
+     behaves natively. */
+  @media (prefers-reduced-motion: no-preference) {
+    .elastic::details-content {
+      block-size: 0;
+      overflow: clip;
+      transition:
+        block-size 0.4s var(--ease-elastic),
+        content-visibility 0.4s allow-discrete;
+    }
+
+    .elastic[open]::details-content {
+      block-size: auto;
+    }
+  }
+}
+
+/* Contact dialog entrance — the panel grows out of the button that opened it,
+   and its contents assemble behind it.
+
+   The two run *together*, not one after the other. Sequenced, the send button
+   would still be arriving 2.3s after the click; started together, the panel
+   settles at 0.84s and the last row lands just behind it, so the whole thing
+   reads as a single gesture.
+
+   Inside prefers-reduced-motion: no-preference rather than relying on the
+   blanket reset at the bottom of this file — that reset zeroes durations but
+   not animation-delay, which on a `both`-filled animation would leave the
+   staggered rows invisible for their delay and then pop. Under `reduce` these
+   rules simply don't exist and the dialog appears, which is correct.
+
+   The one thing JS owns is transform-origin: ContactDialog.tsx aims it at the
+   opener's position before calling showModal(). Without that it falls back to
+   the element's centre, which is a plain zoom — degraded, not broken. */
+@media (prefers-reduced-motion: no-preference) {
+  .dialog-in {
+    /* The entrance study's playback control, frozen at the 0.5x that was
+       picked. Everything below is calc'd against it — set it to 1 for the
+       original speed, or somewhere between to taste. */
+    --dlg-speed: 2;
+
+    opacity: 0;
+    scale: 0.85;
+    transition:
+      opacity calc(0.32s * var(--dlg-speed)) cubic-bezier(0.2, 0.7, 0.2, 1),
+      scale calc(0.42s * var(--dlg-speed)) var(--ease-elastic),
+      /* The panel narrows when the form gives way to the receipt. Safe to
+         transition despite being set on open too: a freshly displayed element
+         has no previous width to interpolate from unless @starting-style names
+         one, and this one doesn't. */
+        width calc(0.32s * var(--dlg-speed)) cubic-bezier(0.2, 0.7, 0.2, 1),
+      /* allow-discrete is what buys the exit: without it `display` flips to
+         none on frame one and there is nothing left on screen to animate. */
+      display calc(0.42s * var(--dlg-speed)) allow-discrete,
+      overlay calc(0.42s * var(--dlg-speed)) allow-discrete;
+  }
+  .dialog-in[open] {
+    opacity: 1;
+    scale: 1;
+  }
+
+  /* The state the panel animates *from* when it opens. A <dialog> goes from
+     display:none to open in one step, and without a starting state there is
+     nothing to interpolate — it would animate closed but never open. */
+  @starting-style {
+    .dialog-in[open] {
+      opacity: 0;
+      scale: 0.85;
+    }
+  }
+
+  .dialog-in::backdrop {
+    opacity: 0;
+    transition:
+      opacity calc(0.32s * var(--dlg-speed)) cubic-bezier(0.2, 0.7, 0.2, 1),
+      display calc(0.32s * var(--dlg-speed)) allow-discrete,
+      overlay calc(0.32s * var(--dlg-speed)) allow-discrete;
+  }
+  .dialog-in[open]::backdrop {
+    opacity: 1;
+  }
+  @starting-style {
+    .dialog-in[open]::backdrop {
+      opacity: 0;
+    }
+  }
+
+  /* The cascade. Each row carries its own --i rather than leaning on
+     nth-child, because the rows live in two different parents (the header sits
+     outside the form) and a positional selector would restart the count at the
+     form and run the two halves over each other. */
+  @keyframes dialog-rise {
+    from {
+      opacity: 0;
+      translate: 0 12px;
+    }
+  }
+
+  .dialog-in[open] .cascade-item {
+    animation: dialog-rise calc(0.25s * var(--dlg-speed))
+      cubic-bezier(0.2, 0.7, 0.2, 1) both;
+    animation-delay: calc(var(--i) * 0.045s * var(--dlg-speed));
+  }
+}
+
+/* A scrollbar you only notice once you need it — a hairline in the text colour
+   at low alpha, on no track at all.
+
+   The two standard properties rather than ::-webkit-scrollbar: they are one
+   line each, they follow the theme through the token, and they are what Firefox
+   understands. Where `thin` isn't supported the bar is merely its default
+   width, which is the behaviour this replaces. */
+.scroll-subtle {
+  scrollbar-width: thin;
+  scrollbar-color: color-mix(in oklab, var(--color-text) 22%, transparent)
+    transparent;
 }
 
 /* Warm ambient glow for CTAs, active/hover states, the featured tier. */
