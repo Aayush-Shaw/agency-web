@@ -11,6 +11,7 @@ import { ChevronDown, X } from "lucide-react";
 import { motion, useReducedMotion, useSpring, useTransform } from "motion/react";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
+import Roll from "@/components/ui/Roll";
 import ContactDialog, { type Summary } from "@/components/ui/ContactDialog";
 import {
   SERVICES,
@@ -434,7 +435,7 @@ export default function Cta() {
 
       {/* Pitch left, estimator right at 60%. One column below lg — the steps
           need the full width on a phone more than the pitch needs a neighbour. */}
-      <div className="mx-auto grid max-w-6xl gap-4 lg:grid-cols-[2fr_3fr] lg:items-start lg:gap-8">
+      <div className="mx-auto grid max-w-[1600px] gap-4 lg:grid-cols-[2fr_3fr] lg:items-start lg:gap-8">
         <Reveal variant="words">
           <Eyebrow>Let&apos;s talk</Eyebrow>
           <h2 className="mt-5 text-section-xl font-bold leading-[1.05] tracking-tight">
@@ -449,7 +450,7 @@ export default function Cta() {
             href={`mailto:${CONTACT_EMAIL}`}
             className="mt-6 inline-block font-display text-lg font-semibold text-accent-primary underline-offset-4 hover:underline"
           >
-            {CONTACT_EMAIL}
+            <Roll>{CONTACT_EMAIL}</Roll>
           </a>
         </Reveal>
 
@@ -538,7 +539,7 @@ export default function Cta() {
                   onClick={() => setDialogOpen(true)}
                   className="glow mt-6 inline-flex h-13 w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary text-base font-semibold text-bg transition-transform hover:scale-[1.02]"
                 >
-                  Start a conversation
+                  <Roll>Start a conversation</Roll>
                 </button>
               </motion.div>
             )}

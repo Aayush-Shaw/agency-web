@@ -51,7 +51,7 @@ export default function Trust() {
     <section className="px-5 py-20 md:px-8 md:py-24">
       <div
         ref={root}
-        className="mx-auto grid max-w-6xl grid-cols-2 gap-4 lg:grid-cols-4"
+        className="mx-auto grid max-w-[1600px] grid-cols-2 gap-4 lg:grid-cols-4"
       >
         {STATS.map((stat) => (
           <div

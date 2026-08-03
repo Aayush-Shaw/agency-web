@@ -234,7 +234,7 @@ export default function Work() {
 
   return (
     <section id="work" className="bg-transparent px-5 py-24 md:px-8 md:py-32">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Selected work</Eyebrow>
           <h2 className="mt-4 max-w-2xl text-section font-bold tracking-tight">

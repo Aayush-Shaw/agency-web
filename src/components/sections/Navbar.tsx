@@ -3,6 +3,7 @@
 import { Moon, Sun } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import Roll from "@/components/ui/Roll";
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
 
@@ -92,7 +93,7 @@ export default function Navbar() {
           turning it visible costs no layout shift. Radius comes from the same
           --radius token as the cards, squircled to match them. */}
       <div
-        className={`relative mx-auto max-w-6xl transition-all duration-500 max-md:overflow-hidden max-md:rounded-(--radius) max-md:border max-md:[corner-shape:squircle] ${
+        className={`relative mx-auto max-w-[1600px] transition-all duration-500 max-md:overflow-hidden max-md:rounded-(--radius) max-md:border max-md:[corner-shape:squircle] ${
           menuOpen
             ? "max-md:border-border max-md:bg-bg/20 max-md:shadow-[0_18px_50px_-18px_var(--raw-glow)] max-md:backdrop-blur-sm"
             : "max-md:border-transparent"
@@ -112,7 +113,11 @@ export default function Navbar() {
             className={`${control} flex h-12 items-center gap-2 px-3 font-display text-base font-bold tracking-tight lg:gap-2.5 lg:px-5 lg:text-lg`}
           >
             <span className="claw h-5 w-5" aria-hidden="true" />
-            DIGITAL <span className="text-gradient">BEAR</span>
+            {/* The claw stays outside the clip — it is the one part of the mark
+                that shouldn't leave. */}
+            <Roll>
+              DIGITAL <span className="text-gradient">BEAR</span>
+            </Roll>
           </a>
 
           {/* Center pill — absolutely positioned so it centres on the page rather
@@ -134,7 +139,7 @@ export default function Navbar() {
                   href={link.href}
                   className="block py-3 text-sm font-medium text-text-muted transition-colors hover:text-text"
                 >
-                  {link.label}
+                  <Roll>{link.label}</Roll>
                 </a>
               </li>
             ))}
@@ -205,7 +210,7 @@ export default function Navbar() {
                 tabIndex={menuOpen ? undefined : -1}
                 className="rounded-full px-3 py-2.5 text-sm font-medium text-text"
               >
-                {link.label}
+                <Roll>{link.label}</Roll>
               </a>
             ))}
           </div>

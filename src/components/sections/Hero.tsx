@@ -6,6 +6,8 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import { imageUrl, videoUrl } from "@/lib/media";
 import Aurora from "@/components/ui/Aurora";
 import Magnetic from "@/components/ui/Magnetic";
+import Roll from "@/components/ui/Roll";
+import ScrollHint from "@/components/ui/ScrollHint";
 import Words from "@/components/ui/Words";
 
 /* ============================================================
@@ -409,7 +411,10 @@ export default function Hero() {
         className="hero-wall pointer-events-none absolute inset-y-0 z-1 overflow-hidden [--wl:0px] md:[--wl:var(--wall-left)]"
         style={
           {
-            "--bw": "min(100vw, 72rem)",
+            // Same cap as the text band below (and every other section's
+            // mx-auto max-w-[1600px]) — they have to match or the wall stops
+            // short of the band's right edge.
+            "--bw": "min(100vw, 1600px)",
             // 100% here, 100vw above, and the difference is the scrollbar.
             // --bw has to be a length (it feeds COVER_H), so it takes the vw;
             // --gut only ever positions, so it takes the percentage — which
@@ -486,7 +491,7 @@ export default function Hero() {
           50% of the band against the wall's 55%, so they still overlap by 5%
           and the wall's fade has already taken it to nothing by the time it
           reaches any glyph. No scrim — see WALL_FADE_LEFT. */}
-      <div className="relative z-10 mx-auto w-full max-w-6xl">
+      <div className="relative z-10 mx-auto w-full max-w-[1600px]">
         <div className="md:w-1/2">
           {/* Not --text-display. That token is solved against the viewport
             alone, which is the right answer for a headline that owns the full
@@ -588,7 +593,9 @@ export default function Hero() {
                 className="hero-cta group inline-flex h-(--cta-h) items-stretch text-[clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform [--cta-h:clamp(2.75rem,6.5svh,3.25rem)] hover:scale-[1.03]"
               >
                 <span className="glow grid place-items-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7">
-                  Elevate Your Brand
+                  {/* The label rolls up while the arrow beside it flies out
+                      diagonally — same swap, and they run on the same hover. */}
+                  <Roll>Elevate Your Brand</Roll>
                 </span>
 
                 <span className="glow grid w-(--cta-h) shrink-0 place-items-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary">
@@ -627,6 +634,24 @@ export default function Hero() {
           </div>
         </div>
       </div>
+
+      {/* Absolute, so it contributes no height. Every vertical step in this
+          section is a clamp solved to make the content fit h-svh exactly, and
+          an in-flow pill at the bottom would be the one thing growing past that
+          budget — straight into the #top[data-overflows] rescue this layout
+          exists to avoid needing.
+
+          short:hidden is the collision guard rather than a height guess. The
+          stack is centred, so the room under it is whatever h-svh has spare,
+          and on a viewport short enough for that to run out this would land on
+          the CTA. `short` is already the breakpoint that means exactly "no
+          vertical room to spare" (see globals.css), so it is the honest test.
+          md:hidden because the ask was phones; together they leave it on the
+          tall narrow screens that have both the room and the need. */}
+      <ScrollHint
+        href="#manifesto"
+        className="absolute bottom-[clamp(1rem,3.5svh,2rem)] left-1/2 z-20 -translate-x-1/2 bg-bg/40 backdrop-blur-sm md:hidden short:hidden"
+      />
     </section>
   );
 }

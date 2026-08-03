@@ -98,7 +98,7 @@ export default function WhyUs() {
       id="why"
       className="px-5 py-24 md:px-8 md:py-32 lg:not-short:sticky lg:not-short:top-0 lg:not-short:z-0 lg:not-short:flex lg:not-short:h-svh lg:not-short:flex-col lg:not-short:justify-center lg:not-short:pt-20 lg:not-short:pb-0"
     >
-      <div className="mx-auto w-full max-w-6xl">
+      <div className="mx-auto w-full max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Why Digital Bear</Eyebrow>
           <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">

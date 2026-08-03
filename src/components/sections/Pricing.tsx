@@ -1,6 +1,7 @@
 import Eyebrow from "@/components/ui/Eyebrow";
 import Magnetic from "@/components/ui/Magnetic";
 import Reveal from "@/components/ui/Reveal";
+import Roll from "@/components/ui/Roll";
 
 type Tier = {
   name: string;
@@ -73,7 +74,7 @@ const Check = () => (
 export default function Pricing() {
   return (
     <section id="pricing" className="px-5 py-24 md:px-8 md:py-32">
-      <div className="mx-auto max-w-6xl">
+      <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Pricing</Eyebrow>
           <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
@@ -135,7 +136,7 @@ export default function Pricing() {
                       : "border border-border text-text hover:border-accent-primary"
                   }`}
                 >
-                  Get started
+                  <Roll>Get started</Roll>
                 </a>
               </Magnetic>
             </div>

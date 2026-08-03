@@ -46,7 +46,13 @@ export default function Manifesto() {
   );
 
   return (
-    <section className="bg-transparent px-5 py-24 md:px-8 md:py-36">
+    // id purely so the hero's scroll hint has the *next* section to aim at —
+    // #services would skip this one, which is not what a "scroll down" arrow
+    // promises. Not in the navbar; nothing else links here.
+    <section
+      id="manifesto"
+      className="bg-transparent px-5 py-24 md:px-8 md:py-36"
+    >
       <p
         ref={root}
         className="mx-auto max-w-4xl text-center text-statement font-semibold leading-snug tracking-tight"

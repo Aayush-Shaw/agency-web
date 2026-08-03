@@ -470,6 +470,29 @@ section[id] {
   box-shadow: 0 18px 50px -18px var(--raw-glow);
 }
 
+/* Scroll hint. The arrow drifts the way it points and returns, so the pill
+   carries the direction rather than only naming it — the loop is the message
+   here, which is the one thing that earns a looping animation in an interface.
+   Held to 4px on a slow cycle for the same reason it is allowed at all: it has
+   to read as a hint at the edge of the screen, not compete with the section it
+   sits under.
+
+   Only the arrow moves, never the pill — a bobbing border draws the eye to the
+   box instead of to the gesture.
+
+   No animation-delay, so the blanket reduced-motion reset at the bottom of this
+   file is sufficient on its own: it zeroes the duration and what is left is a
+   static arrow that still points down. (The <details> and dialog rules above
+   have to opt in instead, because that reset misses ::details-content and does
+   not touch delays.) */
+@keyframes scroll-hint {
+  0%, 100% { translate: 0 0; }
+  50% { translate: 0 4px; }
+}
+.scroll-hint-arrow {
+  animation: scroll-hint 1.9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
 /* The signature claw mark: three tapered strokes. */
 .claw {
   display: inline-block;
@@ -611,6 +634,59 @@ section[id] {
   .hero-cta {
     opacity: 0;
   }
+}
+
+/* ============================================================
+   Roll — the label swap every link, button and logo shares
+
+   Two copies of the text on one reel inside a clip: the resting one rolls out
+   of the top as its twin rides in from below. Same twin-element trick as the
+   hero CTA's arrow and the footer's social marks, turned to text and pinned to
+   one direction (up).
+
+   The trigger is the nearest interactive ancestor rather than a `group` class,
+   so a call site is one edit — wrap the label in <Roll> — and the whole of the
+   control's hit area drives it, padding included. :focus-visible for the
+   keyboard. :not(:disabled) because a hover on a disabled submit button is
+   still a hover, and a dead control that answers back is worse than one that
+   doesn't.
+
+   No overshoot in the curve, for the same reason the footer's flood doesn't
+   have one: both copies move as one rigid pair, so an ease that carries them
+   past their target opens a strip of bare background at the bottom of the clip
+   for the length of the bounce.
+
+   The reduced-motion reset at the bottom of this file zeroes the transition,
+   which leaves the label swapping instantly for an identical label — i.e.
+   nothing visibly happens, which is the right answer here.
+   ============================================================ */
+.roll {
+  position: relative;
+  display: inline-block;
+  overflow: hidden;
+  /* Baseline of an overflow:hidden inline-block is its bottom margin edge, so
+     without this the label sits low against anything beside it. */
+  vertical-align: bottom;
+}
+
+.roll > * {
+  display: block;
+  transition: translate 0.35s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+/* inset:0, so the twin is the same box as the copy it replaces and wraps the
+   same way — nothing here needs to know how wide the label is. */
+.roll-twin {
+  position: absolute;
+  inset: 0;
+  translate: 0 100%;
+}
+
+:is(a, button:not(:disabled)):is(:hover, :focus-visible) .roll > * {
+  translate: 0 -100%;
+}
+:is(a, button:not(:disabled)):is(:hover, :focus-visible) .roll-twin {
+  translate: 0 0;
 }
 
 /* ============================================================

@@ -10,6 +10,7 @@ import {
   type RefObject,
 } from "react";
 import { X } from "lucide-react";
+import Roll from "@/components/ui/Roll";
 
 export type Summary = {
   services: { label: string; value: string }[];
@@ -332,7 +333,7 @@ export default function ContactDialog({
                 onClick={onClose}
                 className="glow inline-flex h-12 items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-6 text-base font-semibold text-bg"
               >
-                Done
+                <Roll>Done</Roll>
               </button>
             </div>
           </>
@@ -438,11 +439,13 @@ export default function ContactDialog({
                   style={{ "--i": 6 } as CSSProperties}
                   className="cascade-item glow inline-flex h-13 w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary text-base font-semibold text-bg transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
                 >
-                  {status === "submitting"
-                    ? "Sending…"
-                    : cooldown > 0
-                      ? `Wait ${cooldown}s`
-                      : "Send brief"}
+                  <Roll>
+                    {status === "submitting"
+                      ? "Sending…"
+                      : cooldown > 0
+                        ? `Wait ${cooldown}s`
+                        : "Send brief"}
+                  </Roll>
                 </button>
               </div>
 

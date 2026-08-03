@@ -4,6 +4,7 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
+import ScrollHint from "@/components/ui/ScrollHint";
 
 /* Stage content. Position on the dial is the array index — index 0 rests at 12
    o'clock, and each step after it sits SPAN degrees further round. Add or
@@ -47,12 +48,17 @@ const RAD = Math.PI / 180;
 
 /* Pre-measure fallback only: `solve` overwrites all three in px on the first
    layout pass, off the heights it can actually see. */
-const DIAL = { "--cy": "60svh", "--ry": "26svh" } as React.CSSProperties;
+const DIAL = {
+  "--cy": "60svh",
+  "--ry": "26svh",
+  "--pad": "5rem",
+} as React.CSSProperties;
 
 /* Air, in px. */
 const LEAD = 20; // heading to the top of the dial
 const EDGE = 24; // section's bottom edge to the ends of the arc
 const MIN_RY = 48; // below this the arc stops reading as an arc at all
+const NAV = 80; // fixed navbar this section scrolls under, = pt-20
 
 /**
  * Section 7 — how we work, as a scroll-driven dial.
@@ -107,12 +113,14 @@ export default function Process() {
       const markers = gsap.utils.toArray<HTMLElement>(".proc-marker", section);
       const rings = gsap.utils.toArray<HTMLElement>(".proc-ring", section);
       const panels = gsap.utils.toArray<HTMLElement>(".proc-panel", section);
+      const hint = gsap.utils.toArray<HTMLElement>(".proc-hint", section);
 
       // Centring is GSAP's rather than a -translate-x-1/2 class: GSAP writes
       // `translate: none` on anything it transforms, and would wipe the class
       // the first time it touched either element.
       gsap.set(markers, { xPercent: -50, yPercent: -50 });
       gsap.set(panels, { xPercent: -50 });
+      gsap.set(hint, { xPercent: -50 });
 
       let rx = 0;
       let ry = 0;
@@ -122,6 +130,12 @@ export default function Process() {
          the viewport narrows, so any svh expression for the dial is wrong at
          some size — and wrong means text on top of text. */
       const solve = () => {
+        /* Back to the bare navbar clearance before anything is measured. --pad
+           lands on the heading's own box, so leaving the last refresh's
+           centring in place would fold it into offsetHeight and compound on
+           every resize. */
+        section.style.setProperty("--pad", `${NAV}px`);
+
         const cs = getComputedStyle(section);
         const H = section.offsetHeight;
         rx =
@@ -145,15 +159,24 @@ export default function Process() {
         // taller than half its own width stops being a dome and becomes a
         // pointed arch, which on a 412x839 phone is a 571px parabola with the
         // stages strung along it. A semicircle is the ceiling.
-        //
-        // On a tall narrow screen that cap leaves room over at the bottom.
-        // That is the trade for pinning the dial LEAD px under the heading:
-        // the surplus has to go somewhere, and whitespace below reads better
-        // than either a deformed arc or the heading drifting away from it.
         ry = Math.max(MIN_RY, Math.min(rx, H - EDGE - markerR - apex));
 
+        /* What that cap leaves over. It is only ever non-zero on a viewport
+           tall enough that a semicircle no longer reaches the bottom — which
+           in practice means a phone; a wide one solves to 0 here and is
+           untouched, so this needs no breakpoint of its own.
+           Half goes above the heading and half stays under the arc, which
+           centres heading and dial as one group. Splitting it is the point:
+           given entirely to one end it reads as the section having slipped,
+           and it was landing under the arc, leaving the heading jammed up
+           against the navbar with a hole beneath the dial. The navbar
+           clearance and EDGE are not part of the split — they are fixed
+           obstacles, so the group centres in what is left between them. */
+        const slack = Math.max(0, H - EDGE - markerR - apex - ry) / 2;
+
+        section.style.setProperty("--pad", `${NAV + slack}px`);
         section.style.setProperty("--ry", `${ry}px`);
-        section.style.setProperty("--cy", `${apex + ry}px`);
+        section.style.setProperty("--cy", `${apex + slack + ry}px`);
       };
 
       const place = (progress: number) => {
@@ -242,7 +265,8 @@ export default function Process() {
      dial is positioned from the section's top edge, and `top` on an absolutely
      positioned child is measured from the *padding* box — leave py-32 on and
      the whole arc drops 128px below where --cy says it is. The heading takes
-     over the top spacing, as --pad, which `solve` sets. */
+     over the top spacing, as --pad, which `solve` sets — see the slack split
+     there for why it is not simply the navbar's height. */
   return (
     <section
       id="process"
@@ -251,8 +275,11 @@ export default function Process() {
       className="relative z-20 mt-[-10svh] overflow-hidden bg-bg px-5 py-24 [corner-shape:squircle] md:px-8 md:py-32 [&.arc]:h-svh [&.arc]:py-0"
     >
       {/* Clears the fixed navbar, which this section scrolls under rather than
-          past — py-0 above took the section's own top padding away with it. */}
-      <div ref={head} className="mx-auto max-w-6xl in-[.arc]:pt-20">
+          past — py-0 above took the section's own top padding away with it.
+          --pad is that clearance plus whatever `solve` needs to add to centre
+          the group vertically; it falls back to the bare NAV on the pass
+          before the first measurement. */}
+      <div ref={head} className="mx-auto max-w-[1600px] in-[.arc]:pt-(--pad)">
         <Reveal variant="words">
           <Eyebrow>How we work</Eyebrow>
           {/* Under `.arc` the heading stops being sized against width alone.
@@ -287,7 +314,7 @@ export default function Process() {
       {/* Zero-size, parked at the centre of the ellipse, so every stage inside
           is placed in plain (x, y) from there. Still an <ol> — the stages are a
           sequence whatever shape they are drawn in. */}
-      <ol className="mx-auto mt-12 grid max-w-6xl gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 in-[.arc]:absolute in-[.arc]:left-1/2 in-[.arc]:top-(--cy) in-[.arc]:mt-0 in-[.arc]:block in-[.arc]:size-0">
+      <ol className="mx-auto mt-12 grid max-w-[1600px] gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 in-[.arc]:absolute in-[.arc]:left-1/2 in-[.arc]:top-(--cy) in-[.arc]:mt-0 in-[.arc]:block in-[.arc]:size-0">
         {STEPS.map((step) => (
           <li
             key={step.n}
@@ -312,7 +339,7 @@ export default function Process() {
                 <h3 className="mt-3 text-card font-semibold tracking-tight in-[.arc]:mt-0">
                   {step.title}
                 </h3>
-                <p className="mt-2 leading-relaxed text-text-muted in-[.arc]:text-text">
+                <p className="mt-2 leading-5 md:leading-relaxed text-text-muted in-[.arc]:text-text px-4 md:px-0">
                   {step.body}
                 </p>
               </div>
@@ -320,6 +347,43 @@ export default function Process() {
           </li>
         ))}
       </ol>
+
+      {/* Sits in the slack `solve` leaves under the arc, so it costs the dial
+          nothing — and it is absolute, so it stays out of the height the arc is
+          solved against.
+
+          hidden until `.arc`, because without JS this section is a plain
+          stacked list that scrolls like any other and has nothing to explain.
+          The two variants are stacked (in-[.arc]:max-md:inline-flex) rather
+          than written as `in-[.arc]:inline-flex md:hidden`: those two are the
+          same specificity and would decide it on source order.
+
+          inline-flex, not block — it has to restore the display ScrollHint
+          sets for itself. Anything else here silently un-flexes the pill, and
+          the label and arrow reflow as plain inline content and wrap onto two
+          lines inside the border.
+
+          A click is worth exactly one viewport, because that is what the
+          trigger's end above buys per stage — so the tap advances the dial one
+          step, the same as the swipe it is asking for, and the fourth one
+          carries you out of the pin. Not an href: the section is pinned, so
+          the next thing to see is a scroll distance and not an element with an
+          id on it. */}
+      <ScrollHint
+        onClick={() =>
+          window.scrollBy({
+            top: window.innerHeight,
+            // Spelled out because the option outranks CSS scroll-behavior,
+            // which both Lenis and the reduced-motion reset force to auto —
+            // so this is the one place the preference has to be read back.
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
+              .matches
+              ? "auto"
+              : "smooth",
+          })
+        }
+        className="proc-hint absolute bottom-6 left-1/2 hidden in-[.arc]:max-md:inline-flex"
+      />
     </section>
   );
 }
