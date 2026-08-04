@@ -60,6 +60,15 @@ const EDGE = 24; // section's bottom edge to the ends of the arc
 const MIN_RY = 48; // below this the arc stops reading as an arc at all
 const NAV = 80; // fixed navbar this section scrolls under, = pt-20
 
+/* How close to a stage counts as being *on* it, as a fraction of one step.
+   Only the Scroll button reads this, and only to answer "next from where?".
+   Nothing snaps the dial, so it can rest anywhere between two stages, and the
+   two failure modes sit on either side of this number: too small and pressing
+   Scroll at 0.97 of the way to Design advances to Design, which is a rotation
+   you cannot see; too large and it skips one. A tenth of a step is close
+   enough to the apex to be reading that stage's text. */
+const SETTLED = 0.1;
+
 /**
  * Section 7 — how we work, as a scroll-driven dial.
  *
@@ -74,6 +83,14 @@ const NAV = 80; // fixed navbar this section scrolls under, = pt-20
  * included. Nothing is parked in a fixed spot and cross-faded in place; the
  * only reason opacity is here at all is that four of these share one arc, so
  * each has to be gone before the next is legible.
+ *
+ * Scroll is not the only way to drive it. The numbers are buttons and the
+ * Scroll pill knows where the dial has got to, but neither of them animates it:
+ * both scroll the page to where the stage they want sits at the apex and let
+ * the scrub do the turning — see the block above `scrollToStep`. Only the
+ * stages you can actually see are reachable, which is a property of the dial
+ * rather than a rule enforced anywhere: the marker opposite the apex is at
+ * opacity 0, and autoAlpha hides it from the pointer and the tab order with it.
  *
  * The layout solves itself from measured heights every refresh, which is what
  * lets one design cover a 320x568 phone and a 1920x1080 monitor:
@@ -100,6 +117,12 @@ export default function Process() {
   const root = useRef<HTMLElement>(null);
   const arc = useRef<HTMLSpanElement>(null);
   const head = useRef<HTMLDivElement>(null);
+  /* Assigned by the effect, called from the markup. The two controls need the
+     live ScrollTrigger to turn a stage index into a scroll position, and it
+     only exists inside the effect — same reason CardRail hands its loop out
+     through a ref rather than rebuilding it per render. */
+  const goStep = useRef<(i: number) => void>(() => {});
+  const goNext = useRef<() => void>(() => {});
 
   useGSAP(
     () => {
@@ -201,7 +224,13 @@ export default function Process() {
             scale: 1 - 0.25 * (off / 180),
             // Depth, then the horizon: gone by 105°, so a stage has vanished
             // before it would reach the bottom of the section.
-            opacity:
+            //
+            // autoAlpha, not opacity: the marker is a button now, and the
+            // curve reaches exactly 0 past 105°, so this hands the far side of
+            // the dial `visibility: hidden` and takes those stages out of the
+            // tab order with it. Left on opacity they would be invisible
+            // controls you could still tab to and press.
+            autoAlpha:
               (1 - 0.5 * (off / 180)) * gsap.utils.clamp(0, 1, (105 - off) / 15),
           });
 
@@ -219,14 +248,19 @@ export default function Process() {
           // step it has only moved half its own width.
           const span = SPAN / 3;
           const near = gsap.utils.clamp(0, 1, (span - off) / span);
-          gsap.set(panels[i], { opacity: near });
+          // autoAlpha for the same reason as the marker, and here it fixes a
+          // hit-testing bug rather than an a11y one: a panel is up to 32rem
+          // wide and an opacity-0 element still takes clicks, so the faded
+          // panels were lying across their neighbours' markers. Nothing
+          // noticed while nothing on the dial was clickable.
+          gsap.set(panels[i], { autoAlpha: near });
           gsap.set(rings[i], { opacity: near });
         });
       };
 
       const dial = { p: 0 };
 
-      gsap.to(dial, {
+      const spin = gsap.to(dial, {
         p: 1,
         ease: "none",
         onUpdate: () => place(dial.p),
@@ -245,6 +279,57 @@ export default function Process() {
           },
         },
       });
+
+      const last = STEPS.length - 1;
+
+      /* Both controls move the *page*, not the dial.
+         The dial has exactly one input — this trigger's progress — so a tween
+         written straight to `dial.p` would be overwritten by the scrub on the
+         next scroll event, and the scroll position would still be sitting on
+         the old stage underneath it. Scrolling to where the wanted stage rests
+         at the apex turns the dial and leaves the pin, the progress and the
+         scrollbar all agreeing, which also means the turn can be interrupted
+         by a scroll mid-flight and nothing has to be unwound.
+         scrub: 1 is what makes it read as a rotation rather than a jump: the
+         dial trails the scroll by a second and keeps turning after it lands. */
+      const scrollToStep = (i: number) => {
+        const st = spin.scrollTrigger;
+        if (!st) return;
+        window.scrollTo({
+          top: st.start + ((st.end - st.start) * gsap.utils.clamp(0, last, i)) / last,
+          // Spelled out for the reason the old one-viewport nudge spelled it
+          // out: the option outranks CSS scroll-behavior, which Lenis and the
+          // reduced-motion reset both force to auto.
+          behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+            ? "auto"
+            : "smooth",
+        });
+      };
+
+      goStep.current = scrollToStep;
+
+      goNext.current = () => {
+        const st = spin.scrollTrigger;
+        if (!st) return;
+        // Which stage is at the apex right now. Off the trigger's own progress
+        // and not `dial.p` — the scrub leaves that one deliberately lagging, so
+        // pressing Scroll twice quickly would read the same stage both times
+        // and ask for the same target twice.
+        const here = Math.floor(st.progress * last + SETTLED);
+        // Past the last stage there is no next one on the dial, so the button
+        // goes back to meaning what it used to: one viewport, which carries you
+        // off the end of the pin and on to the next section.
+        if (here >= last) {
+          window.scrollBy({
+            top: window.innerHeight,
+            behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+              ? "auto"
+              : "smooth",
+          });
+          return;
+        }
+        scrollToStep(here + 1);
+      };
 
       // The tween only calls onUpdate once it is moving, so without this the
       // first frame of the pin shows four stacked, unplaced stages.
@@ -315,14 +400,30 @@ export default function Process() {
           is placed in plain (x, y) from there. Still an <ol> — the stages are a
           sequence whatever shape they are drawn in. */}
       <ol className="mx-auto mt-12 grid max-w-[1600px] gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 in-[.arc]:absolute in-[.arc]:left-1/2 in-[.arc]:top-(--cy) in-[.arc]:mt-0 in-[.arc]:block in-[.arc]:size-0">
-        {STEPS.map((step) => (
+        {STEPS.map((step, i) => (
           <li
             key={step.n}
             className="proc-point border-t border-border pt-5 in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:size-0 in-[.arc]:border-0 in-[.arc]:p-0"
           >
             {/* One moving piece per stage: the marker and its text together. */}
             <div className="proc-arm in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:size-0">
-              <span className="proc-marker font-display text-4xl font-bold text-gradient in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:grid in-[.arc]:size-10 in-[.arc]:place-items-center in-[.arc]:rounded-full in-[.arc]:border in-[.arc]:border-border in-[.arc]:bg-surface in-[.arc]:text-sm">
+              {/* Tapping a number turns the dial to it, however far round it
+                  is — the handler only names the stage, and the distance falls
+                  out of where that stage sits on the scroll.
+
+                  A button and not a div with a click: it is a control, and on
+                  the dial it is also the only way to reach a stage without
+                  scrolling. The label carries the title because the visible
+                  text is "03", which on its own tells a screen reader nothing
+                  about where it goes. Outside `.arc` (no JS, no dial) it is a
+                  plain numeral again and pressing it does nothing, which is
+                  the same deal every other control on the page makes. */}
+              <button
+                type="button"
+                onClick={() => goStep.current(i)}
+                aria-label={`Go to stage ${i + 1}, ${step.title}`}
+                className="proc-marker font-display text-4xl font-bold text-gradient in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:grid in-[.arc]:size-10 in-[.arc]:cursor-pointer in-[.arc]:place-items-center in-[.arc]:rounded-full in-[.arc]:border in-[.arc]:border-border in-[.arc]:bg-surface in-[.arc]:text-sm"
+              >
                 {/* "You are here". A ring rather than a filled chip because the
                     numeral is gradient text — fill it and the two gradients sit
                     on top of each other. */}
@@ -331,7 +432,7 @@ export default function Process() {
                   className="proc-ring absolute inset-0 hidden rounded-full border-2 border-accent-primary in-[.arc]:block"
                 />
                 {step.n}
-              </span>
+              </button>
 
               {/* Directly under its own number — top-8 is the marker's 20px
                   radius plus STACK. */}
@@ -363,25 +464,19 @@ export default function Process() {
           the label and arrow reflow as plain inline content and wrap onto two
           lines inside the border.
 
-          A click is worth exactly one viewport, because that is what the
-          trigger's end above buys per stage — so the tap advances the dial one
-          step, the same as the swipe it is asking for, and the fourth one
-          carries you out of the pin. Not an href: the section is pinned, so
-          the next thing to see is a scroll distance and not an element with an
-          id on it. */}
+          A press lands the *next stage* on the apex — it reads where the dial
+          has got to and aims at the stage after it, rather than adding a fixed
+          viewport and hoping. The two only agree when you press it from a dead
+          stop on a stage: pressing it having drifted two thirds of the way to
+          Design used to leave you two thirds past Design, so the dial ended up
+          resting between two stages with neither block of text legible, and
+          every later press inherited the same offset. Past the last stage it
+          means what it always did — see goNext.
+
+          Not an href: the section is pinned, so the next thing to see is a
+          scroll distance and not an element with an id on it. */}
       <ScrollHint
-        onClick={() =>
-          window.scrollBy({
-            top: window.innerHeight,
-            // Spelled out because the option outranks CSS scroll-behavior,
-            // which both Lenis and the reduced-motion reset force to auto —
-            // so this is the one place the preference has to be read back.
-            behavior: window.matchMedia("(prefers-reduced-motion: reduce)")
-              .matches
-              ? "auto"
-              : "smooth",
-          })
-        }
+        onClick={() => goNext.current()}
         className="proc-hint absolute bottom-6 left-1/2 hidden in-[.arc]:max-md:inline-flex"
       />
     </section>
