@@ -92,7 +92,7 @@ const SOCIALS = [
 /** Section 13 — footer. */
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-surface px-5 py-14 md:px-8">
+    <footer className="border-t border-border bg-surface px-5 pt-14 pb-2 md:px-8">
       <div className="mx-auto flex max-w-[1600px] flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="max-w-xs">
           <a
@@ -156,7 +156,7 @@ export default function Footer() {
         </div>
       </div>
 
-      <div className="mx-auto mt-12 max-w-[1600px] border-t border-border pt-6 text-sm text-text-muted">
+      <div className="mx-auto mt-4 max-w-[1600px] border-t border-border pt-4 text-sm text-text-muted text-center">
         © {new Date().getFullYear()} Digital Bear Studio. All rights reserved.
       </div>
     </footer>

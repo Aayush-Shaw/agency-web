@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
-import { motion } from "motion/react";
+import { motion, useReducedMotion } from "motion/react";
 import { imageUrl, videoUrl } from "@/lib/media";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
@@ -13,10 +13,10 @@ type Project = {
   cat: Category;
   src: string;
   video?: boolean;
-  /** Width ÷ height. Every tile is the row's full height, so this is the only
-      thing that decides how wide it is — each tile sizes itself. A reel is just
-      an aspect below 1 (0.5625 is 9:16); it needs no special case now the row
-      is one tall band rather than two short ones. */
+  /** Width ÷ height. The only thing that decides a tile's size: it is given the
+      height of the band it sits in and this multiplies it out to a width.
+      Below 1 (0.5625 is 9:16) means portrait, and that is also the switch for
+      which band it gets — see TALL below. */
   aspect: number;
 };
 
@@ -55,25 +55,27 @@ const COPIES = 3;
 
 /** Minimum tiles in one copy. A four-item filter would otherwise leave a copy
     far narrower than the viewport and the seam would land on screen, so short
-    categories repeat until there is enough to hide it. Half what the two-row
-    version needed: one tall row makes every tile about twice as wide, so the
-    same number of tiles covers twice the rail. */
-const MIN_TILES = 8;
+    categories repeat until there is enough to hide it. Two rows means each tile
+    is about half as wide as the single-row rail's were, so it takes twice as
+    many of them to cover the same runway. */
+const MIN_TILES = 16;
 
-/** Row height and gutter. Every tile width is derived from these two and the
-    tile's own aspect, so the rail re-solves itself on a resize with no JS.
-    --row is one band roughly as tall as the old two rows plus their gutter
-    combined, which is where the extra size in each tile comes from.
+/** Height of ONE row, plus the gutter. Every tile size is derived from these two
+    and the tile's own aspect, so the rail re-solves itself on a resize with no
+    JS. The band as a whole is twice --row plus one --gap.
 
-    The 52vw term is the phone case and it is doing real work: height alone put a
-    landscape tile at ~380px on a 375px-wide screen, so one tile filled the
-    display edge to edge and nothing hinted the rail scrolled at all. Capping the
-    height by a fraction of the *width* leaves the next tile peeking. min() takes
-    whichever constraint bites first, so desktop is still driven by svh and keeps
-    the full size. Same shape as the hero headline's min(vw, svh). */
+    The 33vw term is the phone case and it is doing real work: height alone put a
+    landscape tile wide enough to fill a 375px screen edge to edge, and nothing
+    hinted the rail scrolled at all. Capping the height by a fraction of the
+    *width* leaves the next tile peeking. min() takes whichever constraint bites
+    first, so desktop is still driven by svh and keeps the full size. Same shape
+    as the hero headline's min(vw, svh). */
 const RAIL_VARS = {
-  "--row": "clamp(10rem, min(30svh, 52vw), 20rem)",
+  "--row": "clamp(7.5rem, min(19svh, 33vw), 12.5rem)",
   "--gap": "0.75rem",
+  /* A portrait tile is both rows tall, so it spans the gutter between them too —
+     that gutter is interior to the tile, not around it. */
+  "--tall": "calc(var(--row) * 2 + var(--gap))",
   /* The fade at each end is exactly the section's own horizontal padding, so
      the rail reads as running *under* the page's margin rather than being
      clipped by it. Overridden to 2rem at md, where the section is px-8. */
@@ -83,18 +85,45 @@ const RAIL_VARS = {
 const FADE =
   "linear-gradient(to right, transparent 0, #000 var(--fade), #000 calc(100% - var(--fade)), transparent 100%)";
 
+/** Portrait, i.e. the tile that takes both rows. The one rule the two-row layout
+    turns on: taller than it is wide gets the full band, everything else gets one
+    row and whatever width its aspect asks for. */
+const TALL = (aspect: number) => aspect < 1;
+
+/** Drift speed, px per second. Slow enough to read as ambience rather than a
+    carousel that is running away from you. */
+const DRIFT = 26;
+
+/** How long the drift stays out of the way after a wheel or a flick. A touch
+    fling keeps scrolling long after the finger is gone, and writing scrollLeft
+    into that momentum kills it — so the drift waits rather than fighting. */
+const YIELD_MS = 1100;
+
 /**
  * Section 5 — the work rail.
  *
- * One tall row on a horizontal track that never ends, scrolled by hand. It is a
- * real scroll container rather than a transform the page drives: native scroll
- * brings touch momentum, trackpad gestures, the scrollbar and keyboard support
- * with it, none of which a custom drag gets for free — and it is what makes
- * this feel right on a phone. The only JS is the wrap.
+ * Two rows on a horizontal track that never ends: portrait media takes the full
+ * band, landscape media takes one row at whatever width its aspect asks for.
+ * The rail drifts left on its own, stops under the pointer, and can be swiped or
+ * dragged at any time.
+ *
+ * It is a real scroll container rather than a transform the page drives: native
+ * scroll brings touch momentum, trackpad gestures, the scrollbar and keyboard
+ * support with it, none of which a custom drag gets for free — and it is what
+ * makes this feel right on a phone. The drift is then just a few px of
+ * scrollLeft per frame, so it shares one coordinate with the user's own scroll
+ * instead of being a second, competing position.
  */
 export default function Work() {
   const [active, setActive] = useState<(typeof TABS)[number]>("All");
   const rail = useRef<HTMLDivElement>(null);
+  const reduced = useReducedMotion();
+
+  // Drift gates. Refs, not state: both are written from pointer handlers on
+  // every move and read inside a rAF loop — a re-render for either would be a
+  // render per frame that changes nothing on screen.
+  const held = useRef(false); // pointer is over the rail, or dragging it
+  const yieldUntil = useRef(0); // momentum/wheel still settling
 
   const shown =
     active === "All" ? PROJECTS : PROJECTS.filter((p) => p.cat === active);
@@ -148,13 +177,59 @@ export default function Work() {
     // under prefers-reduced-motion.
     el.querySelectorAll("video").forEach((v) => void v.play().catch(() => {}));
 
+    // A wheel or trackpad gesture gets the same grace period a flick does. It
+    // is not on the pointer handlers because a wheel mouse never sends one.
+    const yieldNow = () => {
+      yieldUntil.current = performance.now() + YIELD_MS;
+    };
+    el.addEventListener("wheel", yieldNow, { passive: true });
+
+    // The drift. Written as a scroll position we own and re-read rather than a
+    // blind `+=`: the browser may round scrollLeft to a whole pixel, and at this
+    // speed that is most of a frame's movement — accumulating in a float and
+    // assigning it is what keeps a sub-pixel step from being rounded away to
+    // nothing. Anything that moves the rail out from under us (the wrap above, a
+    // drag, momentum) shows up as a gap wider than that rounding, and we take
+    // its position as the new truth instead of yanking it back.
+    let raf = 0;
+    let last = performance.now();
+    let pos = el.scrollLeft;
+
+    // Writing scrollLeft is a layout write, and doing it every frame for a rail
+    // sitting three screens below the fold would be paid for by whatever *is* on
+    // screen. The entry slide gets this for free as well: the rail is translated
+    // out past the page's overflow clip until it lands, so it reads as off
+    // screen and the drift picks up exactly where the entry sets it down.
+    let onScreen = false;
+    const io = new IntersectionObserver(([e]) => {
+      onScreen = e.isIntersecting;
+    });
+    io.observe(el);
+
+    const tick = (now: number) => {
+      raf = requestAnimationFrame(tick);
+      // Clamped: a backgrounded tab or a long frame would otherwise hand us a
+      // gap of seconds and teleport the rail on the frame it resumes.
+      const dt = Math.min(now - last, 50);
+      last = now;
+
+      if (!onScreen || held.current || now < yieldUntil.current) return;
+      if (Math.abs(el.scrollLeft - pos) > 1) pos = el.scrollLeft;
+      pos += (DRIFT * dt) / 1000;
+      el.scrollLeft = pos;
+    };
+    if (!reduced) raf = requestAnimationFrame(tick);
+
     return () => {
       el.removeEventListener("scroll", onScroll);
+      el.removeEventListener("wheel", yieldNow);
       ro.disconnect();
+      io.disconnect();
+      cancelAnimationFrame(raf);
     };
     // Filtering changes how many tiles are on the rail, and so the copy width
     // every threshold above is measured against.
-  }, [active]);
+  }, [active, reduced]);
 
   // Click-and-drag, mouse only. Touch already has native panning and would
   // fight this; a wheel mouse has neither, and without it a desktop visitor
@@ -165,10 +240,20 @@ export default function Work() {
     filled.map((p, i) => (
       <figure
         key={`${copy}-${p.title}-${i}`}
-        // The whole layout, in one line: height comes from the row, width from
-        // the aspect. A minimum rather than a fixed width because it is what the
-        // `max-content` columns below measure — see the note on the media.
-        style={{ minWidth: `calc(var(--row) * ${p.aspect})` }}
+        // The whole layout, in two lines: a portrait tile is handed the full
+        // band and a landscape one a single row, and its own aspect multiplies
+        // that height out to a width. So a reel stands the full height of the
+        // rail and a 16:9 runs its true width — nothing is cropped to a
+        // uniform box.
+        //
+        // A minimum rather than a fixed width because it is what the
+        // `max-content` columns below measure — see the note on the media. It is
+        // also why the two tiles stacked in one column always agree on a width:
+        // the column takes the wider of the pair and the other grows into it,
+        // which only ever gives a tile *more* room than its aspect asked for.
+        style={{
+          minWidth: `calc(var(${TALL(p.aspect) ? "--tall" : "--row"}) * ${p.aspect})`,
+        }}
         // A real squircle, not a rounded rectangle: border-radius alone draws a
         // circular arc, and `corner-shape` is what bends it into the continuous
         // superellipse corner. The radius is the smaller half of the pair — a
@@ -176,7 +261,9 @@ export default function Work() {
         // at the same number, because it hugs the corner point instead of cutting
         // across it. Browsers without `corner-shape` (Safari, Firefox) ignore the
         // line and keep the plain 8px arc, which is the shape this had before.
-        className="group relative overflow-hidden rounded-xl border border-border bg-surface [corner-shape:squircle]"
+        className={`group relative overflow-hidden rounded-xl border border-border bg-surface [corner-shape:squircle] ${
+          TALL(p.aspect) ? "row-span-2" : ""
+        }`}
       >
         {/* Absolutely positioned, and that is load-bearing rather than tidy: the
             columns are `max-content`, and an in-flow <img> or <video> offers its
@@ -217,14 +304,14 @@ export default function Work() {
         {/* flex-wrap, and no truncation on the title: the tag drops to a second
             line only when the two genuinely do not fit, rather than the title
             being cut short to keep them on one. */}
-        <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 bg-black/35 px-3 py-2 opacity-0 backdrop-blur-md transition-opacity duration-200 group-hover:opacity-100">
+        <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 bg-bg/10 px-3 py-2 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
           <span className="font-display text-sm font-semibold text-white">
             {p.title}
           </span>
           {/* The tag only earns its space on "All". Under a category filter it
               would repeat the tab you already pressed on every single tile. */}
           {active === "All" && (
-            <span className="shrink-0 rounded-full bg-white/20 px-2 py-0.5 text-xs font-medium text-white">
+            <span className="shrink-0 rounded-full bg-bg/20 border border-white/10 px-2 py-0.5 text-xs font-medium text-white">
               {p.cat}
             </span>
           )}
@@ -277,49 +364,97 @@ export default function Work() {
           overscroll-x-contain stops a swipe that reaches the end of the rail
           from chaining out to the page and becoming a back/forward navigation —
           the same trap the services carousel has to preventDefault its way out
-          of, except this one is a real scroll container so the CSS covers it. */}
-      <div
-        ref={rail}
-        aria-label="Selected work, scroll sideways to browse"
-        className="-mx-5 mt-4 flex cursor-grab overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] scrollbar-none active:cursor-grabbing md:-mx-8 md:[--fade:2rem] [&::-webkit-scrollbar]:hidden"
-        style={{ ...RAIL_VARS, maskImage: FADE, WebkitMaskImage: FADE }}
-        onPointerDown={(e) => {
-          if (e.pointerType !== "mouse" || e.button !== 0) return;
-          grab.current = { x: e.clientX, left: e.currentTarget.scrollLeft };
-          e.currentTarget.setPointerCapture(e.pointerId);
-        }}
-        onPointerMove={(e) => {
-          if (!grab.current) return;
-          e.currentTarget.scrollLeft = grab.current.left - (e.clientX - grab.current.x);
-        }}
-        onPointerUp={() => {
-          grab.current = null;
-        }}
-        onPointerCancel={() => {
-          grab.current = null;
-        }}
+          of, except this one is a real scroll container so the CSS covers it.
+
+          Three elements rather than one because of the entry. The move is a
+          full-width slide in from the right, which puts the rail entirely
+          outside the page's overflow-x-clip until it arrives — and an
+          IntersectionObserver watching a clipped-out element never fires, so a
+          `whileInView` on the thing that moves would wait forever for itself.
+          The outer element stays put and owns the trigger, the middle one
+          travels, and the scroll container is left untransformed underneath.
+          MotionConfig's reducedMotion="user" (SmoothScroll.tsx) drops the
+          transform on its own, leaving the fade. */}
+      <motion.div
+        initial="out"
+        whileInView="in"
+        viewport={{ once: true, amount: 0.3 }}
+        className="-mx-5 mt-4 md:-mx-8"
       >
-        {Array.from({ length: COPIES }, (_, copy) => (
+        <motion.div
+          variants={{ out: { x: "100%", opacity: 0 }, in: { x: 0, opacity: 1 } }}
+          transition={{ duration: 1.15, ease: [0.22, 1, 0.36, 1] }}
+        >
           <div
-            key={copy}
-            // The gutter as margin-right, never a `gap` on the flex row: the
-            // wrap moves by exactly one copy, and it can only know that distance
-            // if the gutter travels with the copy rather than sitting between
-            // copies as a separate quantity.
-            //
-            // An explicit row height, not one of Tailwind's `grid-rows-*` — those
-            // are `minmax(0, 1fr)`, which sizes the row from its content. With
-            // tile widths derived from the row height that closes a loop: wider
-            // tiles make a taller row makes wider tiles, and the rail settles
-            // several times taller than it should be.
-            aria-hidden={copy !== 1}
-            style={{ marginRight: "var(--gap)" }}
-            className="grid shrink-0 grid-flow-col gap-(--gap) auto-cols-max grid-rows-(--row)"
+            ref={rail}
+            aria-label="Selected work, scroll sideways to browse"
+            className="flex cursor-grab overflow-x-auto overscroll-x-contain [-ms-overflow-style:none] scrollbar-none active:cursor-grabbing md:[--fade:2rem] [&::-webkit-scrollbar]:hidden"
+            style={{ ...RAIL_VARS, maskImage: FADE, WebkitMaskImage: FADE }}
+            // Hover holds the drift still so you can actually look at a tile —
+            // and on touch the same two handlers fire around a swipe, so a
+            // finger on the rail stops it for free.
+            onPointerEnter={() => {
+              held.current = true;
+            }}
+            onPointerLeave={() => {
+              held.current = false;
+            }}
+            onPointerDown={(e) => {
+              held.current = true;
+              if (e.pointerType !== "mouse" || e.button !== 0) return;
+              grab.current = { x: e.clientX, left: e.currentTarget.scrollLeft };
+              e.currentTarget.setPointerCapture(e.pointerId);
+            }}
+            onPointerMove={(e) => {
+              if (!grab.current) return;
+              e.currentTarget.scrollLeft =
+                grab.current.left - (e.clientX - grab.current.x);
+            }}
+            // A finger that lifts is gone — there is no hover to keep holding
+            // the rail, so releasing has to clear it. A mouse gets it back
+            // immediately from the pointerenter it is still inside of.
+            onPointerUp={(e) => {
+              grab.current = null;
+              held.current = e.pointerType === "mouse";
+              yieldUntil.current = performance.now() + YIELD_MS;
+            }}
+            onPointerCancel={() => {
+              grab.current = null;
+              held.current = false;
+            }}
           >
-            {tiles(copy)}
+            {Array.from({ length: COPIES }, (_, copy) => (
+              <div
+                key={copy}
+                // The gutter as margin-right, never a `gap` on the flex row: the
+                // wrap moves by exactly one copy, and it can only know that
+                // distance if the gutter travels with the copy rather than
+                // sitting between copies as a separate quantity.
+                //
+                // Explicit row heights, not one of Tailwind's `grid-rows-*` —
+                // those are `minmax(0, 1fr)`, which sizes rows from their
+                // content. With tile widths derived from the row height that
+                // closes a loop: wider tiles make a taller row makes wider
+                // tiles, and the rail settles several times taller than it
+                // should be.
+                //
+                // `dense` is what the two-row layout needs and the one-row
+                // version did not: a portrait tile that comes up while a column
+                // is half full cannot fit there, and plain column flow would
+                // leave that half column empty for the rest of the rail. Dense
+                // backfills it with the next tile that does fit. It reorders
+                // tiles relative to the DOM, which is free here — the rail is a
+                // wall of work, not a ranked list.
+                aria-hidden={copy !== 1}
+                style={{ marginRight: "var(--gap)" }}
+                className="grid shrink-0 grid-flow-col-dense gap-(--gap) auto-cols-max grid-rows-[repeat(2,var(--row))]"
+              >
+                {tiles(copy)}
+              </div>
+            ))}
           </div>
-        ))}
-      </div>
+        </motion.div>
+      </motion.div>
     </section>
   );
 }
