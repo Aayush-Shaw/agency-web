@@ -5,8 +5,8 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import Words from "@/components/ui/Words";
 
 /**
- * Section 3 — a single bold statement that lights up word by word as you
- * scroll through it.
+ * Section 3 — a single bold statement that turns over word by word as you
+ * scroll through it, the way a departure board flips.
  *
  * Scrubbed rather than triggered: the sentence is tied to scroll position, so
  * reading pace and scroll pace are the same thing, and scrolling back up
@@ -20,22 +20,32 @@ export default function Manifesto() {
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // Words render at full opacity by default, so no-JS and reduced-motion
-        // readers get a plain paragraph. fromTo only dims them once it runs.
+        // The perspective lives on the paragraph, not on each word, so every
+        // word turns toward one shared vanishing point instead of each flipping
+        // in its own little world. transformOrigin is set rather than tweened:
+        // it is the hinge the rotation swings on and never changes.
+        gsap.set(root.current, { perspective: 800 });
+        gsap.set(".mf-word", { transformOrigin: "50% 0%" });
+
+        // Words render upright and at full opacity by default, so no-JS and
+        // reduced-motion readers get a plain paragraph. fromTo only tips them
+        // over once it runs.
         gsap.fromTo(
           ".mf-word",
-          { opacity: 0.16 },
+          { rotationX: -92, y: -12, opacity: 0.15 },
           {
+            rotationX: 0,
+            y: 0,
             opacity: 1,
             ease: "none",
             duration: 1,
             // Under scrub the whole tween is mapped onto the scroll range, so
             // these two numbers are ratios to each other, not seconds.
-            stagger: 0.4,
+            stagger: 0.3,
             scrollTrigger: {
               trigger: root.current,
               start: "top 80%",
-              end: "bottom 60%",
+              end: "bottom 55%",
               scrub: true,
             },
           }
@@ -51,7 +61,7 @@ export default function Manifesto() {
     // promises. Not in the navbar; nothing else links here.
     <section
       id="manifesto"
-      className="bg-transparent px-5 py-24 md:px-8 md:py-36"
+      className="bg-transparent px-5 pt-35 pb-10 md:px-8"
     >
       <p
         ref={root}

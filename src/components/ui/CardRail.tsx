@@ -23,6 +23,11 @@ export type RailItem = {
 const TILT = 9;
 /** Card pitch as a multiple of card width — the reference's plane+padding gap. */
 const PITCH = 1.18;
+/** Minimum px of the neighbouring cards left showing either side of the centre
+    one. A rail that presents a single card with clear air on both sides looks
+    like a single card: nothing says it can be flicked, so nobody flicks it.
+    Only ever binds on a portrait phone — see the clamp in `measure`. */
+const PEEK = 28;
 /** The reference's `bend` is the sag, in world units, of the card at the edge
     of the viewport — and half a 16:10 desktop viewport is ~13.25 of them
     (2·tan(22.5°)·20·1.6/2). Scaling the sag by half the container *width*
@@ -160,9 +165,26 @@ export default function CardRail({
         bottom = Math.max(bottom, y + reach);
       }
 
+      // PITCH card-widths, except where that would carry the neighbours off a
+      // narrow screen. The card is 78vw in portrait, so the rail has 22vw of
+      // slack to spend on *both* the gap and the sliver of the next card that
+      // advertises the flick — and at PITCH the gap takes all of it, parking
+      // the neighbours just past either edge. What is left is one card with
+      // clear air around it, which is not something anyone thinks to swipe.
+      //
+      // The cap is the pitch that still leaves PEEK of them showing: the
+      // neighbour's near edge sits at half + pitch - w/2, held to the far edge
+      // less PEEK. Once the card stops growing at its rem cap the slack widens
+      // with the viewport, so this only ever binds on a portrait phone —
+      // tablet and desktop keep the full gap untouched.
+      const pitch = Math.min(w * PITCH, half + w / 2 - PEEK);
+
       geo.current = {
-        pitch: w * PITCH,
-        span: w * PITCH * cards.current.length,
+        pitch,
+        // Has to stay pitch × count: this is the wrap period the layout's
+        // modulo folds into, so a span derived from a different pitch would
+        // leave a gap or an overlap where the rail comes back round.
+        span: pitch * cards.current.length,
         half,
         sag,
         // Cards are anchored at top-1/2, which centres the *centre card*.

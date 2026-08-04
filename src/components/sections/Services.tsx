@@ -96,11 +96,11 @@ const SERVICES: RailItem[] = [
 /** Section 4 — services, on the shared curved rail (see ui/CardRail.tsx). */
 export default function Services() {
   return (
-    <section id="services" className="px-5 py-24 md:px-8 md:py-32">
+    <section id="services" className="px-2 pt-24 md:px-8 md:pt-30 pb-10">
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>What we do</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
+          <h2 className="mt-2 max-w-2xl text-section font-bold tracking-tight">
             Five services, one <span className="text-gradient">creative team</span>.
           </h2>
         </Reveal>
