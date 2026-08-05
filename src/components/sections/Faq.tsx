@@ -1,17 +1,10 @@
 "use client";
 
-import { useRef, useState } from "react";
-import {
-  motion,
-  useMotionValue,
-  useReducedMotion,
-  useSpring,
-  useTransform,
-  useVelocity,
-} from "motion/react";
+import { useRef } from "react";
 import { gsap, useGSAP, SplitText } from "@/lib/gsap";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
+import usePawRake from "@/components/ui/usePawRake";
 
 /* `topic` is the structural device here, and it is not decoration: an FAQ is
    not a sequence, so numbering it (01 / 02 / 03) would encode an order that
@@ -48,18 +41,6 @@ const FAQS = [
   },
 ];
 
-/* The paw is heavy and lags behind the cursor; the light under it keeps up.
-   That difference is the whole effect — matched springs would read as one
-   cursor decoration, and the drag is what makes it feel like an animal's paw
-   being pulled across the list rather than a shape parented to the pointer. */
-const PAW = { stiffness: 110, damping: 17, mass: 1.1 };
-const GLOW = { stiffness: 260, damping: 30, mass: 0.6 };
-/* Softens the tilt, which is derived from velocity and so is noisy at source. */
-const TILT = { stiffness: 190, damping: 26 };
-
-/** The site's standard curve — see .lift in globals.css. */
-const EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1];
-
 /**
  * Section 11 — FAQ, as a raked ledger.
  *
@@ -75,7 +56,8 @@ const EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1];
  * arrives, and each answer's lines rise in sequence when it opens. Framer owns
  * the pointer: the paw, its light, and the tilt are springs retargeted on every
  * mousemove, which GSAP would need a tween per frame to do (same reasoning as
- * Magnetic.tsx).
+ * Magnetic.tsx). That half now lives in PawRake.tsx, which Reviews rakes with
+ * too — the paw is the site's hover, not this section's.
  *
  * Open/closed is still the browser's. <details name="faq"> is a native
  * exclusive accordion — opening one closes the last without a line of state —
@@ -84,25 +66,8 @@ const EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1];
  * than one we remembered to announce.
  */
 export default function Faq() {
-  const list = useRef<HTMLDivElement>(null);
-  const [raking, setRaking] = useState(false);
-  const reduced = useReducedMotion();
-
-  // Pointer position inside the list, in px from its top-left corner.
-  const x = useMotionValue(0);
-  const y = useMotionValue(0);
-
-  const pawX = useSpring(x, PAW);
-  const pawY = useSpring(y, PAW);
-  const glowX = useSpring(x, GLOW);
-  const glowY = useSpring(y, GLOW);
-
-  // Velocity of the *sprung* x, not the raw pointer: a mousemove stream is
-  // stepwise and its derivative jumps, while the spring has already smoothed it.
-  const tilt = useSpring(
-    useTransform(useVelocity(pawX), [-2200, 2200], [-26, 26]),
-    TILT
-  );
+  const list = useRef<HTMLUListElement>(null);
+  const paw = usePawRake();
 
   useGSAP(
     () => {
@@ -130,7 +95,12 @@ export default function Faq() {
 
         tl.fromTo(
           rows,
-          { opacity: 0, x: -48, rotate: -1.4, clipPath: "inset(0% 100% 0% 0%)" },
+          {
+            opacity: 0,
+            x: -48,
+            rotate: -1.4,
+            clipPath: "inset(0% 100% 0% 0%)",
+          },
           {
             opacity: 1,
             x: 0,
@@ -140,7 +110,7 @@ export default function Faq() {
             duration: 1,
             stagger: 0.1,
             clearProps: "all",
-          }
+          },
         );
 
         // The topic lands a beat behind its own row, overlapped so the two
@@ -149,7 +119,7 @@ export default function Faq() {
           tags,
           { opacity: 0, x: -14 },
           { opacity: 1, x: 0, duration: 0.6, stagger: 0.1, clearProps: "all" },
-          "-=0.85"
+          "-=0.85",
         );
 
         /* An answer's lines rise in sequence as its panel opens, so the two
@@ -188,7 +158,7 @@ export default function Faq() {
                 // original markup back the moment the tween lands keeps them out
                 // of the tree React reconciles against.
                 onComplete: () => split.revert(),
-              }
+              },
             );
           });
         };
@@ -200,11 +170,12 @@ export default function Faq() {
         // including when the user turns reduced motion on and this context is
         // torn down, which is the point of hanging them off matchMedia at all.
         return () => {
-          for (const panel of panels) panel.removeEventListener("toggle", onToggle);
+          for (const panel of panels)
+            panel.removeEventListener("toggle", onToggle);
         };
       });
     },
-    { scope: list }
+    { scope: list },
   );
 
   return (
@@ -229,67 +200,32 @@ export default function Faq() {
           </p>
         </Reveal>
 
-        {/* The paw is drawn from the cursor's position and so can reach half its
-            own width past the rows at the edges; the clip keeps it inside the
-            ledger. -mx-2/px-2 buys back the 8px it would otherwise cut off a
-            focused row's outline (2px ring at 3px offset, globals.css). */}
+        {/* This box is what the paw is measured against and clipped to, so it
+            rakes the ledger and nothing beyond it. No padding tricks needed:
+            the clip lives on the paw's own layer, not here, so a focused row's
+            outline (2px ring at 3px offset, globals.css) is never cut. */}
         <div
-          ref={list}
-          onPointerMove={(event) => {
-            // Fine pointers only, for the reason Magnetic.tsx gives: on touch
-            // this would put a paw under the finger that is trying to press.
-            if (reduced || event.pointerType !== "mouse" || !list.current) return;
-            const box = list.current.getBoundingClientRect();
-            const nx = event.clientX - box.left;
-            const ny = event.clientY - box.top;
-            // First frame of a hover: jump rather than spring, or the paw
-            // streaks in from the list's top-left corner every time the cursor
-            // enters — a swipe nobody made.
-            if (!raking) {
-              pawX.jump(nx);
-              pawY.jump(ny);
-              glowX.jump(nx);
-              glowY.jump(ny);
-              setRaking(true);
-            }
-            x.set(nx);
-            y.set(ny);
-          }}
-          onPointerLeave={() => setRaking(false)}
-          className="relative -mx-2 overflow-hidden px-2"
+          onPointerMove={paw.track}
+          onPointerLeave={paw.stop}
+          className="relative"
         >
-          {!reduced && (
-            <>
-              {/* Warm light under the paw, which is what actually picks the row
-                  out — the claw itself is a mark, not a lamp. */}
-              <motion.span
-                aria-hidden="true"
-                style={{ x: glowX, y: glowY }}
-                animate={{ opacity: raking ? 1 : 0 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="pointer-events-none absolute left-0 top-0 -ml-40 -mt-40 size-80 rounded-full bg-accent-primary/20 blur-3xl"
-              />
-              {/* .claw sizes itself at 1em and is unlayered, so it outranks any
-                  size-* utility (same cascade note as :focus-visible in
-                  globals.css) — font-size is the handle on how big it gets. */}
-              <motion.span
-                aria-hidden="true"
-                style={{ x: pawX, y: pawY, rotate: tilt }}
-                animate={{ opacity: raking ? 0.45 : 0 }}
-                transition={{ duration: 0.4, ease: EASE }}
-                className="claw pointer-events-none absolute left-0 top-0 -ml-14 -mt-14 text-[7rem]"
-              />
-            </>
-          )}
+          {paw.layers}
 
-          {/* relative, so the rows paint over the paw rather than under it:
-              among positioned siblings at z-index auto the later one wins, and
-              an unpositioned <ul> would lose to both absolute spans above. */}
-          <ul className="relative">
+          {/* Above the paw's layer, so the rows paint over it rather than under.
+              They are transparent, so it still shows through them — only the
+              type stays clear of it. */}
+          <ul ref={list} className="relative z-10">
             {FAQS.map((faq) => (
               <li
                 key={faq.q}
-                className="faq-row group relative border-t border-border last:border-b"
+                // Same glass as the review cards: a translucent pane over a
+                // backdrop-blur, with the paw raking behind it rather than
+                // inside it, so the blur lands on the paw. bg-surface/20 and
+                // not the cards' bg-bg/20 — that pairing is inverted here. A
+                // review card is a bg pane on a bg-surface section; these rows
+                // sit on the page's bg sheet, so surface is the token that
+                // reads as a pane against it. bg-bg/20 would be invisible.
+                className="faq-row group relative border-t border-border hover:bg-surface/20 backdrop-blur-sm px-2 last:border-b"
               >
                 {/* The rule lights up rather than a background flooding in: the
                     glow above already washes the row, and two lights on one
