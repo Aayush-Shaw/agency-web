@@ -537,7 +537,7 @@ export default function Cta() {
                   ref={openRef}
                   type="button"
                   onClick={() => setDialogOpen(true)}
-                  className="glow mt-6 inline-flex h-13 w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary text-base font-semibold text-bg transition-transform hover:scale-[1.02]"
+                  className="mt-6 inline-flex h-13 w-full items-center justify-center rounded-full brand-gradient text-base font-semibold text-bg transition-transform hover:scale-[1.02]"
                 >
                   <Roll>Start a conversation</Roll>
                 </button>

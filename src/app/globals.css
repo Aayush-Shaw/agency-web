@@ -30,13 +30,24 @@
 .theme-dark,
 :root:not([data-past-hero]) header {
   color-scheme: light dark;
-  --raw-bg: light-dark(#fbf3e7, #040713); /* warm cream / espresso */
-  --raw-surface: light-dark(#f3e6d3, #1f1810); /* card / section */
-  --raw-text: light-dark(#2b1d14, #f5ecdd); /* dark umber / warm off-white */
-  --raw-text-muted: light-dark(#6b5642, #c9b8a2);
+  /* The palette is three colours: parchment #f3eee5, espresso #2b1b12, and
+     #4b3621 between them. bg and text are the pair, straight, and swap. */
+  --raw-bg: light-dark(#f3eee5, #2b1b12);
+  --raw-text: light-dark(#2b1b12, #f3eee5);
+  /* #4b3621 is the third one, and a flat fill of it is not usable as a card:
+     in the light theme that is dark-brown text on a dark-brown pane, 1.6:1.
+     Mixed toward each theme's own ground instead — same hue, one step off the
+     background, legible in both. */
+  --raw-surface: light-dark(#e6dfd5, #3b291a); /* card / section */
+  /* #4b3621 straight in the light theme: 9.2:1, quieter than the 15:1 of the
+     primary text, which is what "muted" has to mean. The dark half can't use
+     it — on #2b1b12 the same brown is 1.5:1 — so it lifts toward the
+     parchment instead. */
+  --raw-text-muted: light-dark(#4b3621, #b7afa6);
   --raw-accent-primary: light-dark(#c9822e, #e8a33d); /* honey amber */
   --raw-accent-secondary: light-dark(#a8502d, #c1633b); /* cinnamon / rust */
-  --raw-border: light-dark(rgba(43, 29, 20, 0.12), rgba(245, 236, 221, 0.12));
+  --raw-border: light-dark(rgba(75, 54, 33, 0.16), rgba(243, 238, 229, 0.14));
+  /* Hover only — the one lit state the site keeps. */
   --raw-glow: light-dark(rgba(201, 130, 46, 0.28), rgba(232, 163, 61, 0.24));
 }
 
@@ -180,13 +191,41 @@ section[id] {
    Reusable helpers (token-driven — no hardcoded color)
    ============================================================ */
 
-/* Honey → cinnamon text fill for highlighted words. */
-.text-gradient {
+/* The honey → cinnamon ramp, panning. One definition for the three things
+   that wear it — highlighted words, the CTA/button pills, and the claw mark —
+   so the colours are retuned in one place and every one of them moves
+   together.
+
+   The ramp itself is unchanged; only its position animates. Drawn at 200% and
+   ping-ponged across the box, so the pill reads as lit from a light that
+   travels rather than a fill that sits there.
+
+   CSS, not GSAP or motion: a two-property loop with no trigger, no sequencing
+   and no scroll input is exactly what a keyframe is for, and this way it also
+   runs on the server-rendered markup with nothing to hydrate. The
+   reduced-motion reset at the bottom of this file parks the pan and leaves the
+   gradient, which is the right answer. */
+@keyframes gradient-pan {
+  to {
+    background-position: 100% 50%;
+  }
+}
+
+.text-gradient,
+.brand-gradient,
+.claw {
   background-image: linear-gradient(
     100deg,
     var(--color-accent-primary),
     var(--color-accent-secondary)
   );
+  background-size: 200% 100%;
+  background-position: 0% 50%;
+  animation: gradient-pan 7s ease-in-out infinite alternate;
+}
+
+/* Text fill for highlighted words. */
+.text-gradient {
   -webkit-background-clip: text;
   background-clip: text;
   color: transparent;
@@ -460,16 +499,6 @@ section[id] {
     transparent;
 }
 
-/* Warm ambient glow for CTAs, active/hover states, the featured tier. */
-.glow {
-  box-shadow: 0 12px 44px -12px var(--raw-glow);
-}
-.glow-ring {
-  box-shadow:
-    0 0 0 1px var(--color-accent-primary),
-    0 12px 48px -14px var(--raw-glow);
-}
-
 /* Card hover lift. CSS, not JS: it's a two-state hover with no sequencing, so
    a motion library would only add a bundle to it. Reveal suspends transitions
    while its entrance tween runs and clears its inline transform on arrival, so
@@ -558,11 +587,8 @@ section[id] {
   display: inline-block;
   width: 1em;
   height: 1em;
-  background: linear-gradient(
-    100deg,
-    var(--color-accent-primary),
-    var(--color-accent-secondary)
-  );
+  /* Fill comes from the shared ramp above — a `background` shorthand here
+     would reset the size and position it pans on. */
   -webkit-mask: var(--claw-mask) center / contain no-repeat;
   mask: var(--claw-mask) center / contain no-repeat;
   --claw-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M5 2c1.5 4 2 9 1.5 14M12 1c1.6 4.5 2.1 10 1.4 16M19 3c1.4 4 1.8 8.5 1.2 13' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'/%3E%3C/svg%3E");
@@ -606,17 +632,58 @@ section[id] {
   margin-bottom: -100vh;
   z-index: -1;
   pointer-events: none;
-  background:
-    radial-gradient(
-      60% 50% at 12% 0%,
-      color-mix(in oklab, var(--color-accent-primary) 20%, transparent),
-      transparent 70%
-    ),
-    radial-gradient(
-      55% 45% at 88% 12%,
-      color-mix(in oklab, var(--color-accent-secondary) 16%, transparent),
-      transparent 70%
-    );
+}
+
+/* The two glows drift, and they drift apart.
+
+   One glow per pseudo-element rather than two backgrounds on one box: as a
+   pair of layers they can only ever slide as a slab, which reads as the page
+   shifting rather than as light moving. Split, with different periods and
+   opposite phase, the gap between them opens and closes and neither ever
+   returns to the same place at the same time — 26 and 37 seconds, so the
+   combined cycle is long enough not to be spotted as a loop.
+
+   `translate`, not `transform`: SmoothScroll.tsx scrubs `transform` on the
+   parent for the scroll-linked scale, and the two are separate properties
+   that compose, so neither overwrites the other.
+
+   Y stays positive. The layer is sticky inside the post-hero sheet and the
+   hero is pinned above it, so drifting *up* is the one direction that could
+   put an orange wash over the hero — the same reason the scrub anchors its
+   transform-origin at the top.
+
+   Slow on purpose. This sits behind every section on the page, and a backdrop
+   you can watch move is a backdrop competing with the copy in front of it. */
+.atmosphere::before,
+.atmosphere::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  animation: atmosphere-drift 26s ease-in-out infinite alternate;
+}
+
+.atmosphere::before {
+  background: radial-gradient(
+    60% 50% at 12% 0%,
+    color-mix(in oklab, var(--color-accent-primary) 20%, transparent),
+    transparent 70%
+  );
+}
+
+.atmosphere::after {
+  background: radial-gradient(
+    55% 45% at 88% 12%,
+    color-mix(in oklab, var(--color-accent-secondary) 16%, transparent),
+    transparent 70%
+  );
+  animation-duration: 37s;
+  animation-direction: alternate-reverse;
+}
+
+@keyframes atmosphere-drift {
+  to {
+    translate: 7% 5%;
+  }
 }
 
 /* ============================================================
@@ -640,6 +707,14 @@ section[id] {
 .theme-dark,
 :root:not([data-past-hero]) header {
   color-scheme: dark;
+  /* The stage's own ground, deeper and bluer than the site's espresso. Flat
+     rather than light-dark(): this scope is pinned dark, so there is no light
+     half to carry. Every `bg-bg` inside the hero re-resolves against it —
+     which is Aurora's canvas (its CSS paint and the clear colour it reads back
+     off that same utility) and the navbar's frost while it is still overhead. */
+  --raw-bg: #040713;
+  /* --raw-bg: #061528; */
+  /* --raw-bg: #2b1b12; */
   /* Re-declaring the tokens is necessary but not sufficient: `color` is set
      from one once, on the body, so anything that inherits its text colour
      (the h1, the logo) carries the resolved light value down here regardless.

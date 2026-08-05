@@ -96,12 +96,12 @@ export default function Pricing() {
               key={tier.name}
               className={`lift relative flex flex-col rounded-2xl border bg-surface p-7 ${
                 tier.featured
-                  ? "glow-ring border-transparent lg:-mt-4 lg:pb-11"
+                  ? "border-accent-primary lg:-mt-4 lg:pb-11"
                   : "border-border"
               }`}
             >
               {tier.featured && (
-                <span className="absolute -top-3 left-7 rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-3 py-1 text-xs font-semibold text-bg">
+                <span className="absolute -top-3 left-7 rounded-full brand-gradient px-3 py-1 text-xs font-semibold text-bg">
                   Most Popular
                 </span>
               )}
@@ -132,7 +132,7 @@ export default function Pricing() {
                   href="#contact"
                   className={`inline-flex h-12 w-full items-center justify-center rounded-full text-sm font-semibold transition-transform hover:scale-[1.03] ${
                     tier.featured
-                      ? "glow bg-linear-to-r from-accent-primary to-accent-secondary text-bg"
+                      ? "brand-gradient text-bg"
                       : "border border-border text-text hover:border-accent-primary"
                   }`}
                 >

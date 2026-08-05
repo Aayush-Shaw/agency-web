@@ -154,7 +154,7 @@ export default function Footer() {
                   fill's top edge past the button and flash a gap underneath. */}
                 <span
                   aria-hidden="true"
-                  className="absolute inset-0 translate-y-full bg-linear-to-r from-accent-primary to-accent-secondary transition-transform duration-420 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-y-0"
+                  className="absolute inset-0 translate-y-full brand-gradient transition-transform duration-420 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-y-0"
                 />
                 {/* Two copies of the mark on one reel: the resting one rolls out
                   of the top as its twin rides in on the flood. Same twin-icon

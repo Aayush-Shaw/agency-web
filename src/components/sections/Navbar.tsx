@@ -70,16 +70,16 @@ export default function Navbar() {
   }, [menuOpen]);
 
   const surface = scrolled
-    ? "border-border bg-bg/20 shadow-[0_6px_24px_-10px_var(--raw-glow)] backdrop-blur-sm"
+    ? "border-border bg-bg/20 backdrop-blur-sm"
     : "border-transparent bg-transparent";
 
   // One shared surface so the separate pills read as a single bar that happens
-  // to be split. Frost is token-driven (bg/border/glow), never a new colour.
+  // to be split. Frost is token-driven (bg/border), never a new colour.
   const pill = `rounded-full border transition-all duration-300 ${surface}`;
 
   // Open below md, the whole bar becomes one box, so the pills inside give up
   // their own surface — otherwise every control reads as a pill inside a pill.
-  const pillInBox = `${pill} max-md:border-transparent max-md:bg-transparent max-md:shadow-none max-md:backdrop-blur-none`;
+  const pillInBox = `${pill} max-md:border-transparent max-md:bg-transparent max-md:backdrop-blur-none`;
   const control = menuOpen ? pillInBox : pill;
 
   return (
@@ -95,7 +95,7 @@ export default function Navbar() {
       <div
         className={`relative mx-auto max-w-[1600px] transition-all duration-500 max-md:overflow-hidden max-md:rounded-(--radius) max-md:border max-md:[corner-shape:squircle] ${
           menuOpen
-            ? "max-md:border-border max-md:bg-bg/20 max-md:shadow-[0_18px_50px_-18px_var(--raw-glow)] max-md:backdrop-blur-sm"
+            ? "max-md:border-border max-md:bg-bg/20 max-md:backdrop-blur-sm"
             : "max-md:border-transparent"
         }`}
       >

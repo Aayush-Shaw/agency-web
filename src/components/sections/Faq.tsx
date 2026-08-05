@@ -240,7 +240,7 @@ export default function Faq() {
                     hairline it replaces instead of beside it. */}
                 <span
                   aria-hidden="true"
-                  className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 bg-linear-to-r from-accent-primary to-accent-secondary transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-focus-within:scale-x-100 group-data-[focus]:scale-x-100 group-has-[[open]]:scale-x-100"
+                  className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 brand-gradient transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-focus-within:scale-x-100 group-data-[focus]:scale-x-100 group-has-[[open]]:scale-x-100"
                 />
 
                 {/* The paw's light, parked. Its own clip box rather than

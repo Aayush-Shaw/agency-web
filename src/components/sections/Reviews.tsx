@@ -234,7 +234,7 @@ function ReviewCard({
             so the two sections answer a hover the same way. */}
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-linear-to-r from-accent-primary to-accent-secondary transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-data-[focus]/card:scale-x-100"
+          className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 brand-gradient transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-data-[focus]/card:scale-x-100"
         />
 
         {/* <figcaption> first, not last, and that is the redesign. A review is

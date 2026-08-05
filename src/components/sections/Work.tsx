@@ -320,7 +320,7 @@ export default function Work() {
     ));
 
   return (
-    <section id="work" className="bg-transparent px-5 pt-24 md:px-8 md:pt-35 pb-10">
+    <section id="work" className="px-5 pt-24 md:px-8 md:pt-35 pb-10">
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Selected work</Eyebrow>
@@ -344,7 +344,7 @@ export default function Work() {
               onClick={() => setActive(tab)}
               className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition-colors ${
                 active === tab
-                  ? "border-transparent bg-linear-to-r from-accent-primary to-accent-secondary text-bg"
+                  ? "border-transparent brand-gradient text-bg"
                   : "border-border text-text-muted hover:border-accent-primary hover:text-text"
               }`}
             >

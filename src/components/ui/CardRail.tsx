@@ -479,7 +479,7 @@ export default function CardRail({
               // max-h-full clamps a very long item against the rail, and
               // the flex-start default is the right answer there too — the
               // pills go, never the icon and heading.
-              className={`pointer-events-none flex h-full w-full flex-col gap-4 overflow-hidden border border-border bg-surface p-5 shadow-[0_28px_70px_-30px_var(--raw-glow)] transition-transform duration-200 ease-out select-none sm:p-7 ${
+              className={`pointer-events-none flex h-full w-full flex-col gap-4 overflow-hidden border border-border bg-surface p-5 transition-transform duration-200 ease-out select-none sm:p-7 ${
                 cardRadius.startsWith("rounded") ? cardRadius : ""
               }`}
               style={

@@ -331,7 +331,7 @@ export default function ContactDialog({
               <button
                 type="button"
                 onClick={onClose}
-                className="glow inline-flex h-12 items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-6 text-base font-semibold text-bg"
+                className="inline-flex h-12 items-center justify-center rounded-full brand-gradient px-6 text-base font-semibold text-bg"
               >
                 <Roll>Done</Roll>
               </button>
@@ -437,7 +437,7 @@ export default function ContactDialog({
                   type="submit"
                   disabled={status === "submitting" || cooldown > 0}
                   style={{ "--i": 6 } as CSSProperties}
-                  className="cascade-item glow inline-flex h-13 w-full items-center justify-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary text-base font-semibold text-bg transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
+                  className="cascade-item inline-flex h-13 w-full items-center justify-center rounded-full brand-gradient text-base font-semibold text-bg transition-transform hover:scale-[1.02] disabled:cursor-not-allowed disabled:opacity-70 disabled:hover:scale-100"
                 >
                   <Roll>
                     {status === "submitting"

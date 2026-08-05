@@ -139,7 +139,7 @@ function Tiles({ items }: { items: Tile[] }) {
       // fit and every span above becomes a suggestion.
       // marginBottom rather than a `gap` on the track — see the loop for why
       // the two are not interchangeable here.
-      className="relative shrink-0 overflow-hidden rounded-xl bg-transparent"
+      className="relative shrink-0 overflow-hidden rounded-xl"
       style={{ height: `calc(var(--cover-h) * ${item.span})`, marginBottom: GAP }}
     >
       {item.type === "video" ? (
@@ -388,7 +388,8 @@ export default function Hero() {
         className="hero-backdrop pointer-events-none absolute inset-0 z-0"
       >
         <Aurora
-          colorStops={["#4f6793", "#223057", "#483f72"]}
+          // colorStops={["#4f6793", "#223057", "#483f72"]}
+          colorStops={["#6fa8dc", "#223057", "#8b5cf6"]}
           blend={0.5}
           amplitude={1.5}
           speed={0.8}
@@ -592,13 +593,13 @@ export default function Hero() {
                 href="#contact"
                 className="hero-cta group inline-flex h-(--cta-h) items-stretch text-[clamp(0.875rem,1.9svh,1rem)] font-semibold text-bg transition-transform [--cta-h:clamp(2.75rem,6.5svh,3.25rem)] hover:scale-[1.03]"
               >
-                <span className="glow grid place-items-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary px-7">
+                <span className="grid place-items-center rounded-full brand-gradient px-7">
                   {/* The label rolls up while the arrow beside it flies out
                       diagonally — same swap, and they run on the same hover. */}
                   <Roll>Elevate Your Brand</Roll>
                 </span>
 
-                <span className="glow grid w-(--cta-h) shrink-0 place-items-center rounded-full bg-linear-to-r from-accent-primary to-accent-secondary">
+                <span className="grid w-(--cta-h) shrink-0 place-items-center rounded-full brand-gradient">
                   {/* Two arrows on a belt: on hover the seated one flies out
                     and its twin — parked one trip down-left, outside the clip —
                     takes the slot. Same duration, no delay, or it reads as two
