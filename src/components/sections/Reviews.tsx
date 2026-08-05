@@ -49,7 +49,32 @@ const REVIEWS = [
     when: "3 months ago",
     rating: 5,
   },
+  {
+    quote:
+      "Our social finally looks like it belongs to the same brand as the site. Six weeks in, and I've stopped writing captions at midnight.",
+    name: "Priya Raman",
+    company: "Bower & Co, UK",
+    face: "photo-1534528741775-53994a69daeb",
+    when: "5 weeks ago",
+    rating: 5,
+  },
+  {
+    quote:
+      "They cut nine months of shoot footage into a launch film and three ad variants. Two rounds of notes and it was done.",
+    name: "Tomás Herrera",
+    company: "Vessel Outdoor, ES",
+    face: "photo-1506794778202-cad84cf45f1d",
+    when: "6 months ago",
+    rating: 5,
+  },
 ];
+
+/** How many of the six a phone gets. Six in one column is a long scroll past
+    the same card six times; four is the point where the reader has enough and
+    the section still ends. The rest are hidden in CSS rather than sliced in JS
+    — a slice would need the viewport width at render, which the server does not
+    have, and would cost a hydration mismatch to guess at. */
+const PHONE_LIMIT = 4;
 
 /* Google's own mark in its own four colours — the one saturated thing in a
    section built from honey and cinnamon, which is exactly why it reads as a
@@ -118,7 +143,14 @@ const MAX_TILT = 4;
  * the other silently stops working. Same split — and the same reason — as the
  * hero's CTA, where Magnetic owns the wrapper and the entrance owns the anchor.
  */
-function ReviewCard({ review }: { review: (typeof REVIEWS)[number] }) {
+function ReviewCard({
+  review,
+  className = "",
+}: {
+  review: (typeof REVIEWS)[number];
+  /** Extra classes for the outer (GSAP-owned) box — the phone cut-off uses it. */
+  className?: string;
+}) {
   const box = useRef<HTMLElement>(null);
   const reduced = useReducedMotion();
   // Per card, not per grid: the handlers below are the card's, so the paw is
@@ -137,7 +169,7 @@ function ReviewCard({ review }: { review: (typeof REVIEWS)[number] }) {
   const plane = { rotateX, rotateY, y: lift, transformPerspective: 900 };
 
   return (
-    <div className="review-card relative">
+    <div className={`review-card relative ${className}`}>
       {/* The paw rakes *behind* the glass, not inside it. backdrop-filter only
           blurs what is painted behind an element — never its own descendants —
           so a paw parented to the card would composite on top of the finished
@@ -324,10 +356,23 @@ export default function Reviews() {
           </h2>
         </Reveal>
 
-        {/* No rake at this level. Each card owns its own — see ReviewCard. */}
-        <div ref={grid} className="mt-12 grid gap-4 sm:grid-cols-2">
-          {REVIEWS.map((review) => (
-            <ReviewCard key={review.name} review={review} />
+        {/* No rake at this level. Each card owns its own — see ReviewCard.
+            One column on a phone, two on a small tablet, three from md. */}
+        <div
+          ref={grid}
+          className="mt-12 grid gap-4 sm:grid-cols-2 md:grid-cols-3"
+        >
+          {REVIEWS.map((review, i) => (
+            <ReviewCard
+              key={review.name}
+              review={review}
+              // display:none, so the tail cards cost a phone no layout and no
+              // avatar fetch (a lazy image inside a hidden box is never
+              // requested). They stay in the GSAP selectors and animate
+              // invisibly, which is free: they are last in DOM order, so the
+              // visible cards still lead the stagger.
+              className={i >= PHONE_LIMIT ? "max-sm:hidden" : ""}
+            />
           ))}
         </div>
       </div>
