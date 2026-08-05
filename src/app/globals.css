@@ -40,8 +40,12 @@
   --raw-glow: light-dark(rgba(201, 130, 46, 0.28), rgba(232, 163, 61, 0.24));
 }
 
-:root[data-theme="light"] { color-scheme: light; }
-:root[data-theme="dark"] { color-scheme: dark; }
+:root[data-theme="light"] {
+  color-scheme: light;
+}
+:root[data-theme="dark"] {
+  color-scheme: dark;
+}
 
 /* corner radii: squircle-capable browsers (Chrome/Edge 139+) get larger radii,
    everyone else keeps the fallback. Consumed via the --radius / --radius-sm /
@@ -122,7 +126,11 @@
   --text-display: clamp(2.75rem, 1.08rem + 7.13vw, 6rem); /* hero h1  44→96 */
   --text-section-xl: clamp(2.25rem, 1.72rem + 2.25vw, 3.75rem); /* cta  36→60 */
   --text-section: clamp(2.25rem, 1.99rem + 1.13vw, 3rem); /* h2       36→48 */
-  --text-statement: clamp(1.875rem, 1.48rem + 1.69vw, 3rem); /* manifesto 30→48 */
+  --text-statement: clamp(
+    1.875rem,
+    1.48rem + 1.69vw,
+    3rem
+  ); /* manifesto 30→48 */
   --text-card: clamp(1.125rem, 1.08rem + 0.19vw, 1.25rem); /* card h3  18→20 */
   --text-card-lg: clamp(1.375rem, 1.3rem + 0.32vw, 1.5rem); /* cta h3  22→24 */
   --text-lead: clamp(1.0625rem, 1rem + 0.28vw, 1.25rem); /* sub-head  17→20 */
@@ -139,7 +147,12 @@ body {
   text-rendering: optimizeLegibility;
 }
 
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   font-family: var(--font-display), var(--font-sans), sans-serif;
 }
 
@@ -286,9 +299,10 @@ section[id] {
   /* Resting: empty and unfocused. An open service picker counts as focused,
      because Safari does not reliably focus a <summary> that was clicked. */
   &:is(
-    :has(:placeholder-shown:not(:focus)),
-    [data-empty]:not(:focus-within, :has(details[open]))
-  ) > .float-label {
+      :has(:placeholder-shown:not(:focus)),
+      [data-empty]:not(:focus-within, :has(details[open]))
+    )
+    > .float-label {
     top: 50%;
     translate: 0 -50%;
     /* No pill while it sits inside the field — it only exists to notch the
@@ -381,7 +395,7 @@ section[id] {
         width calc(0.32s * var(--dlg-speed)) cubic-bezier(0.2, 0.7, 0.2, 1),
       /* allow-discrete is what buys the exit: without it `display` flips to
          none on frame one and there is nothing left on screen to animate. */
-      display calc(0.42s * var(--dlg-speed)) allow-discrete,
+        display calc(0.42s * var(--dlg-speed)) allow-discrete,
       overlay calc(0.42s * var(--dlg-speed)) allow-discrete;
   }
   .dialog-in[open] {
@@ -451,7 +465,9 @@ section[id] {
   box-shadow: 0 12px 44px -12px var(--raw-glow);
 }
 .glow-ring {
-  box-shadow: 0 0 0 1px var(--color-accent-primary), 0 12px 48px -14px var(--raw-glow);
+  box-shadow:
+    0 0 0 1px var(--color-accent-primary),
+    0 12px 48px -14px var(--raw-glow);
 }
 
 /* Card hover lift. CSS, not JS: it's a two-state hover with no sequencing, so
@@ -464,10 +480,49 @@ section[id] {
     border-color 0.35s ease,
     box-shadow 0.35s ease;
 }
-.lift:hover {
-  transform: translateY(-6px);
-  border-color: color-mix(in oklab, var(--color-accent-primary) 55%, transparent);
-  box-shadow: 0 18px 50px -18px var(--raw-glow);
+/* Gated, unlike the Tailwind hover: utilities around it — those are already
+   wrapped in this same query by the framework, and only the hand-written rules
+   in this file are exposed. Without it a tap on a touch device leaves the card
+   lifted until something else is tapped, which on iOS means it stays lifted
+   while you scroll away from it. */
+@media (hover: hover) {
+  .lift:hover {
+    transform: translateY(-6px);
+    border-color: color-mix(
+      in oklab,
+      var(--color-accent-primary) 55%,
+      transparent
+    );
+    box-shadow: 0 18px 50px -18px var(--raw-glow);
+  }
+}
+
+/* The touch counterpart to the paw's light (usePawRake.tsx). There is no cursor
+   to follow on a phone, so it parks at the centre of whatever is crossing the
+   viewport's middle and fades in there — see useScrollFocus.ts, which sets the
+   attribute.
+
+   Driven straight off [data-focus] rather than by a group-data utility at the
+   call site: this rule is unlayered, so its opacity:0 would outrank the utility
+   trying to raise it (the same cascade note as .claw and :focus-visible above).
+   One rule here beats a specificity fight at two call sites. */
+.focus-glow {
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  translate: -50% -50%;
+  width: 20rem;
+  height: 20rem;
+  border-radius: 9999px;
+  background: color-mix(in oklab, var(--color-accent-primary) 20%, transparent);
+  filter: blur(64px);
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.4s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+
+[data-focus] .focus-glow {
+  opacity: 1;
 }
 
 /* Scroll hint. The arrow drifts the way it points and returns, so the pill
@@ -486,8 +541,13 @@ section[id] {
    have to opt in instead, because that reset misses ::details-content and does
    not touch delays.) */
 @keyframes scroll-hint {
-  0%, 100% { translate: 0 0; }
-  50% { translate: 0 4px; }
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  50% {
+    translate: 0 4px;
+  }
 }
 .scroll-hint-arrow {
   animation: scroll-hint 1.9s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -682,11 +742,24 @@ section[id] {
   translate: 0 100%;
 }
 
-:is(a, button:not(:disabled)):is(:hover, :focus-visible) .roll > * {
+/* Split, and the two halves are not symmetric. :focus-visible is ungated —
+   a keyboard is not a mouse, and touch devices get keyboards attached to them.
+   :hover is gated for the reason .lift is: on a phone it latches on tap and the
+   label sits mid-roll until something else is touched. */
+:is(a, button:not(:disabled)):focus-visible .roll > * {
   translate: 0 -100%;
 }
-:is(a, button:not(:disabled)):is(:hover, :focus-visible) .roll-twin {
+:is(a, button:not(:disabled)):focus-visible .roll-twin {
   translate: 0 0;
+}
+
+@media (hover: hover) {
+  :is(a, button:not(:disabled)):hover .roll > * {
+    translate: 0 -100%;
+  }
+  :is(a, button:not(:disabled)):hover .roll-twin {
+    translate: 0 0;
+  }
 }
 
 /* ============================================================
@@ -707,7 +780,9 @@ html.lenis body {
 }
 
 @media (prefers-reduced-motion: reduce) {
-  *, *::before, *::after {
+  *,
+  *::before,
+  *::after {
     animation-duration: 0.001ms !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.001ms !important;

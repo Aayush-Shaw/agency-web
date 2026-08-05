@@ -7,6 +7,7 @@ import { faceUrl } from "@/lib/media";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import usePawRake from "@/components/ui/usePawRake";
+import useScrollFocus from "@/components/ui/useScrollFocus";
 
 /* `when` is the field that turns marketing copy into a record. A quote with a
    name under it is a claim; a quote with a name, a face, a platform and a date
@@ -169,7 +170,12 @@ function ReviewCard({
   const plane = { rotateX, rotateY, y: lift, transformPerspective: 900 };
 
   return (
-    <div className={`review-card relative ${className}`}>
+    // group/card, named, because two groups are nested here: this one carries
+    // the touch focus state (useScrollFocus sets data-focus on it) and the
+    // figure inside carries the mouse one. The glow has to hang off this outer
+    // box — it lives in the clip layer, which is the figure's sibling, not its
+    // child, and so cannot see a group on the figure.
+    <div className={`review-card group/card relative ${className}`}>
       {/* The paw rakes *behind* the glass, not inside it. backdrop-filter only
           blurs what is painted behind an element — never its own descendants —
           so a paw parented to the card would composite on top of the finished
@@ -186,6 +192,10 @@ function ReviewCard({
         className="pointer-events-none absolute inset-0 overflow-hidden rounded-2xl"
       >
         {paw.layers}
+        {/* Behind the glass with the paw, so it is frosted the same way. This
+            is the whole of the touch treatment's light — the claw needs an x/y
+            the scroll cannot give it, so it stays a mouse reward. */}
+        <span className="focus-glow" aria-hidden="true" />
       </motion.div>
 
       <motion.figure
@@ -224,7 +234,7 @@ function ReviewCard({
             so the two sections answer a hover the same way. */}
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-linear-to-r from-accent-primary to-accent-secondary transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100"
+          className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 bg-linear-to-r from-accent-primary to-accent-secondary transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-data-[focus]/card:scale-x-100"
         />
 
         {/* <figcaption> first, not last, and that is the redesign. A review is
@@ -262,7 +272,7 @@ function ReviewCard({
               sourcing verifies itself when you lean in. Held at grayscale at
               rest so four brand colours aren't shouting from every card in a
               section that otherwise has two. */}
-          <GoogleG className="size-5 shrink-0 opacity-60 grayscale transition-[opacity,filter] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:opacity-100 group-hover:grayscale-0" />
+          <GoogleG className="size-5 shrink-0 opacity-60 grayscale transition-[opacity,filter] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:opacity-100 group-hover:grayscale-0 group-data-[focus]/card:opacity-100 group-data-[focus]/card:grayscale-0" />
         </figcaption>
 
         <div className="mt-4 flex items-center gap-2.5">
@@ -281,6 +291,9 @@ function ReviewCard({
 /** Section 9 — client reviews. */
 export default function Reviews() {
   const grid = useRef<HTMLDivElement>(null);
+  // Touch's stand-in for hover: whichever card is crossing the middle of the
+  // screen wears the state a mouse would give it.
+  useScrollFocus(grid, ".review-card");
 
   useGSAP(
     () => {
