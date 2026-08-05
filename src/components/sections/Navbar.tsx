@@ -108,7 +108,7 @@ export default function Navbar() {
         >
           {/* Left pill — logo only. */}
           <a
-            href="#top"
+            href="#"
             onClick={() => setMenuOpen(false)}
             className={`${control} flex h-12 items-center gap-2 px-3 font-display text-base font-bold tracking-tight lg:gap-2.5 lg:px-5 lg:text-lg`}
           >

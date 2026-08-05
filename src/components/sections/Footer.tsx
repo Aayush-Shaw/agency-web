@@ -96,7 +96,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-[1600px] flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="max-w-xs">
           <a
-            href="#top"
+            href="#"
             className="flex items-center gap-2.5 font-display text-lg font-bold tracking-tight"
           >
             <span className="claw h-5 w-5" aria-hidden="true" />
