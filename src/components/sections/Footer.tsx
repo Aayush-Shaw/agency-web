@@ -49,19 +49,19 @@ const socialIcon = (glyph: ReactNode) => (
 const SOCIALS = [
   {
     label: "Instagram",
-    href: "https://instagram.com",
+    href: "https://instagram.com/digibear",
     // Lens on the tile's centre, flash offset into the top-right quadrant.
     icon: socialIcon(
       <>
         {TILE}
         <circle cx="12" cy="12" r="4.1" />
         <path d="M16.7 7.3h.01" />
-      </>
+      </>,
     ),
   },
   {
     label: "Facebook",
-    href: "https://facebook.com",
+    href: "https://facebook.com/digibear",
     /* An 'f': stem up the centre, hooking right at the top, barred at the
        waist. Sized so the ink — not the stem — centres on the tile: the two
        strokes together span x 8.8→15.2 and y 7→17, both centred on 12. Judging
@@ -72,19 +72,19 @@ const SOCIALS = [
         {TILE}
         <path d="M12.1 17V9.2A2.2 2.2 0 0 1 14.3 7h.9" />
         <path d="M8.8 11.9h5.4" />
-      </>
+      </>,
     ),
   },
   {
     label: "YouTube",
-    href: "https://youtube.com",
+    href: "https://youtube.com/@digibear",
     /* Play triangle, centroid nudged right of centre so it reads as centred —
        a right-pointing triangle carries its mass on the left. */
     icon: socialIcon(
       <>
         {TILE_WIDE}
         <path d="m10.7 9.2 5.2 2.8-5.2 2.8z" />
-      </>
+      </>,
     ),
   },
 ];
@@ -101,7 +101,7 @@ export default function Footer() {
           >
             <span className="claw h-5 w-5" aria-hidden="true" />
             <Roll>
-              DIGITAL <span className="text-gradient">BEAR</span>
+              DIGI <span className="text-gradient">BEAR</span>
             </Roll>
           </a>
           <p className="mt-4 text-sm leading-relaxed text-text-muted">
@@ -110,54 +110,69 @@ export default function Footer() {
           </p>
         </div>
 
-        <nav aria-label="Footer">
-          <ul className="grid grid-cols-2 gap-x-10 gap-y-3">
-            {NAV.map((link) => (
-              <li key={link.href}>
-                <a
-                  href={link.href}
-                  className="inline-block py-1.5 text-sm text-text-muted transition-colors hover:text-text"
-                >
-                  <Roll>{link.label}</Roll>
-                </a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+        {/* One three-column row on a phone: the five links fill the first two
+            columns and the three social marks stack down the third, so both
+            halves are three rows tall and the block squares off. md:contents
+            dissolves this wrapper again, leaving the desktop flex row exactly
+            as it was — no second copy of either child. */}
+        <div className="grid grid-cols-3 gap-x-6 md:contents">
+          <nav aria-label="Footer" className="col-span-2">
+            <ul className="grid grid-cols-2 gap-x-10 gap-y-3">
+              {NAV.map((link) => (
+                // The nav's two columns are the phone grid's first and second,
+                // so the middle column of the footer is this list's even
+                // children — row-major flow puts 2 and 4 in column two. Centred
+                // there, the row reads left / centre / right across the three
+                // columns. Back to flush left at md, where the socials are a
+                // row again and there is no middle column to speak of.
+                <li key={link.href} className="even:text-center md:even:text-left">
+                  <a
+                    href={link.href}
+                    className="inline-block py-1.5 text-sm text-text-muted transition-colors hover:text-text"
+                  >
+                    <Roll>{link.label}</Roll>
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
 
-        <div className="flex gap-3">
-          {SOCIALS.map((social) => (
-            <a
-              key={social.label}
-              href={social.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              aria-label={social.label}
-              className="group relative block h-11 w-11 overflow-hidden rounded-full border border-border text-text-muted transition-[transform,border-color] duration-500 ease-(--ease-elastic) hover:-translate-y-1 hover:border-accent-primary"
-            >
-              {/* The accent floods up from the bottom edge. Deliberately not
+          {/* items-end so the stack hugs the footer's right edge rather than
+            floating mid-column — the marks are 44px in a ~96px column. */}
+          <div className="flex flex-col items-end gap-3 md:flex-row md:items-start">
+            {SOCIALS.map((social) => (
+              <a
+                key={social.label}
+                href={social.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={social.label}
+                className="group relative block h-11 w-11 overflow-hidden rounded-full border border-border text-text-muted transition-[transform,border-color] duration-500 ease-(--ease-elastic) hover:-translate-y-1 hover:border-accent-primary"
+              >
+                {/* The accent floods up from the bottom edge. Deliberately not
                   --ease-elastic like the rest: an overshoot would carry the
                   fill's top edge past the button and flash a gap underneath. */}
-              <span
-                aria-hidden="true"
-                className="absolute inset-0 translate-y-full bg-linear-to-r from-accent-primary to-accent-secondary transition-transform duration-420 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-y-0"
-              />
-              {/* Two copies of the mark on one reel: the resting one rolls out
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0 translate-y-full bg-linear-to-r from-accent-primary to-accent-secondary transition-transform duration-420 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-y-0"
+                />
+                {/* Two copies of the mark on one reel: the resting one rolls out
                   of the top as its twin rides in on the flood. Same twin-icon
                   swap the hero CTA's arrow uses, turned vertical. */}
-              <span className="absolute inset-0 grid place-items-center transition-transform duration-520 ease-(--ease-elastic) group-hover:-translate-y-full">
-                {social.icon}
-              </span>
-              <span className="absolute inset-0 grid translate-y-full place-items-center text-bg transition-transform duration-520 ease-(--ease-elastic) group-hover:translate-y-0">
-                {social.icon}
-              </span>
-            </a>
-          ))}
+                <span className="absolute inset-0 grid place-items-center transition-transform duration-520 ease-(--ease-elastic) group-hover:-translate-y-full">
+                  {social.icon}
+                </span>
+                <span className="absolute inset-0 grid translate-y-full place-items-center text-bg transition-transform duration-520 ease-(--ease-elastic) group-hover:translate-y-0">
+                  {social.icon}
+                </span>
+              </a>
+            ))}
+          </div>
         </div>
       </div>
 
       <div className="mx-auto mt-4 max-w-[1600px] border-t border-border pt-4 text-sm text-text-muted text-center">
-        © {new Date().getFullYear()} Digital Bear Studio. All rights reserved.
+        © {new Date().getFullYear()} Digi Bear. All rights reserved.
       </div>
     </footer>
   );

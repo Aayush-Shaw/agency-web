@@ -116,7 +116,7 @@ export default function Navbar() {
             {/* The claw stays outside the clip — it is the one part of the mark
                 that shouldn't leave. */}
             <Roll>
-              DIGITAL <span className="text-gradient">BEAR</span>
+              DIGI <span className="text-gradient">BEAR</span>
             </Roll>
           </a>
 

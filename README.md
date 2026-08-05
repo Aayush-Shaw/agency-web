@@ -1,6 +1,6 @@
 <div align="center">
 
-# 🐻 Digital Bear
+# 🐻 Digi Bear
 
 **Design, Motion & AI Video Studio**
 

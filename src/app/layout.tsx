@@ -22,9 +22,9 @@ const sans = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Digital Bear — Design, Motion & AI Video Studio",
+  title: "Digi Bear — Design, Motion & AI Video Studio",
   description:
-    "Digital Bear is a full-service digital studio for ambitious brands: website design & development, social media marketing, motion graphics, video editing, and AI-generated avatars & video.",
+    "Digi Bear is a full-service digital studio for ambitious brands: website design & development, social media marketing, motion graphics, video editing, and AI-generated avatars & video.",
 };
 
 // Tells the UA to render its own surfaces (scrollbars, form controls, the mobile

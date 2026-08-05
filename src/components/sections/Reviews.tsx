@@ -5,7 +5,7 @@ import Reveal from "@/components/ui/Reveal";
 const REVIEWS = [
   {
     quote:
-      "Digital Bear rebuilt our site and it paid for itself in a month. Sharp design, and they actually hit every deadline.",
+      "Digi Bear rebuilt our site and it paid for itself in a month. Sharp design, and they actually hit every deadline.",
     name: "Sarah Whitmore",
     company: "Northwind Coffee, US",
     avatar: "/avatars/a1.svg",

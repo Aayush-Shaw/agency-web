@@ -566,7 +566,7 @@ export default function Hero() {
           {/* The service list moved down here when the headline lost it — the
             headline now carries the promise and this carries the proof. */}
           <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
-            Digital Bear is a full-service studio crafting websites, social
+            Digi Bear is a full-service studio crafting websites, social
             content, motion graphics, and AI-generated video for ambitious teams
             — premium work, fast turnarounds, on your timezone.
           </p>
