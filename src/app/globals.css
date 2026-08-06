@@ -72,22 +72,38 @@
    tone in each palette takes it and the lighter one becomes secondary.
    surface / text-muted / border / glow are mixed from those rather than
    invented, exactly the way the light half of the pair above mixes its own.
-   85% for muted is what keeps it past 4.5:1 on these grounds while still
-   reading a step quieter than the ink.
+
+   Muted is the ink at full strength here, not a lightened step of it, and that
+   is what pays for the field. These four are the only themes with a moving
+   coloured ground under the copy, so the darkest thing the field is allowed to
+   go is set by the *lightest* text on it: at 85% ink, muted needed the ground
+   to stay above 0.64 relative luminance, which caps every mesh node around 0.3
+   and leaves four near-identical cream washes. At full ink the floor drops to
+   0.41, which is what lets the nodes run 2-3x heavier. Muted is separated by
+   size and weight instead of by tint — see the .prose scale below.
+
+   Surfaces are tinted with each theme's *own* mid-tone rather than its ink, so
+   a card reads as that theme's material — sand, pine, tweed, greige — and not
+   as the same grey pane four times.
 
    --mesh-0..3 are the animated field's stops, read off this element by
    MeshGradient.tsx. -0 is the base tone and the canvas' clear colour; the
-   other three are the drifting nodes. Plain hex on purpose — that component
-   parses them, so a color-mix() here would not survive the trip.
+   other three are the moving masses, in the order that file expects them:
+   -1 the light-mid tone that carries the large areas, -2 the dark chromatic
+   accent, -3 the ink (or, for gucci, the gold — see there). Plain hex on
+   purpose: that component parses them, so a color-mix() here would not
+   survive the trip.
    ============================================================ */
 
-/* Trail parchment, clay and dusty rose over a charcoal-olive ink. */
+/* Trail parchment, clay and dusty rose over a charcoal-olive ink. The field is
+   ridgelines: warm haze low, rose ridge under it, ink at the very bottom edge —
+   altitude and distance, drifting sideways like weather. */
 :root[data-theme="hiking"] {
   color-scheme: light;
   --raw-bg: #f3eee5;
   --raw-text: #41403c;
-  --raw-surface: color-mix(in oklab, #41403c 8%, #f3eee5);
-  --raw-text-muted: color-mix(in oklab, #41403c 85%, #f3eee5);
+  --raw-surface: color-mix(in oklab, #d08856 14%, #f3eee5);
+  --raw-text-muted: #41403c;
   --raw-accent-primary: #8c5a5a;
   --raw-accent-secondary: #d08856;
   --raw-border: color-mix(in oklab, #41403c 18%, transparent);
@@ -99,13 +115,16 @@
 }
 
 /* Maple red on parchment, slate ink, and pine as the tone the surfaces are
-   tinted with — the amber is autumn, and it is the ramp's light end. */
+   tinted with — the amber is autumn, and it is the ramp's light end. The field
+   is the only one built on *vertical* masses: maple and pine as two standing
+   columns that breathe past each other with the parchment splitting them, and
+   an amber band sweeping the horizon between. It is a flag, read slowly. */
 :root[data-theme="canada"] {
   color-scheme: light;
   --raw-bg: #f3eee5;
   --raw-text: #2d3748;
-  --raw-surface: color-mix(in oklab, #1b4332 8%, #f3eee5);
-  --raw-text-muted: color-mix(in oklab, #2d3748 85%, #f3eee5);
+  --raw-surface: color-mix(in oklab, #1b4332 12%, #f3eee5);
+  --raw-text-muted: #2d3748;
   --raw-accent-primary: #8b1e2d;
   --raw-accent-secondary: #d08856;
   --raw-border: color-mix(in oklab, #1b4332 20%, transparent);
@@ -118,13 +137,19 @@
 
 /* Tweed olive ink, a deep maroon accent, tan for the ramp's light end. The
    maroon is darker than the ink, so highlighted words read heavier than the
-   copy around them rather than lighter — which is the right way round here. */
+   copy around them rather than lighter — which is the right way round here.
+
+   The field is the literal one: this palette is a tweed jacket, so the ground
+   is a woven one. Two sets of broad diagonals crossing at roughly 160px, tan
+   one way and maroon the other, wandering through a noise warp so the weave
+   never lines up with itself — cloth, not a pattern swatch. It is the only
+   field here with a *direction*, and the slowest of the four. */
 :root[data-theme="mr-bean"] {
   color-scheme: light;
   --raw-bg: #f3eee5;
   --raw-text: #3b3c36;
-  --raw-surface: color-mix(in oklab, #3b3c36 8%, #f3eee5);
-  --raw-text-muted: color-mix(in oklab, #3b3c36 85%, #f3eee5);
+  --raw-surface: color-mix(in oklab, #b07d56 16%, #f3eee5);
+  --raw-text-muted: #3b3c36;
   --raw-accent-primary: #6a1d20;
   --raw-accent-secondary: #b07d56;
   --raw-border: color-mix(in oklab, #3b3c36 18%, transparent);
@@ -140,17 +165,20 @@
    the ink and the secondary are the leather and the camel pulled toward the
    espresso this site already owns (#2b1b12, see the pair above), and the gold
    is treated as *light* rather than pigment: it is the hover glow and the
-   brightest node in the field, and it never has to be read. */
+   brightest node in the field, and it never has to be read.
+
+   Which is also what the field is built on. Gold being light is the whole
+   direction: a specular band travels diagonally across the greige the way it
+   crosses satin, over slow leather and camel masses underneath. It is the one
+   theme whose brightest node is lighter than its own ground, so it is the one
+   field allowed to run at full strength — the governor in the shader reads
+   luminance, and gold passes it. Highest drama of the four, by construction. */
 :root[data-theme="gucci"] {
   color-scheme: light;
   --raw-bg: #dcd2c6;
   --raw-text: color-mix(in oklab, #7b604a 62%, #2b1b12);
   --raw-surface: color-mix(in oklab, #b19a8a 40%, #dcd2c6);
-  --raw-text-muted: color-mix(
-    in oklab,
-    color-mix(in oklab, #7b604a 62%, #2b1b12) 85%,
-    #dcd2c6
-  );
+  --raw-text-muted: color-mix(in oklab, #7b604a 62%, #2b1b12);
   --raw-accent-primary: #7b604a;
   --raw-accent-secondary: color-mix(in oklab, #c9a075 45%, #2b1b12);
   --raw-border: color-mix(in oklab, #7b604a 26%, transparent);
