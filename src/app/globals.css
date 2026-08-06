@@ -58,6 +58,133 @@
   color-scheme: dark;
 }
 
+/* ============================================================
+   The four extra themes.
+
+   Same token contract as the pair above, minus light-dark(): each of these is
+   one fixed palette, so every token is a flat value and there is no second
+   half to carry. Nothing above is touched — [data-theme] is still the one
+   switch, and anything these don't declare falls back to what :root resolved.
+
+   Roles are assigned by *contrast*, not by the order the palette was handed
+   over, because --raw-accent-primary is not decoration: it is link text, the
+   focus ring, the review stars and the checkmarks, so the darkest chromatic
+   tone in each palette takes it and the lighter one becomes secondary.
+   surface / text-muted / border / glow are mixed from those rather than
+   invented, exactly the way the light half of the pair above mixes its own.
+   85% for muted is what keeps it past 4.5:1 on these grounds while still
+   reading a step quieter than the ink.
+
+   --mesh-0..3 are the animated field's stops, read off this element by
+   MeshGradient.tsx. -0 is the base tone and the canvas' clear colour; the
+   other three are the drifting nodes. Plain hex on purpose — that component
+   parses them, so a color-mix() here would not survive the trip.
+   ============================================================ */
+
+/* Trail parchment, clay and dusty rose over a charcoal-olive ink. */
+:root[data-theme="hiking"] {
+  color-scheme: light;
+  --raw-bg: #f3eee5;
+  --raw-text: #41403c;
+  --raw-surface: color-mix(in oklab, #41403c 8%, #f3eee5);
+  --raw-text-muted: color-mix(in oklab, #41403c 85%, #f3eee5);
+  --raw-accent-primary: #8c5a5a;
+  --raw-accent-secondary: #d08856;
+  --raw-border: color-mix(in oklab, #41403c 18%, transparent);
+  --raw-glow: color-mix(in oklab, #8c5a5a 30%, transparent);
+  --mesh-0: #f3eee5;
+  --mesh-1: #d08856;
+  --mesh-2: #8c5a5a;
+  --mesh-3: #41403c;
+}
+
+/* Maple red on parchment, slate ink, and pine as the tone the surfaces are
+   tinted with — the amber is autumn, and it is the ramp's light end. */
+:root[data-theme="canada"] {
+  color-scheme: light;
+  --raw-bg: #f3eee5;
+  --raw-text: #2d3748;
+  --raw-surface: color-mix(in oklab, #1b4332 8%, #f3eee5);
+  --raw-text-muted: color-mix(in oklab, #2d3748 85%, #f3eee5);
+  --raw-accent-primary: #8b1e2d;
+  --raw-accent-secondary: #d08856;
+  --raw-border: color-mix(in oklab, #1b4332 20%, transparent);
+  --raw-glow: color-mix(in oklab, #8b1e2d 26%, transparent);
+  --mesh-0: #f3eee5;
+  --mesh-1: #d08856;
+  --mesh-2: #8b1e2d;
+  --mesh-3: #1b4332;
+}
+
+/* Tweed olive ink, a deep maroon accent, tan for the ramp's light end. The
+   maroon is darker than the ink, so highlighted words read heavier than the
+   copy around them rather than lighter — which is the right way round here. */
+:root[data-theme="mr-bean"] {
+  color-scheme: light;
+  --raw-bg: #f3eee5;
+  --raw-text: #3b3c36;
+  --raw-surface: color-mix(in oklab, #3b3c36 8%, #f3eee5);
+  --raw-text-muted: color-mix(in oklab, #3b3c36 85%, #f3eee5);
+  --raw-accent-primary: #6a1d20;
+  --raw-accent-secondary: #b07d56;
+  --raw-border: color-mix(in oklab, #3b3c36 18%, transparent);
+  --raw-glow: color-mix(in oklab, #6a1d20 26%, transparent);
+  --mesh-0: #f3eee5;
+  --mesh-1: #b07d56;
+  --mesh-2: #6a1d20;
+  --mesh-3: #3b3c36;
+}
+
+/* The one palette with no ink in it. Leather on greige is 3.8:1 and the gold
+   on greige is 1.06:1 — unreadable as text, whatever it is doing there. So
+   the ink and the secondary are the leather and the camel pulled toward the
+   espresso this site already owns (#2b1b12, see the pair above), and the gold
+   is treated as *light* rather than pigment: it is the hover glow and the
+   brightest node in the field, and it never has to be read. */
+:root[data-theme="gucci"] {
+  color-scheme: light;
+  --raw-bg: #dcd2c6;
+  --raw-text: color-mix(in oklab, #7b604a 62%, #2b1b12);
+  --raw-surface: color-mix(in oklab, #b19a8a 40%, #dcd2c6);
+  --raw-text-muted: color-mix(
+    in oklab,
+    color-mix(in oklab, #7b604a 62%, #2b1b12) 85%,
+    #dcd2c6
+  );
+  --raw-accent-primary: #7b604a;
+  --raw-accent-secondary: color-mix(in oklab, #c9a075 45%, #2b1b12);
+  --raw-border: color-mix(in oklab, #7b604a 26%, transparent);
+  --raw-glow: color-mix(in oklab, #f5d76e 34%, transparent);
+  --mesh-0: #dcd2c6;
+  --mesh-1: #c9a075;
+  --mesh-2: #7b604a;
+  --mesh-3: #f5d76e;
+}
+
+/* The field replaces the two-glow atmosphere for the themes that have one —
+   they are the same layer doing the same job, and running both would put a
+   honey wash over a palette that has no honey in it.
+
+   Reviews is the one section whose own background would hide the field. It is
+   a flat tonal band with nothing overlapping it, so dropping it costs nothing
+   and the field carries that stretch instead. Process keeps its background on
+   purpose: it is a raised sheet riding up over WhyUs (mt-[-10svh]), and a
+   transparent one would show WhyUs straight through the overlap. It covers
+   the atmosphere layer today for exactly the same reason. */
+:root:is(
+    [data-theme="hiking"],
+    [data-theme="canada"],
+    [data-theme="mr-bean"],
+    [data-theme="gucci"]
+  ) {
+  & .atmosphere {
+    display: none;
+  }
+  & #reviews {
+    background-color: transparent;
+  }
+}
+
 /* corner radii: squircle-capable browsers (Chrome/Edge 139+) get larger radii,
    everyone else keeps the fallback. Consumed via the --radius / --radius-sm /
    --radius-input custom properties. */
@@ -625,7 +752,12 @@ section[id] {
    reaches the top it sits at the sheet's own top edge and cannot reach the
    hero, and after that it pins at 0 and behaves exactly as fixed did.
    The negative margin is so it claims no space in the flow. */
-.atmosphere {
+/* .mesh-bg is the four extra themes' animated field (MeshGradient.tsx) and it
+   takes the identical slot — same sticky trick, same negative margin, same
+   layer — because it is answering the same question: how does a backdrop cover
+   the whole post-hero sheet without ever reaching the pinned hero above it. */
+.atmosphere,
+.mesh-bg {
   position: sticky;
   top: 0;
   height: 100vh;

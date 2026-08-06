@@ -1,23 +1,11 @@
 "use client";
 
-import { Moon, Sun } from "lucide-react";
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import Roll from "@/components/ui/Roll";
+import ThemeMenu from "@/components/ui/ThemeMenu";
 
 const DARK_QUERY = "(prefers-color-scheme: dark)";
-
-// The <head> script in layout.tsx guarantees data-theme is always set, so this
-// only has to flip it.
-//
-// Nothing is persisted, deliberately: the device preference is the single
-// source of truth and this is a session-only override. Saving the choice is
-// what used to pin the site to a stale value and make it ignore the OS — a
-// reload or a system change now re-resolves from the device instead.
-function toggleTheme() {
-  const root = document.documentElement;
-  root.dataset.theme = root.dataset.theme === "dark" ? "light" : "dark";
-}
 
 const LINKS = [
   { label: "Services", href: "#services" },
@@ -150,19 +138,11 @@ export default function Navbar() {
               outline, and it still collapses to a single circle at md where the
               hamburger drops out. */}
           <div className={`${control} flex h-12 items-center gap-1 px-0.5`}>
-            {/* Theme toggle. The DOM attribute is the state — no React state, so
-                nothing to hydrate and the icon swap is pure CSS. */}
-            <motion.button
-              type="button"
-              onClick={toggleTheme}
-              whileTap={{ scale: 0.85, rotate: -25 }}
-              transition={{ type: "spring", stiffness: 400, damping: 15 }}
-              aria-label="Toggle light or dark theme"
-              className="flex h-11 w-11 items-center justify-center rounded-full text-text transition-colors md:text-text-muted md:hover:text-text"
-            >
-              <Sun className="hidden h-5 w-5 dark:block" aria-hidden="true" />
-              <Moon className="h-5 w-5 dark:hidden" aria-hidden="true" />
-            </motion.button>
+            {/* Theme picker. Still the DOM attribute that is the state — the
+                menu only writes it, same as the two-state toggle it replaces.
+                Its panel is a popover, so it is in the top layer and escapes
+                this bar's max-md:overflow-hidden. */}
+            <ThemeMenu />
 
             {/* Hamburger → X. Two bars, not three: the middle one only exists to
                 be faded out, and these two already cross into the X on their

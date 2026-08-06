@@ -13,6 +13,7 @@ import Trust from "@/components/sections/Trust";
 import Faq from "@/components/sections/Faq";
 import Cta from "@/components/sections/Cta";
 import Footer from "@/components/sections/Footer";
+import MeshGradient from "@/components/ui/MeshGradient";
 
 export default function Home() {
   return (
@@ -49,6 +50,12 @@ export default function Home() {
             Work's mobile carousel keeps its own overflow-x-auto regardless. */}
         <div className="relative z-10 overflow-clip bg-bg">
           <div className="atmosphere" aria-hidden="true" />
+          {/* The four extra themes' animated field, in the same slot and for
+              the same reason — this is the only place a backdrop can cover the
+              whole post-hero sheet without reaching the pinned hero above it.
+              It renders nothing on light/dark, which keep .atmosphere; on the
+              four it renders, and globals.css hides .atmosphere instead. */}
+          <MeshGradient />
 
           <Manifesto />
           <Services />
