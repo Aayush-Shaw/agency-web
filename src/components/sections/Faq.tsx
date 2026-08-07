@@ -28,11 +28,11 @@ const FAQS = [
   {
     topic: "Payment",
     q: "How do you handle payment?",
-    a: "Bank transfer, all major cards, PayPal, and Wise. We bill 50% upfront to book the work and 50% on delivery. Larger engagements split into milestones instead.",
+    a: "Bank transfer and all major cards. We bill 50% upfront to book the work and 50% on delivery. Larger engagements split into milestones instead.",
   },
   {
     topic: "Working hours",
-    q: "How do you handle timezones and communication?",
+    q: "How do you handle communication?",
     a: "We work your hours across US, UK, and EU timezones. You get one dedicated point of contact, async updates as we go, and scheduled calls whenever you want a live review.",
   },
   {
