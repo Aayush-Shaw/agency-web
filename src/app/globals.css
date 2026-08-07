@@ -773,6 +773,26 @@ section[id] {
   pointer-events: none;
 }
 
+/* The hero's copy wants none of that. Sticky offsets are measured from the
+   scroll container's *content* edge, and the hero is a scroll container
+   (overflow-hidden) with a real top padding — so `top: 0` pushed this copy down
+   by the full pt-[clamp(3.5rem,11svh,6rem)], 96px at a 900px viewport. The
+   canvas ran from 96 to 996: the bottom 96px clipped away, and the top 96px of
+   the hero left with no canvas over it at all. That strip is exactly where the
+   navbar sits and exactly where WALL_FADE_TOP holds the wall transparent, so
+   nothing covered it and it read as a flat band of raw page background.
+
+   Static is the whole fix: no sticky, so no offset, and the box lands at its
+   flow position — the top-left of .hero-backdrop, which is already absolute
+   inset-0 over the section. height:100% then tracks the hero rather than the
+   viewport, which also drops the 100vh/100svh mismatch on mobile. The -100vh
+   margin is left alone; with no following sibling and a parent whose height is
+   definite, it has nothing to pull. */
+.hero-backdrop .mesh-bg {
+  position: static;
+  height: 100%;
+}
+
 /* ============================================================
    Hero stage
 
@@ -787,9 +807,16 @@ section[id] {
    [data-past-hero] lands on <html> once a full hero has scrolled past the top
    (Hero.tsx). Absent by default, so the server HTML already paints the dark
    navbar and there's no flash on load.
+
+   Both scopes are off while the hero carries no theme-dark (see Hero.tsx): the
+   bar borrows the *hero's* palette, so a dark bar over a light hero is
+   parchment ink on parchment. Restore the two together — re-add theme-dark to
+   the section and put `:root:not([data-past-hero]) header,` back in the
+   selector list below. The block itself is left intact so that is one line
+   either way.
    ============================================================ */
-.theme-dark,
-:root:not([data-past-hero]) header {
+/* :root:not([data-past-hero]) header, */
+.theme-dark {
   color-scheme: dark;
   /* The stage's own ground, deeper and bluer than the espresso below. Every
      `bg-bg` inside the hero re-resolves against it — which is Aurora's canvas

@@ -4,8 +4,9 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import { ArrowUp } from "lucide-react";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { imageUrl, videoUrl } from "@/lib/media";
-import Aurora from "@/components/ui/Aurora";
+// import Aurora from "@/components/ui/Aurora"; // with the backdrop below
 import Magnetic from "@/components/ui/Magnetic";
+import MeshGradient from "@/components/ui/MeshGradient";
 import Roll from "@/components/ui/Roll";
 import ScrollHint from "@/components/ui/ScrollHint";
 import Words from "@/components/ui/Words";
@@ -368,14 +369,19 @@ export default function Hero() {
   // no scrub to fight native scroll on a phone; the whole effect is two
   // z-indexes.
   //
-  // theme-dark swaps the section onto the site's one other palette — the dark
-  // espresso stage. See the Hero stage block in globals.css for why it is a
-  // class re-declaring the whole token set rather than a bare color-scheme.
+  // theme-dark swapped the section onto the site's one other palette — the dark
+  // espresso stage. Off with the aurora backdrop: the stage existed to be the
+  // ground that backdrop cleared to, and without it the hero just takes the
+  // page palette, same as every section below. Put `theme-dark ` back at the
+  // head of the className to restore it, and uncomment the navbar half of the
+  // selector in globals.css with it — the bar borrows this palette while the
+  // hero is under it, so the two go back together or the bar is light ink on a
+  // light hero.
   return (
     <section
       id="top"
       ref={root}
-      className="theme-dark sticky top-0 z-0 flex h-svh items-center overflow-hidden px-5 pt-[clamp(3.5rem,11svh,6rem)] pb-[clamp(1.25rem,3svh,2rem)] md:px-8"
+      className="sticky top-0 z-0 flex h-svh items-center overflow-hidden px-5 pt-[clamp(3.5rem,11svh,6rem)] pb-[clamp(1.25rem,3svh,2rem)] md:px-8"
     >
       {/* Hero-only backdrop. It clears to the bg token (opaque), which under
           theme-dark is the stage's own ground — so this is the hero's whole
@@ -383,18 +389,41 @@ export default function Hero() {
           strip to the left of the wall. Content sits above it; globals.css
           drops it entirely once the page is past the hero, which is what stops
           its render loop. */}
+      {/* The same field the rest of the page runs (MeshGradient), on a second
+          mount: page.tsx puts its own inside the post-hero sheet, which is
+          opaque and z-10, so that instance physically cannot reach up here.
+          Two mounts is the only way one field covers both, and it costs a
+          second WebGL context — both pause through the same
+          IntersectionObserver, so only one is ever drawing.
+
+          Same field, same stops, no per-instance palette: this is the page's
+          mesh continued up over the hero, which is the whole point.
+
+          .mesh-bg brings its own sticky/100vh/z-index:-1; inside this absolute
+          z-0 box that resolves to "fills the hero, behind nothing else", so
+          there is no CSS to add. And the display:none rule below still applies
+          to .hero-backdrop, which is what kills the render loop past the hero —
+          same switch Aurora used.
+
+          The Aurora original is kept below. */}
       <div
         aria-hidden
         className="hero-backdrop pointer-events-none absolute inset-0 z-0"
       >
+        <MeshGradient />
+      </div>
+
+      {/* <div
+        aria-hidden
+        className="hero-backdrop pointer-events-none absolute inset-0 z-0"
+      >
         <Aurora
-          // colorStops={["#4f6793", "#223057", "#483f72"]}
           colorStops={["#6fa8dc", "#223057", "#8b5cf6"]}
           blend={0.5}
           amplitude={1.5}
           speed={0.8}
         />
-      </div>
+      </div> */}
 
       {/* The wall's window: full height, hard against the *band's* right edge,
           and starting --wl into it so it runs on under the text.
@@ -538,8 +567,9 @@ export default function Hero() {
               the last box but outside the gradient span, so it stays
               text-coloured.
 
-              iOS glass alternative — swap these three in and comment the
-              gradient ones below. `.text-glass` is still in globals.css. Each
+              iOS glass alternative — commented directly below; swap it back in
+              and comment the gradient trio. `.text-glass` is still in
+              globals.css and this is still the live pair of options. Each
               glyph becomes a cut-out onto whatever is behind them, so unlike
               the gradient it doesn't restart per box; the period goes inside
               the glass because left solid against it, it reads as a stray
@@ -550,18 +580,18 @@ export default function Hero() {
               photographs it reads as blown-out cut-outs. Put it back if the
               wall ever comes out, or if you re-tune the brightness for it.
 */}
-            <span className="hero-word text-glass inline-block">
+            {/* <span className="hero-word text-glass inline-block">
               impossible
             </span>{" "}
             <span className="hero-word text-glass inline-block">to</span>{" "}
-            <span className="hero-word text-glass inline-block">ignore.</span>
-            {/* <span className="hero-word text-gradient inline-block">
-            impossible
-          </span>{" "}
-          <span className="hero-word text-gradient inline-block">to</span>{" "}
-          <span className="hero-word inline-block">
-            <span className="text-gradient">ignore</span>.
-          </span> */}
+            <span className="hero-word text-glass inline-block">ignore.</span> */}
+            <span className="hero-word text-gradient inline-block">
+              impossible
+            </span>{" "}
+            <span className="hero-word text-gradient inline-block">to</span>{" "}
+            <span className="hero-word inline-block">
+              <span className="text-gradient">ignore</span>.
+            </span>
           </h1>
 
           {/* The service list moved down here when the headline lost it — the
