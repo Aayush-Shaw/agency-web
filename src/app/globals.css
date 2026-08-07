@@ -623,114 +623,123 @@ section[id] {
    is not one of them: it comes from the keyframe at the bottom, so what you
    drag is the real scroll offset rather than a JS estimate of it.
 
-   All of it is inside @supports. A browser without scroll timelines keeps its
-   own scrollbar instead of losing the native one and getting a thumb that
-   never moves in exchange.
+   Two gates, and everything — including hiding the native bar — is behind
+   both.
+
+   @supports: a browser without scroll timelines keeps its own scrollbar
+   instead of losing the native one and getting a thumb that never moves in
+   exchange.
+
+   @media: this is a pointer control, so it only exists where there is a
+   pointer. Phones and tablets are excluded outright rather than shown an inert
+   copy — a touch scrollbar is dragged nowhere, and the gutter problem this
+   solves does not exist there either: iOS and Android scrollbars already
+   overlay and already cost no layout width, so hiding theirs would give up a
+   real affordance and buy nothing.
+
+   The pair of features is the point. `any-pointer` rather than `pointer`,
+   because a touchscreen laptop reports a coarse *primary* pointer while its
+   trackpad is the thing reaching for a 4px thumb. `any-hover` alongside it,
+   because a stylus reports a fine pointer with no hover — an Android tablet
+   with a pen would otherwise slip through the first test on its own.
+
+   CSS and not a JS check, because the server cannot know the pointer type: any
+   render-time branch on it is a hydration mismatch. The markup ships either
+   way and costs four empty divs where it is off.
    ============================================================ */
 .scrollbar {
   display: none;
 }
 
 @supports (animation-timeline: scroll()) {
-  html {
-    scrollbar-width: none;
-  }
-  html::-webkit-scrollbar {
-    display: none;
-  }
-
-  .scrollbar {
-    display: flex;
-    flex-direction: column;
-    position: fixed;
-    top: 0;
-    right: 0;
-    z-index: 70;
-    /* Wider than it looks. The visible bar is the 4px thumb; the rest of this
-       column is grab room, because 4px is not a pointer target. It sits inside
-       the page's own right padding, so it covers no content. */
-    width: 14px;
-    height: 100dvh;
-    /* Dragging a thumb must not sweep a selection through whatever is behind
-       it. preventDefault() on pointerdown covers Chrome; Firefox and Safari
-       want the property. */
-    -webkit-user-select: none;
-    user-select: none;
-    /* Inert unless a fine pointer exists — see below. */
-    pointer-events: none;
-  }
-
-  /* Touch scrolls by dragging the page, so a live 14px strip down the edge
-     would only steal touches from what is behind it. Keyed on any-pointer
-     rather than pointer: a touchscreen laptop reports a coarse *primary*
-     pointer while its trackpad is still the thing reaching for a 4px thumb,
-     and testing "is there a fine pointer at all" is what keeps those working. */
-  @media (any-pointer: fine) {
-    .scrollbar {
-      pointer-events: auto;
+  @media (any-pointer: fine) and (any-hover: hover) {
+    html {
+      scrollbar-width: none;
     }
-  }
+    html::-webkit-scrollbar {
+      display: none;
+    }
 
-  /* Height lives here and nowhere else — the drag maths measures the track box
-     rather than deriving it from the viewport less the arrows, so this number
-     is no longer shared with ScrollBar.tsx and does not need to be. */
-  .scrollbar-arrow {
-    display: grid;
-    place-items: center;
-    flex: none;
-    height: 14px;
-    color: var(--mesh-1);
-    opacity: 0.5;
-    cursor: default;
-    transition: opacity 0.2s;
-  }
-  .scrollbar-arrow:hover {
-    opacity: 1;
-  }
+    .scrollbar {
+      display: flex;
+      flex-direction: column;
+      position: fixed;
+      top: 0;
+      right: 0;
+      z-index: 70;
+      /* Wider than it looks. The visible bar is the 4px thumb; the rest of
+         this column is grab room, because 4px is not a pointer target. It sits
+         inside the page's own right padding, so it covers no content. */
+      width: 14px;
+      height: 100dvh;
+      /* Dragging a thumb must not sweep a selection through whatever is behind
+         it. preventDefault() on pointerdown covers Chrome; Firefox and Safari
+         want the property. */
+      -webkit-user-select: none;
+      user-select: none;
+    }
 
-  /* Transparent by design: the track is the gap the thumb runs down, nothing
-     more. It stays pressable — that is the jump-to-position.
+    /* Height lives here and nowhere else — the drag maths measures the track
+       box rather than deriving it from the viewport less the arrows, so this
+       number is no longer shared with ScrollBar.tsx and need not be. */
+    .scrollbar-arrow {
+      display: grid;
+      place-items: center;
+      flex: none;
+      height: 14px;
+      color: var(--mesh-1);
+      opacity: 0.5;
+      cursor: default;
+      transition: opacity 0.2s;
+    }
+    .scrollbar-arrow:hover {
+      opacity: 1;
+    }
 
-     container-type is what keeps the two halves of this honest. The thumb's
-     travel is measured off *this box* in both places — 100cqh in the keyframe
-     below, getBoundingClientRect() in ScrollBar.tsx — so the animation and the
-     drag maths cannot drift apart. Computing it as 100dvh minus the arrows
-     instead is what would drift: dvh and window.innerHeight disagree while a
-     mobile address bar is collapsing and whenever a horizontal bar exists, and
-     the difference shows up as the thumb sliding away from the cursor. */
-  .scrollbar-track {
-    position: relative;
-    flex: 1;
-    container-type: size;
-  }
+    /* Transparent by design: the track is the gap the thumb runs down, nothing
+       more. It stays pressable — that is the jump-to-position.
 
-  /* A fixed-length handle rather than one sized to viewport/document. CSS
-     cannot read the document height, and a guessed percentage would be wrong
-     on every page whose length it wasn't guessed for. The trade is that the
-     thumb shows where you are, not how long the page is. */
-  .scrollbar-thumb {
-    position: absolute;
-    top: 0;
-    left: 5px;
-    width: 4px;
-    height: var(--sb-thumb);
-    border-radius: 999px;
-    background: var(--mesh-1);
-    animation-name: scrollbar-thumb;
-    animation-timing-function: linear;
-    animation-fill-mode: both;
-    animation-timeline: scroll(root block);
-    /* Longhands, not the `animation` shorthand: the shorthand would reset
-       animation-duration, and it is the initial `auto` that makes the
-       keyframes span the whole scroll range instead of collapsing. */
-    transition: scale 0.15s;
-  }
+       container-type is what keeps the two halves of this honest. The thumb's
+       travel is measured off *this box* in both places — 100cqh in the
+       keyframe below, getBoundingClientRect() in ScrollBar.tsx — so the
+       animation and the drag maths cannot drift apart. Computing it as 100dvh
+       minus the arrows instead is what would drift: dvh and window.innerHeight
+       disagree whenever a horizontal bar exists, and the difference shows up
+       as the thumb sliding away from the cursor. */
+    .scrollbar-track {
+      position: relative;
+      flex: 1;
+      container-type: size;
+    }
 
-  /* scale, not width: `translate` is the animation's property and these are
-     separate longhands, so the two compose instead of overwriting each other.
-     Scaling from the centre also keeps the thumb on its own axis. */
-  .scrollbar:hover .scrollbar-thumb {
-    scale: 2 1;
+    /* A fixed-length handle rather than one sized to viewport/document. CSS
+       cannot read the document height, and a guessed percentage would be wrong
+       on every page whose length it wasn't guessed for. The trade is that the
+       thumb shows where you are, not how long the page is. */
+    .scrollbar-thumb {
+      position: absolute;
+      top: 0;
+      left: 5px;
+      width: 4px;
+      height: var(--sb-thumb);
+      border-radius: 999px;
+      background: var(--mesh-1);
+      animation-name: scrollbar-thumb;
+      animation-timing-function: linear;
+      animation-fill-mode: both;
+      animation-timeline: scroll(root block);
+      /* Longhands, not the `animation` shorthand: the shorthand would reset
+         animation-duration, and it is the initial `auto` that makes the
+         keyframes span the whole scroll range instead of collapsing. */
+      transition: scale 0.15s;
+    }
+
+    /* scale, not width: `translate` is the animation's property and these are
+       separate longhands, so the two compose instead of overwriting each
+       other. Scaling from the centre also keeps the thumb on its own axis. */
+    .scrollbar:hover .scrollbar-thumb {
+      scale: 2 1;
+    }
   }
 }
 
