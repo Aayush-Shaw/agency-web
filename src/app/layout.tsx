@@ -1,6 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { Questrial, Poppins } from "next/font/google";
 import "./globals.css";
+import ScrollBar from "@/components/ui/ScrollBar";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 
 // Display: Questrial ships a single 400 weight — there is no bold cut, so the
@@ -25,45 +26,34 @@ export const metadata: Metadata = {
   title: "Digi Bear — Design, Motion & AI Video Studio",
   description:
     "Digi Bear is a full-service digital studio for ambitious brands: website design & development, social media marketing, motion graphics, video editing, and AI-generated avatars & video.",
+  // Points at the same file the navbar and footer render, rather than a second
+  // copy under app/ as icon.svg — one asset, one place to update it.
+  icons: { icon: "/digibear-logo.svg" },
 };
 
-// Tells the UA to render its own surfaces (scrollbars, form controls, the mobile
-// address bar) in the matching scheme before our CSS lands. No themeColor pair:
-// those only track the OS, which the toggle is now free to disagree with.
+// Tells the UA to render its own surfaces (scrollbars, form controls, the
+// mobile address bar) in the matching scheme before our CSS lands. Flat
+// `light` now that the site has one palette — the hero's dark stage sets its
+// own color-scheme locally and doesn't want the whole document following it.
 export const viewport: Viewport = {
-  colorScheme: "light dark",
+  colorScheme: "light",
 };
 
 export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html
-      lang="en"
-      className={`${display.variable} ${sans.variable}`}
-      suppressHydrationWarning
-    >
-      <head>
-        {/* Runs during HTML parsing, before first paint: no theme flash. Writes
-            the attribute so [data-theme] is the single source both CSS and the
-            toggle read.
-
-            Resolved from the device every load, with nothing persisted. Reading
-            a saved value here instead is what pinned the site to a stale theme
-            and made it ignore the OS from then on; the toggle is a session-only
-            override, so a reload deliberately returns to the device preference. */}
-        <script
-          dangerouslySetInnerHTML={{
-            __html: `(function(){var d=document.documentElement;try{d.dataset.theme=matchMedia("(prefers-color-scheme:dark)").matches?"dark":"light"}catch(e){d.dataset.theme="light"}})()`,
-          }}
-        />
-      </head>
+    <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="min-h-dvh">
         {/* Film grain — non-interactive, stationary while the page scrolls
             under it, and above the navbar (z-60 vs z-50) so nothing escapes
-            it. The .atmosphere backdrop it used to sit beside now lives inside
-            page.tsx's post-hero sheet, which is opaque; see the note there. */}
+            it. */}
         <div className="grain" aria-hidden="true" />
+
+        {/* Scrollbar. Sits above the grain (z-70 vs z-60) so the noise doesn't
+            dull it, and outside <main> because it belongs to the viewport
+            rather than to the page's content. */}
+        <ScrollBar />
 
         <SmoothScroll>{children}</SmoothScroll>
       </body>

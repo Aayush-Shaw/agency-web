@@ -165,9 +165,10 @@ export default function Aurora(props: AuroraProps) {
     // hex to keep in sync with globals.css.
     //
     // The utility, not `var(--color-bg)`: the @theme alias is declared on
-    // :root, so its light-dark() has already collapsed to the site theme by
-    // the time it inherits. Tailwind inlines this one to the raw token, which
-    // re-resolves against whichever scope the canvas actually sits in.
+    // :root, so it already resolved to the page's parchment by the time it
+    // inherits. Tailwind inlines this one to the raw token, which re-resolves
+    // against whichever scope the canvas actually sits in — here the hero's
+    // .theme-dark, whose ground is the one this wants.
     canvas.className = "bg-bg";
 
     // preserveDrawingBuffer, because this canvas deliberately stops drawing:
@@ -301,19 +302,6 @@ export default function Aurora(props: AuroraProps) {
     });
     io.observe(ctn);
 
-    // data-theme on <html> is the single source of truth for the palette (the
-    // navbar toggle writes it, and so does the OS-preference listener next to
-    // it), so watching the attribute covers both paths — no second matchMedia
-    // subscription here.
-    const themeObserver = new MutationObserver(() => {
-      readClearColor();
-      if (!animateId) render(performance.now());
-    });
-    themeObserver.observe(document.documentElement, {
-      attributes: true,
-      attributeFilter: ["data-theme", "class"],
-    });
-
     resize();
 
     return () => {
@@ -321,7 +309,6 @@ export default function Aurora(props: AuroraProps) {
       window.removeEventListener("resize", resize);
       motionMq.removeEventListener("change", sync);
       io.disconnect();
-      themeObserver.disconnect();
       if (canvas.parentNode === ctn) ctn.removeChild(canvas);
       gl.getExtension("WEBGL_lose_context")?.loseContext();
     };

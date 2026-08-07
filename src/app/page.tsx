@@ -29,32 +29,22 @@ export default function Home() {
             (Manifesto is 522px on a 844px phone) shows the hero through the
             strip below it.
 
-            .atmosphere has to live inside for the same reason — a body-level
-            backdrop would be behind this sheet and never seen again. z-10 +
-            relative makes this a stacking context, so a z-index:-1 child
-            paints above the sheet's own background and below every section,
-            which is exactly where it sat on the body.
+            The mesh field has to live inside for the same reason — a
+            body-level backdrop would be behind this sheet and never seen
+            again. z-10 + relative makes this a stacking context, so a
+            z-index:-1 child paints above the sheet's own background and below
+            every section, which is where a backdrop belongs.
 
-            overflow-clip pays for that move. .atmosphere is scrubbed from
-            scale 1 to 1.3, and as a sticky (in-flow) element it now counts
-            toward the document's scrollable area the way a fixed one never
-            did — so the page grew a horizontal scrollbar that widened as you
-            scrolled. Both axes, not just x: the scale grows *downward* from a
-            50% 0% origin, so the same overflow hung ~30vh off the bottom of
-            this sheet and iOS Safari let you scroll it — a blank gap past the
-            footer. The glow's gradients sit at 0% and 12%, so clipping the
-            bottom of that box costs nothing visible.
+            overflow-clip pays for that: the field is sticky, and a sticky
+            (in-flow) element counts toward the document's scrollable area the
+            way a fixed one never did.
             clip, not hidden: hidden would make this a scroll container and
             kill the sticky positioning it exists to support (and Process's
             pin, which is position:fixed, escapes clip either way).
             Work's mobile carousel keeps its own overflow-x-auto regardless. */}
         <div className="relative z-10 overflow-clip bg-bg">
-          <div className="atmosphere" aria-hidden="true" />
-          {/* The four extra themes' animated field, in the same slot and for
-              the same reason — this is the only place a backdrop can cover the
-              whole post-hero sheet without reaching the pinned hero above it.
-              It renders nothing on light/dark, which keep .atmosphere; on the
-              four it renders, and globals.css hides .atmosphere instead. */}
+          {/* The animated field. This is the only place a backdrop can cover
+              the whole post-hero sheet without reaching the pinned hero. */}
           <MeshGradient />
 
           <Manifesto />

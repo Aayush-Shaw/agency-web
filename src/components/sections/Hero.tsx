@@ -368,9 +368,9 @@ export default function Hero() {
   // no scrub to fight native scroll on a phone; the whole effect is two
   // z-indexes.
   //
-  // theme-dark locks the section to the dark half of every token pair whatever
-  // the site theme is. See the Hero stage block in globals.css for why it is a
-  // class re-declaring the palette rather than a bare color-scheme.
+  // theme-dark swaps the section onto the site's one other palette — the dark
+  // espresso stage. See the Hero stage block in globals.css for why it is a
+  // class re-declaring the whole token set rather than a bare color-scheme.
   return (
     <section
       id="top"
@@ -378,9 +378,9 @@ export default function Hero() {
       className="theme-dark sticky top-0 z-0 flex h-svh items-center overflow-hidden px-5 pt-[clamp(3.5rem,11svh,6rem)] pb-[clamp(1.25rem,3svh,2rem)] md:px-8"
     >
       {/* Hero-only backdrop. It clears to the bg token (opaque), which under
-          theme-dark is the dark one — so inside this section it stands in for
-          the shared .atmosphere rather than layering over it. It is what fills
-          the strip to the left of the wall. Content sits above it; globals.css
+          theme-dark is the stage's own ground — so this is the hero's whole
+          background rather than a layer over the page's. It is what fills the
+          strip to the left of the wall. Content sits above it; globals.css
           drops it entirely once the page is past the hero, which is what stops
           its render loop. */}
       <div

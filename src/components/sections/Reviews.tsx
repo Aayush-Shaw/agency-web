@@ -227,14 +227,14 @@ function ReviewCard({
         }}
         // z-10 so the glass sits over the paw layer behind it — that ordering
         // is what makes the card's backdrop-filter sample the rake at all.
-        className="group relative z-10 flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg/20 p-6 backdrop-blur-sm md:p-7"
+        className="group relative z-10 flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg/20 p-6 backdrop-blur-xs md:p-7"
       >
         {/* The card's top hairline lights up left-to-right. Verbatim the
             mechanic on the FAQ's rows — same origin, same 500ms, same curve —
             so the two sections answer a hover the same way. */}
         <span
           aria-hidden="true"
-          className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 brand-gradient transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-data-[focus]/card:scale-x-100"
+          className="absolute inset-x-0 top-0 h-px origin-left scale-x-0 brand-gradient transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-data-focus/card:scale-x-100"
         />
 
         {/* <figcaption> first, not last, and that is the redesign. A review is
@@ -272,7 +272,7 @@ function ReviewCard({
               sourcing verifies itself when you lean in. Held at grayscale at
               rest so four brand colours aren't shouting from every card in a
               section that otherwise has two. */}
-          <GoogleG className="size-5 shrink-0 opacity-60 grayscale transition-[opacity,filter] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:opacity-100 group-hover:grayscale-0 group-data-[focus]/card:opacity-100 group-data-[focus]/card:grayscale-0" />
+          <GoogleG className="size-5 shrink-0 opacity-60 grayscale transition-[opacity,filter] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:opacity-100 group-hover:grayscale-0 group-data-focus/card:opacity-100 group-data-focus/card:grayscale-0" />
         </figcaption>
 
         <div className="mt-4 flex items-center gap-2.5">
@@ -358,8 +358,12 @@ export default function Reviews() {
     { scope: grid },
   );
 
+  // No background of its own: this is a flat band with nothing overlapping it,
+  // so letting the mesh field carry the stretch costs nothing. Process keeps
+  // its background on purpose — it is a raised sheet riding up over WhyUs, and
+  // a transparent one would show WhyUs through the overlap.
   return (
-    <section id="reviews" className="bg-surface px-5 py-24 md:px-8 md:py-32">
+    <section id="reviews" className="px-5 py-24 md:px-8 md:py-32">
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Client reviews</Eyebrow>

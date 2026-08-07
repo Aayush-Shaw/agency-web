@@ -232,7 +232,7 @@ export default function Faq() {
                 // data-[focus] is the touch twin of every hover: on a phone the
                 // row crossing the middle of the screen wears what a cursor
                 // would give it. useScrollFocus sets the attribute.
-                className="faq-row group relative border-t border-border px-2 backdrop-blur-sm last:border-b hover:bg-surface/20 data-[focus]:bg-surface/20"
+                className="faq-row group relative border-t border-border px-2 backdrop-blur-xs last:border-b hover:bg-surface/20 data-focus:bg-surface/20"
               >
                 {/* The rule lights up rather than a background flooding in: the
                     glow above already washes the row, and two lights on one
@@ -240,7 +240,7 @@ export default function Faq() {
                     hairline it replaces instead of beside it. */}
                 <span
                   aria-hidden="true"
-                  className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 brand-gradient transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-focus-within:scale-x-100 group-data-[focus]:scale-x-100 group-has-[[open]]:scale-x-100"
+                  className="absolute -top-px left-0 h-px w-full origin-left scale-x-0 brand-gradient transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:scale-x-100 group-focus-within:scale-x-100 group-data-focus:scale-x-100 group-has-[[open]]:scale-x-100"
                 />
 
                 {/* The paw's light, parked. Its own clip box rather than
@@ -258,8 +258,8 @@ export default function Faq() {
                   <summary className="flex cursor-pointer list-none items-center gap-5 py-6 md:py-7 [&::-webkit-details-marker]:hidden">
                     {/* Shifts out of the paw's way on hover — the row gives
                         ground rather than lighting up in place. */}
-                    <span className="min-w-0 flex-1 transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-x-2 group-data-[focus]:translate-x-2">
-                      <span className="faq-tag block text-xs font-semibold uppercase tracking-[0.22em] text-text-muted transition-colors duration-300 group-hover:text-accent-primary group-data-[focus]:text-accent-primary group-has-[[open]]:text-accent-primary">
+                    <span className="min-w-0 flex-1 transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-x-2 group-data-focus:translate-x-2">
+                      <span className="faq-tag block text-xs font-semibold uppercase tracking-[0.22em] text-text-muted transition-colors duration-300 group-hover:text-accent-primary group-data-focus:text-accent-primary group-has-[[open]]:text-accent-primary">
                         {faq.topic}
                       </span>
                       <span className="faq-q mt-2 block font-display text-card-lg font-semibold tracking-tight">
@@ -272,10 +272,10 @@ export default function Faq() {
                         panel and the rule say the same thing at the same time,
                         and <summary> tells assistive tech outright, so this can
                         be the brand's mark rather than a chevron. */}
-                    <span className="grid size-11 shrink-0 place-items-center rounded-full border border-border transition-colors duration-500 group-hover:border-accent-primary/60 group-data-[focus]:border-accent-primary/60 group-has-[[open]]:border-accent-primary">
+                    <span className="grid size-11 shrink-0 place-items-center rounded-full border border-border transition-colors duration-500 group-hover:border-accent-primary/60 group-data-focus:border-accent-primary/60 group-has-[[open]]:border-accent-primary">
                       <span
                         aria-hidden="true"
-                        className="claw text-lg opacity-40 transition-[opacity,rotate] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:opacity-100 group-data-[focus]:opacity-100 group-has-[[open]]:rotate-180 group-has-[[open]]:opacity-100"
+                        className="claw text-lg opacity-40 transition-[opacity,rotate] duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:opacity-100 group-data-focus:opacity-100 group-has-[[open]]:rotate-180 group-has-[[open]]:opacity-100"
                       />
                     </span>
                   </summary>

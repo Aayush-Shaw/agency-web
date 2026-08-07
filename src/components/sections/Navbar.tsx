@@ -3,9 +3,6 @@
 import { motion } from "motion/react";
 import { useEffect, useRef, useState } from "react";
 import Roll from "@/components/ui/Roll";
-import ThemeMenu from "@/components/ui/ThemeMenu";
-
-const DARK_QUERY = "(prefers-color-scheme: dark)";
 
 const LINKS = [
   { label: "Services", href: "#services" },
@@ -32,19 +29,6 @@ export default function Navbar() {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Follow the device live and unconditionally: flipping the system theme
-  // retints the page immediately, and outranks a manual toggle rather than
-  // being blocked by it. Same rule as the reload path, so the two never
-  // disagree about which theme the site should be showing.
-  useEffect(() => {
-    const mq = window.matchMedia(DARK_QUERY);
-    const onChange = () => {
-      document.documentElement.dataset.theme = mq.matches ? "dark" : "light";
-    };
-    mq.addEventListener("change", onChange);
-    return () => mq.removeEventListener("change", onChange);
-  }, []);
-
   // Tap outside the bar to dismiss. pointerdown rather than click so the menu
   // is already closing as the finger lands, and it fires for touch and mouse
   // alike. menuOpen is only ever true below md, where the header *is* the box.
@@ -58,7 +42,7 @@ export default function Navbar() {
   }, [menuOpen]);
 
   const surface = scrolled
-    ? "border-border bg-bg/20 backdrop-blur-sm"
+    ? "border-border bg-bg/20 backdrop-blur-xs"
     : "border-transparent bg-transparent";
 
   // One shared surface so the separate pills read as a single bar that happens
@@ -98,11 +82,20 @@ export default function Navbar() {
           <a
             href="#"
             onClick={() => setMenuOpen(false)}
-            className={`${control} flex h-12 items-center gap-2 px-3 font-display text-base font-bold tracking-tight lg:gap-2.5 lg:px-5 lg:text-lg`}
+            className={`${control} flex h-10 items-center gap-0 px-3 font-display text-base font-bold tracking-tight lg:gap-1 lg:text-lg`}
           >
-            <span className="claw h-5 w-5" aria-hidden="true" />
-            {/* The claw stays outside the clip — it is the one part of the mark
-                that shouldn't leave. */}
+            {/* Plain <img>, not next/image: a local SVG has nothing for the
+                optimiser to do, and routing it through /_next/image would need
+                dangerouslyAllowSVG turned on for no gain. Decorative — the
+                wordmark beside it already names the brand. */}
+            <img
+              src="/digibear-logo.svg"
+              alt=""
+              className="h-7 w-auto"
+              aria-hidden="true"
+            />
+            {/* The mark stays outside the clip — it is the one part of the
+                lockup that shouldn't leave. */}
             <Roll>
               DIGI <span className="text-gradient">BEAR</span>
             </Roll>
@@ -119,7 +112,7 @@ export default function Navbar() {
               gap/padding here and the compact logo above (both until lg) buy
               that clearance back instead of moving the pill off-centre. */}
           <ul
-            className={`${pill} absolute left-1/2 hidden h-12 -translate-x-1/2 items-center gap-3 px-4 md:flex lg:gap-6 lg:px-6`}
+            className={`${pill} absolute left-1/2 hidden h-10 -translate-x-1/2 items-center gap-3 px-3 md:flex lg:gap-6 lg:px-4`}
           >
             {LINKS.map((link) => (
               <li key={link.href}>
@@ -133,17 +126,12 @@ export default function Navbar() {
             ))}
           </ul>
 
-          {/* Both controls share one pill instead of carrying their own. The
-              buttons inside are borderless so the pill supplies the only
-              outline, and it still collapses to a single circle at md where the
-              hamburger drops out. */}
-          <div className={`${control} flex h-12 items-center gap-1 px-0.5`}>
-            {/* Theme picker. Still the DOM attribute that is the state — the
-                menu only writes it, same as the two-state toggle it replaces.
-                Its panel is a popover, so it is in the top layer and escapes
-                this bar's max-md:overflow-hidden. */}
-            <ThemeMenu />
-
+          {/* The hamburger is borderless so this pill supplies the only outline
+              around it. md:hidden on the pill and not just its contents: the
+              hamburger is the only thing left in here since the theme picker
+              was removed, so at md this would otherwise be an empty circle
+              floating at the right edge. */}
+          <div className={`${control} flex h-12 items-center px-0.5 md:hidden`}>
             {/* Hamburger → X. Two bars, not three: the middle one only exists to
                 be faded out, and these two already cross into the X on their
                 own. Both stay centred and just rotate, so there is nothing to

@@ -97,9 +97,15 @@ export default function Footer() {
         <div className="max-w-xs">
           <a
             href="#"
-            className="flex items-center gap-2.5 font-display text-lg font-bold tracking-tight"
+            className="flex items-center gap-0 lg:gap-1 font-display text-lg font-bold tracking-tight"
           >
-            <span className="claw h-5 w-5" aria-hidden="true" />
+            {/* Same plain <img> as the navbar lockup — see the note there. */}
+            <img
+              src="/digibear-logo.svg"
+              alt=""
+              className="h-7 w-auto"
+              aria-hidden="true"
+            />
             <Roll>
               DIGI <span className="text-gradient">BEAR</span>
             </Roll>

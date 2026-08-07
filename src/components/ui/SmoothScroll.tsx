@@ -33,35 +33,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     gsap.ticker.add(onTick);
     gsap.ticker.lagSmoothing(0);
 
-    // The fixed backdrop stays fixed — translating it would drag its edges into
-    // view and fight native scroll, which is exactly what the reference sites
-    // avoid. Scaling it instead reads as depth without moving anything: the
-    // glow slowly opens up over the length of the page.
-    const drift = gsap.fromTo(
-      ".atmosphere",
-      { scale: 1 },
-      {
-        scale: 1.3,
-        // Grow downward only. The layer is sticky inside the post-hero sheet
-        // now, and a centre origin pushed its top edge a few pixels above the
-        // sheet — i.e. over the pinned hero — as soon as the scrub left 1.0.
-        // Anchoring at the top also matches where these gradients start (0%
-        // and 12%), so the glow opens out from its own source.
-        transformOrigin: "50% 0%",
-        ease: "none",
-        scrollTrigger: {
-          trigger: document.body,
-          start: "top top",
-          end: "bottom bottom",
-          scrub: 1.2,
-        },
-      }
-    );
-
     return () => {
-      drift.scrollTrigger?.kill();
-      drift.kill();
-      gsap.set(".atmosphere", { clearProps: "transform" });
       gsap.ticker.remove(onTick);
       lenis.destroy();
     };
