@@ -363,11 +363,11 @@ export default function Reviews() {
   // its background on purpose - it is a raised sheet riding up over WhyUs, and
   // a transparent one would show WhyUs through the overlap.
   return (
-    <section id="reviews" className="px-5 py-24 md:px-8 md:py-32">
+    <section id="reviews" className="px-5 py-24 md:px-8 md:pt-32 md:pb-4">
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Client reviews</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
+          <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight">
             Trusted by brands that{" "}
             <span className="text-gradient">sweat the details</span>.
           </h2>

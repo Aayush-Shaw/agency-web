@@ -48,7 +48,7 @@ export default function Trust() {
   );
 
   return (
-    <section className="px-5 py-20 md:px-8 md:py-24">
+    <section className="px-5 py-4 md:px-8">
       <div
         ref={root}
         className="mx-auto grid max-w-[1600px] grid-cols-2 gap-4 lg:grid-cols-4"

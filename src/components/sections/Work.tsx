@@ -324,7 +324,7 @@ export default function Work() {
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Selected work</Eyebrow>
-          <h2 className="mt-4 max-w-2xl text-section font-bold tracking-tight">
+          <h2 className="mt-4 max-w-3xl text-section font-bold tracking-tight">
             Work we&apos;re <span className="text-gradient">proud to ship</span>.
           </h2>
         </Reveal>

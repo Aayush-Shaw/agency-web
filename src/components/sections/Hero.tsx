@@ -543,7 +543,7 @@ export default function Hero() {
 
             No text-balance: the first line is nowrap and the balancer would be
             reasoning about a line it cannot break. */}
-          <h1 className="text-[clamp(2.5rem,min(6.2vw,10svh),4.75rem)] font-bold leading-[1.05] tracking-tight">
+          <h1 className="text-[clamp(2.5rem,min(6.2vw,11svh),4.75rem)] font-bold leading-[1.05] tracking-tight">
             {/* One line, always. The break used to be a hard <br> after this
               phrase, which is the same thing said less strictly: nowrap keeps
               it together and lets the *next* line break wherever the column

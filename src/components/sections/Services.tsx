@@ -100,7 +100,7 @@ export default function Services() {
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>What we do</Eyebrow>
-          <h2 className="mt-2 max-w-2xl text-section font-bold tracking-tight">
+          <h2 className="mt-2 max-w-3xl text-section font-bold tracking-tight">
             Five services, one <span className="text-gradient">creative team</span>.
           </h2>
         </Reveal>

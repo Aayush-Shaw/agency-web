@@ -374,7 +374,7 @@ export default function Process() {
               a 568px screen spent on the heading. min(vw, svh) is the hero's own
               answer to the same problem: whichever axis is tighter wins, so this
               reads the same at 1440 and gets out of the way on a phone. */}
-          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight in-[.arc]:leading-[1.15]">
+          <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight in-[.arc]:leading-[1.15]">
             A simple path from{" "}
             <span className="text-gradient">idea to launch</span>.
           </h2>

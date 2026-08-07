@@ -77,7 +77,7 @@ export default function Pricing() {
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Pricing</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
+          <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight">
             Clear pricing, <span className="text-gradient">no surprises</span>.
           </h2>
           <p className="mt-4 max-w-xl text-text-muted">

@@ -101,7 +101,7 @@ export default function WhyUs() {
       <div className="mx-auto w-full max-w-[1600px]">
         <Reveal variant="words">
           <Eyebrow>Why Digi Bear</Eyebrow>
-          <h2 className="mt-5 max-w-2xl text-section font-bold tracking-tight">
+          <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight">
             Built to feel like your{" "}
             <span className="text-gradient">in-house team</span>.
           </h2>
