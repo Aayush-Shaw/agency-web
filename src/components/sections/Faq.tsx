@@ -10,7 +10,7 @@ import useScrollFocus from "@/components/ui/useScrollFocus";
 /* `topic` is the structural device here, and it is not decoration: an FAQ is
    not a sequence, so numbering it (01 / 02 / 03) would encode an order that
    does not exist. What a reader actually does with this list is scan it for
-   the one thing they came to check — so every row is filed under the thing it
+   the one thing they came to check - so every row is filed under the thing it
    answers, and the topic is the first line of the row. */
 const FAQS = [
   {
@@ -38,12 +38,12 @@ const FAQS = [
   {
     topic: "Ownership",
     q: "Who owns the final deliverables?",
-    a: "You do. On final payment you receive full ownership plus the source files — designs, project files, and footage. No lock-in, no licensing games.",
+    a: "You do. On final payment you receive full ownership plus the source files - designs, project files, and footage. No lock-in, no licensing games.",
   },
 ];
 
 /**
- * Section 11 — FAQ, as a raked ledger.
+ * Section 11 - FAQ, as a raked ledger.
  *
  * The pitch sticks in the left column while five hairline-ruled rows scroll
  * past it, and a bear's paw rakes across those rows under the cursor: the
@@ -58,10 +58,10 @@ const FAQS = [
  * the pointer: the paw, its light, and the tilt are springs retargeted on every
  * mousemove, which GSAP would need a tween per frame to do (same reasoning as
  * Magnetic.tsx). That half now lives in PawRake.tsx, which Reviews rakes with
- * too — the paw is the site's hover, not this section's.
+ * too - the paw is the site's hover, not this section's.
  *
  * Open/closed is still the browser's. <details name="faq"> is a native
- * exclusive accordion — opening one closes the last without a line of state —
+ * exclusive accordion - opening one closes the last without a line of state -
  * and .elastic (globals.css) gives the panel its height transition. So there is
  * no `openIndex` here, and a screen reader gets the real expanded state rather
  * than one we remembered to announce.
@@ -86,7 +86,7 @@ export default function Faq() {
         // The ledger is scratched in rather than faded in: each row wipes open
         // from its left edge while sliding the last of the way into its rule,
         // pivoted about that same edge so the far end swings down into place.
-        // clearProps is load-bearing, not tidiness — an inline clip-path left
+        // clearProps is load-bearing, not tidiness - an inline clip-path left
         // behind would still be cropping the row when its answer opened, and an
         // inline transform outranks the hover translate on the question.
         //
@@ -127,7 +127,7 @@ export default function Faq() {
         );
 
         /* An answer's lines rise in sequence as its panel opens, so the two
-           halves of the disclosure — the height and the text — arrive together
+           halves of the disclosure - the height and the text - arrive together
            instead of a finished paragraph being revealed by a growing box.
 
            Split on open and reverted on arrival rather than once at setup: a
@@ -137,7 +137,7 @@ export default function Faq() {
            the reader.
 
            rAF because a closed <details> panel carries content-visibility:
-           hidden, which skips its layout — measured in the same tick as the
+           hidden, which skips its layout - measured in the same tick as the
            toggle, SplitText would be reading a box the browser has not laid out
            yet and would hand back one line for the whole paragraph. */
         const onToggle = (event: Event) => {
@@ -170,7 +170,7 @@ export default function Faq() {
         const panels = gsap.utils.toArray<HTMLDetailsElement>("details", el);
         for (const panel of panels) panel.addEventListener("toggle", onToggle);
 
-        // useGSAP reverts the timeline; the listeners are ours to take back —
+        // useGSAP reverts the timeline; the listeners are ours to take back -
         // including when the user turns reduced motion on and this context is
         // torn down, which is the point of hanging them off matchMedia at all.
         return () => {
@@ -186,7 +186,7 @@ export default function Faq() {
     <section id="faq" className="px-5 py-24 md:px-8 md:py-32">
       {/* Asymmetric on purpose. Every other section on this page stacks its
           heading over its content, and three of the four around this one are
-          card grids — so the pitch moving into a column of its own and holding
+          card grids - so the pitch moving into a column of its own and holding
           still is the change of rhythm that stops the run of them.
           items-start is what lets the rail stick: a stretched grid item is
           already as tall as the row, and a sticky box with nowhere to travel
@@ -199,7 +199,7 @@ export default function Faq() {
             No mysteries, no <span className="text-gradient">fine print</span>.
           </h2>
           <p className="mt-5 max-w-sm text-lead text-text-muted">
-            The questions that come up on every first call — answered here
+            The questions that come up on every first call - answered here
             before you have to ask them.
           </p>
         </Reveal>
@@ -216,7 +216,7 @@ export default function Faq() {
           {paw.layers}
 
           {/* Above the paw's layer, so the rows paint over it rather than under.
-              They are transparent, so it still shows through them — only the
+              They are transparent, so it still shows through them - only the
               type stays clear of it. */}
           <ul ref={list} className="relative z-10">
             {FAQS.map((faq) => (
@@ -225,7 +225,7 @@ export default function Faq() {
                 // Same glass as the review cards: a translucent pane over a
                 // backdrop-blur, with the paw raking behind it rather than
                 // inside it, so the blur lands on the paw. bg-surface/20 and
-                // not the cards' bg-bg/20 — that pairing is inverted here. A
+                // not the cards' bg-bg/20 - that pairing is inverted here. A
                 // review card is a bg pane on a bg-surface section; these rows
                 // sit on the page's bg sheet, so surface is the token that
                 // reads as a pane against it. bg-bg/20 would be invisible.
@@ -256,7 +256,7 @@ export default function Faq() {
 
                 <details name="faq" className="elastic">
                   <summary className="flex cursor-pointer list-none items-center gap-5 py-6 md:py-7 [&::-webkit-details-marker]:hidden">
-                    {/* Shifts out of the paw's way on hover — the row gives
+                    {/* Shifts out of the paw's way on hover - the row gives
                         ground rather than lighting up in place. */}
                     <span className="min-w-0 flex-1 transition-transform duration-500 ease-[cubic-bezier(0.2,0.7,0.2,1)] group-hover:translate-x-2 group-data-focus:translate-x-2">
                       <span className="faq-tag block text-xs font-semibold uppercase tracking-[0.22em] text-text-muted transition-colors duration-300 group-hover:text-accent-primary group-data-focus:text-accent-primary group-has-[[open]]:text-accent-primary">

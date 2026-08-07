@@ -3,7 +3,7 @@ import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import CardRail, { type RailItem } from "@/components/ui/CardRail";
 
-// 24×24 stroke icons (currentColor) — no icon dependency.
+// 24×24 stroke icons (currentColor) - no icon dependency.
 const icon = (path: ReactNode) => (
   <svg
     viewBox="0 0 24 24"
@@ -24,7 +24,7 @@ const SERVICES: RailItem[] = [
     heading: "Website Design & Development",
     description: "Fast, conversion-focused sites built to sell.",
     detail:
-      "Design and build in one place — no handoff gaps. Accessible, SEO-ready, and fast on every device.",
+      "Design and build in one place - no handoff gaps. Accessible, SEO-ready, and fast on every device.",
     deliverables: ["UX & UI design", "Next.js build", "CMS & analytics", "Core Web Vitals"],
     icon: icon(
       <>
@@ -38,7 +38,7 @@ const SERVICES: RailItem[] = [
     heading: "Social Media Marketing",
     description: "Content and campaigns that grow real audiences.",
     detail:
-      "Strategy, content calendars, and paid campaigns tuned to your market — measured by reach, engagement, and pipeline.",
+      "Strategy, content calendars, and paid campaigns tuned to your market - measured by reach, engagement, and pipeline.",
     deliverables: ["Content strategy", "Post design", "Paid campaigns", "Monthly reporting"],
     icon: icon(
       <>
@@ -77,7 +77,7 @@ const SERVICES: RailItem[] = [
     heading: "AI-Generated Avatars & Video",
     description: "Scale video production without a film crew.",
     detail:
-      "Lifelike AI presenters and generated scenes for ads, explainers, and localization — produced in days, not weeks.",
+      "Lifelike AI presenters and generated scenes for ads, explainers, and localization - produced in days, not weeks.",
     deliverables: ["AI presenters", "Script to video", "Localization", "Ad variations"],
     icon: icon(
       <>
@@ -93,7 +93,7 @@ const SERVICES: RailItem[] = [
   },
 ];
 
-/** Section 4 — services, on the shared curved rail (see ui/CardRail.tsx). */
+/** Section 4 - services, on the shared curved rail (see ui/CardRail.tsx). */
 export default function Services() {
   return (
     <section id="services" className="px-2 pt-24 md:px-8 md:pt-30 pb-10">

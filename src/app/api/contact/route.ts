@@ -16,7 +16,7 @@ let windowStart = Date.now();
  * ponytail: in-process counter with a window that resets for everyone at once
  * rather than sliding per caller. That keeps it to ten lines and bounds the
  * map's memory for free (the clear below is the only cleanup), at the price of
- * being per-instance — a serverless cold start forgets the counts and a second
+ * being per-instance - a serverless cold start forgets the counts and a second
  * instance keeps its own. It thins accidental and casual floods; it will not
  * stop a determined one. Move to a shared store (Vercel KV / Upstash) or edge
  * rate limiting when this endpoint actually sends mail at volume.
@@ -41,7 +41,7 @@ function overLimit(request: Request) {
  * Contact form handler.
  *
  * Validates the submission server-side and returns success. No email provider
- * is wired yet (no secrets to leak) — drop your provider call where noted.
+ * is wired yet (no secrets to leak) - drop your provider call where noted.
  */
 export async function POST(request: Request) {
   if (overLimit(request)) {
@@ -90,7 +90,7 @@ export async function POST(request: Request) {
   //
   // SECURITY: this endpoint is public and unauthenticated. overLimit() above is
   // the only thing between it and a spam relay someone else pays for, and it is
-  // deliberately a cheap one — read its note before you wire a provider up.
+  // deliberately a cheap one - read its note before you wire a provider up.
   console.log("[contact] new enquiry received");
 
   return NextResponse.json({ ok: true });

@@ -38,7 +38,7 @@ const REASONS: RailItem[] = [
   {
     heading: "Fast turnaround",
     description:
-      "Tight, predictable timelines. First drafts in days, not weeks — without cutting corners on quality.",
+      "Tight, predictable timelines. First drafts in days, not weeks - without cutting corners on quality.",
     icon: icon(
       <>
         <circle cx="12" cy="13" r="8" />
@@ -71,7 +71,7 @@ const REASONS: RailItem[] = [
 ];
 
 /**
- * Section 6 — why choose us, on the same curved rail as Services.
+ * Section 6 - why choose us, on the same curved rail as Services.
  *
  * Sticky at lg, so Process rides up over it rather than pushing it along. z-0
  * keeps it under Process's z-20, and the pair is wrapped in page.tsx to bound
@@ -89,7 +89,7 @@ const REASONS: RailItem[] = [
  * side. pt-20 rather than symmetric padding because the centring has to clear
  * the fixed navbar, which this scrolls under. And `not-short` because below
  * 44rem of viewport height the heading, the rail and the navbar no longer fit
- * together — there the section keeps its normal flow, and Process's negative
+ * together - there the section keeps its normal flow, and Process's negative
  * margin still carries it over the top.
  */
 export default function WhyUs() {

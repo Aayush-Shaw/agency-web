@@ -23,7 +23,7 @@ type Status = "idle" | "submitting" | "success" | "error";
 /**
  * Seconds the send button stays locked after an attempt.
  *
- * This is politeness, not protection — anyone can skip the button and POST the
+ * This is politeness, not protection - anyone can skip the button and POST the
  * route directly. The limit that actually guards the inbox is per-IP in
  * app/api/contact/route.ts.
  */
@@ -55,7 +55,7 @@ function composeMessage(summary: Summary, business: string) {
 }
 
 const inputClass =
-  // The placeholder is never painted — the fields stay empty until they're
+  // The placeholder is never painted - the fields stay empty until they're
   // typed in. It is kept on the elements anyway because :placeholder-shown is
   // how .float-field (globals.css) knows a field is empty and where to draw
   // its label; text-transparent hides the example without taking that away.
@@ -66,7 +66,7 @@ const inputClass =
  * What's wrong with a field, in words.
  *
  * The platform's own `validationMessage` for everything except a failed
- * `pattern` — Chrome answers those with "Please match the requested format",
+ * `pattern` - Chrome answers those with "Please match the requested format",
  * which tells nobody anything. The input's `title` says what the format is, so
  * it stands in there; every other case keeps the browser's localised text.
  */
@@ -79,7 +79,7 @@ const problemWith = (el: HTMLInputElement) =>
  * The rules live on the input itself (required / minLength / pattern) and the
  * message comes back from the platform's own `validationMessage`, so there is
  * no second copy of the validation in JS and the text arrives localised.
- * `noValidate` on the form suppresses only the browser's bubble UI — the checks
+ * `noValidate` on the form suppresses only the browser's bubble UI - the checks
  * themselves still run, which is what lets us render them inline per keystroke.
  */
 function Field({
@@ -94,7 +94,7 @@ function Field({
   label: string;
   error?: string;
   onCheck: (el: HTMLInputElement) => void;
-  /** Position in the dialog's entrance cascade — see .cascade-item. */
+  /** Position in the dialog's entrance cascade - see .cascade-item. */
   i: number;
 } & ComponentProps<"input">) {
   const id = `cd-${name}`;
@@ -114,7 +114,7 @@ function Field({
         <label htmlFor={id} className="float-label">
           {label}
           {input.required ? (
-            // Decoration only — `required` is what tells a screen reader.
+            // Decoration only - `required` is what tells a screen reader.
             <span aria-hidden="true" className="text-accent-secondary">
               {" *"}
             </span>
@@ -144,7 +144,7 @@ function Field({
  * to dismiss, the rest of the page marked inert, and top-layer painting that
  * no z-index on the page can beat. The only thing left to add is the
  * click-outside, which is four lines because a click on the backdrop targets
- * the dialog element itself — hence p-0 here and the padding on the child.
+ * the dialog element itself - hence p-0 here and the padding on the child.
  */
 export default function ContactDialog({
   open,
@@ -155,7 +155,7 @@ export default function ContactDialog({
   open: boolean;
   onClose: () => void;
   summary: Summary;
-  /** The button that opens this — the panel grows out of it. */
+  /** The button that opens this - the panel grows out of it. */
   opener: RefObject<HTMLButtonElement | null>;
 }) {
   const ref = useRef<HTMLDialogElement>(null);
@@ -176,7 +176,7 @@ export default function ContactDialog({
       // the entrance is driven by @starting-style, which reads the element's
       // state on the frame it opens, so a later write would arrive too late.
       //
-      // The dialog isn't laid out yet and can't be measured — but it doesn't
+      // The dialog isn't laid out yet and can't be measured - but it doesn't
       // need to be. `m-auto` centres it, so its future centre is the
       // viewport's, and the origin is just the button's offset from there.
       const box = opener.current?.getBoundingClientRect();
@@ -193,7 +193,7 @@ export default function ContactDialog({
   }, [open, opener]);
 
   // One timer per remaining second; it stops itself at zero. Deliberately not
-  // reset when the dialog closes — reopening must not buy a fresh send.
+  // reset when the dialog closes - reopening must not buy a fresh send.
   useEffect(() => {
     if (cooldown === 0) return;
     const id = setTimeout(() => setCooldown((s) => s - 1), 1000);
@@ -232,7 +232,7 @@ export default function ContactDialog({
           message: composeMessage(summary, String(data.get("business") ?? "")),
         }),
         // Without this a stalled connection leaves the button on "Sending…"
-        // forever with nothing to tell the visitor — the one failure that
+        // forever with nothing to tell the visitor - the one failure that
         // otherwise never reaches the error box below.
         signal: AbortSignal.timeout(TIMEOUT_MS),
       });
@@ -242,7 +242,7 @@ export default function ContactDialog({
       } else {
         // Every failure the route returns carries { error }. Anything else on
         // this path is a 500 or a platform error page, which won't parse as
-        // JSON — hence the catch and the fallback.
+        // JSON - hence the catch and the fallback.
         const body = (await res.json().catch(() => ({}))) as { error?: string };
         setError(
           body.error ?? "Something went wrong at our end. Please try again."
@@ -251,7 +251,7 @@ export default function ContactDialog({
       }
     } catch {
       // fetch itself rejected: offline, DNS, a dropped connection, or the
-      // timeout above. Deliberately not the thrown error's own message — that
+      // timeout above. Deliberately not the thrown error's own message - that
       // would put "Failed to fetch" or "signal timed out" in front of someone.
       setError(
         "We couldn't reach the server. Check your connection and try again."
@@ -299,7 +299,7 @@ export default function ContactDialog({
             id="contact-dialog-title"
             className="text-card-lg font-bold tracking-tight"
           >
-            {status === "success" ? "Message sent — thank you." : "Start a conversation"}
+            {status === "success" ? "Message sent - thank you." : "Start a conversation"}
           </h2>
           <button
             type="button"
@@ -314,7 +314,7 @@ export default function ContactDialog({
         {status === "success" ? (
           // .cascade-item carries this too: a CSS animation restarts whenever a
           // matching element is inserted, so the same rule that staggers the
-          // form on open plays the receipt in when it replaces it — no second
+          // form on open plays the receipt in when it replaces it - no second
           // mechanism, and no exit machinery for the form it displaces.
           <>
             <p
@@ -372,7 +372,7 @@ export default function ContactDialog({
                   // Two non-space characters, so "  " can't satisfy minLength.
                   // Mirrors name.trim().length >= 2 in app/api/contact/route.ts.
                   pattern="\s*(\S\s*){2,}"
-                  title="Please enter your name — at least 2 characters."
+                  title="Please enter your name - at least 2 characters."
                   autoComplete="name"
                   placeholder="Jane Doe"
                 />
@@ -406,7 +406,7 @@ export default function ContactDialog({
                   placeholder="jane@company.com"
                 />
 
-                {/* Honeypot — hidden from users, catches bots. */}
+                {/* Honeypot - hidden from users, catches bots. */}
                 <input
                   type="text"
                   name="website"
@@ -416,7 +416,7 @@ export default function ContactDialog({
                   className="absolute left-[-9999px] h-0 w-0 opacity-0"
                 />
 
-                {/* Every failed send lands here — a 400 from the route, the
+                {/* Every failed send lands here - a 400 from the route, the
                     429 rate limit, a 500, an unparseable platform error page,
                     an offline browser, or the fetch timeout. role="alert" is
                     what reads it out without moving focus off the field the
@@ -431,7 +431,7 @@ export default function ContactDialog({
                 )}
 
                 {/* Under the fields it is filling in, not across the bottom of
-                    the dialog — the brief on the right is for reading, and the
+                    the dialog - the brief on the right is for reading, and the
                     send button belongs to the column you just typed in. */}
                 <button
                   type="submit"
@@ -451,7 +451,7 @@ export default function ContactDialog({
 
               {/* Read-only review of everything the configurator collected.
                   Wrapped in .float-field so its name sits on the border like
-                  every other field's — this one has no resting state to return
+                  every other field's - this one has no resting state to return
                   to, and the CSS only drops the label back inside the box for
                   something empty or focused, so it stays up without being told.
 
@@ -464,7 +464,7 @@ export default function ContactDialog({
                 {/* 16rem is the fields column beside it, to the pixel: three
                     h-12 fields, three gap-5 gaps and the h-13 button. Capping
                     at exactly that is what stops this column from setting the
-                    row height and pushing the dialog past 85dvh — the brief
+                    row height and pushing the dialog past 85dvh - the brief
                     scrolls so the dialog doesn't.
 
                     md only: below that the dialog is one column and already
@@ -504,7 +504,7 @@ export default function ContactDialog({
                   </dl>
                 </div>
 
-                {/* Not aria-hidden, unlike the pickers' labels in Cta.tsx —
+                {/* Not aria-hidden, unlike the pickers' labels in Cta.tsx -
                     there is no control here naming itself, so this span is the
                     only thing that introduces the list. */}
                 <span className="float-label">Your brief</span>

@@ -9,7 +9,7 @@ const LINKS = [
   { label: "Work", href: "#work" },
   { label: "Process", href: "#process" },
   { label: "Contact", href: "#contact" },
-  // Parked with the section itself — see page.tsx.
+  // Parked with the section itself - see page.tsx.
   // { label: "Pricing", href: "#pricing" },
 ];
 
@@ -19,7 +19,7 @@ export default function Navbar() {
   const headerRef = useRef<HTMLElement>(null);
 
   // Surface-only: the pills are always mounted and always visible, so this
-  // never gates display — it only decides transparent vs. frosted. A plain
+  // never gates display - it only decides transparent vs. frosted. A plain
   // passive listener, same as before: there's no scrub or timeline here, so
   // ScrollTrigger would be a second scroll system for one boolean.
   useEffect(() => {
@@ -50,7 +50,7 @@ export default function Navbar() {
   const pill = `rounded-full border transition-all duration-300 ${surface}`;
 
   // Open below md, the whole bar becomes one box, so the pills inside give up
-  // their own surface — otherwise every control reads as a pill inside a pill.
+  // their own surface - otherwise every control reads as a pill inside a pill.
   const pillInBox = `${pill} max-md:border-transparent max-md:bg-transparent max-md:backdrop-blur-none`;
   const control = menuOpen ? pillInBox : pill;
 
@@ -78,7 +78,7 @@ export default function Navbar() {
             menuOpen ? "max-md:p-3" : ""
           }`}
         >
-          {/* Left pill — logo only. */}
+          {/* Left pill - logo only. */}
           <a
             href="#"
             onClick={() => setMenuOpen(false)}
@@ -86,7 +86,7 @@ export default function Navbar() {
           >
             {/* Plain <img>, not next/image: a local SVG has nothing for the
                 optimiser to do, and routing it through /_next/image would need
-                dangerouslyAllowSVG turned on for no gain. Decorative — the
+                dangerouslyAllowSVG turned on for no gain. Decorative - the
                 wordmark beside it already names the brand. */}
             <img
               src="/digibear-logo.svg"
@@ -94,21 +94,21 @@ export default function Navbar() {
               className="h-7 w-auto"
               aria-hidden="true"
             />
-            {/* The mark stays outside the clip — it is the one part of the
+            {/* The mark stays outside the clip - it is the one part of the
                 lockup that shouldn't leave. */}
             <Roll>
               DIGI <span className="text-gradient">BEAR</span>
             </Roll>
           </a>
 
-          {/* Center pill — absolutely positioned so it centres on the page rather
+          {/* Center pill - absolutely positioned so it centres on the page rather
               than on the space left over by its siblings; the logo can grow
               without dragging it off-centre.
 
               That independence is also why it has to shrink at md: page-centred
               means the pill grows equally in both directions, so at 768px a
               full-size one (371px) would reach back to x=191 while the
-              full-size logo still runs to x=218 — they overlap. The tighter
+              full-size logo still runs to x=218 - they overlap. The tighter
               gap/padding here and the compact logo above (both until lg) buy
               that clearance back instead of moving the pill off-centre. */}
           <ul
@@ -158,7 +158,7 @@ export default function Navbar() {
           </div>
         </div>
 
-        {/* Mobile menu — a two-column grid inside the same box, revealed by
+        {/* Mobile menu - a two-column grid inside the same box, revealed by
             animating max-height. Always mounted, so the exit plays on its own
             without AnimatePresence keeping a removed subtree alive. max-h-40
             clears the two rows four links produce; kept close to the real

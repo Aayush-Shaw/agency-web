@@ -11,7 +11,7 @@ import { useEffect, type RefObject } from "react";
  *
  * `rootMargin: -50% 0px -50%` collapses the observer's root to a zero-height
  * line across the middle of the viewport, so "intersecting" means "touching
- * that line" — one item at a time, without measuring anything per frame.
+ * that line" - one item at a time, without measuring anything per frame.
  *
  * It latches: focus moves when something new starts intersecting and is never
  * cleared on exit. The gap between two cards is a stretch of scroll where
@@ -19,7 +19,7 @@ import { useEffect, type RefObject } from "react";
  * between every pair.
  *
  * Only runs where there is no hover to begin with, and watches that live rather
- * than reading it once — plug a mouse into a tablet and this turns itself off,
+ * than reading it once - plug a mouse into a tablet and this turns itself off,
  * the same way CardRail watches for a fine pointer.
  *
  * The state is a DOM attribute rather than React state, for the reason the

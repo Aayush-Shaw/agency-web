@@ -38,7 +38,7 @@ const REVEAL_STEP = {
 };
 
 /**
- * The estimate's entrance — a spring loose enough to overshoot, so the numbers
+ * The estimate's entrance - a spring loose enough to overshoot, so the numbers
  * land rather than merely appear. The JS half of --ease-elastic in globals.css,
  * which does the same job for the service picker's panel.
  *
@@ -57,7 +57,7 @@ const REVEAL_ELASTIC = {
 
 /**
  * One numbered step with the progress line running down its left edge.
- * `last` drops the line and the gap below — pass it when nothing is rendered
+ * `last` drops the line and the gap below - pass it when nothing is rendered
  * underneath this step yet.
  *
  * No title: every field in here carries its own floating label, so a heading
@@ -90,9 +90,9 @@ function Step({
 /**
  * The two dismissals a <details> doesn't bring itself: click-outside and Esc.
  *
- * Everything else about the disclosure — the click and Enter/Space toggles, the
+ * Everything else about the disclosure - the click and Enter/Space toggles, the
  * expanded state a screen reader announces, open/closed living in the DOM
- * rather than in React — is the element's own behaviour, which is why both
+ * rather than in React - is the element's own behaviour, which is why both
  * pickers below are built on one.
  */
 function useDismiss(ref: RefObject<HTMLDetailsElement | null>) {
@@ -120,7 +120,7 @@ function useDismiss(ref: RefObject<HTMLDetailsElement | null>) {
   }, [ref]);
 }
 
-/** Shared by both pickers' panels — the list under the summary. */
+/** Shared by both pickers' panels - the list under the summary. */
 const panelClass = "border-t border-border p-1.5";
 const optionClass =
   "flex cursor-pointer items-center gap-3 rounded-lg px-3 py-2.5 text-sm transition hover:bg-accent-primary/10";
@@ -135,7 +135,7 @@ const optionClass =
  * would reach past the section's bottom edge.
  *
  * ponytail: a disclosure wrapped around a checkbox group, not an ARIA combobox
- * — no type-ahead, no arrow-key roving. The right shape for five fixed options;
+ * - no type-ahead, no arrow-key roving. The right shape for five fixed options;
  * if this list ever grows enough to want searching, that's the upgrade.
  */
 function ServicePicker({
@@ -154,7 +154,7 @@ function ServicePicker({
    * flex-wrap fills each row greedily and never looks back, so pick order
    * leaves holes: "Motion Graphics" then "Website Design & Development" puts a
    * short tag alone on row one because the long one couldn't follow it. Sorting
-   * widest-first is first-fit-decreasing — the long tags claim their rows early
+   * widest-first is first-fit-decreasing - the long tags claim their rows early
    * and the short ones fill in behind them, which is the fewest rows this can
    * wrap into.
    *
@@ -177,10 +177,10 @@ function ServicePicker({
           and .elastic in globals.css. */}
       <details ref={ref} className="elastic group rounded-xl bg-bg transition-colors">
         <summary
-          // <summary> is a button, so its name comes from its content — which
+          // <summary> is a button, so its name comes from its content - which
           // is tags, or nothing at all before anything is picked. Spelled out
           // here so it always says what the field is for, selections included.
-          aria-label={`Services — What do you need?${names.length ? `: ${names.join(", ")}` : ""}`}
+          aria-label={`Services - What do you need?${names.length ? `: ${names.join(", ")}` : ""}`}
           className="flex min-h-12 cursor-pointer list-none flex-wrap items-center gap-2 px-3 py-2 [&::-webkit-details-marker]:hidden"
         >
           {packed.map((id) => (
@@ -192,7 +192,7 @@ function ServicePicker({
               <button
                 type="button"
                 // Inside a <summary>, whose default action is to toggle the
-                // panel — so removing a tag has to cancel it. The checkbox list
+                // panel - so removing a tag has to cancel it. The checkbox list
                 // is the keyboard/screen-reader path to the same thing; this is
                 // the mouse shortcut.
                 onClick={(event) => {
@@ -213,7 +213,7 @@ function ServicePicker({
           />
         </summary>
 
-        <div role="group" aria-label="Services — What do you need?" className={panelClass}>
+        <div role="group" aria-label="Services - What do you need?" className={panelClass}>
           {SERVICES.map((service) => (
             <label key={service.id} className={optionClass}>
               <input
@@ -228,7 +228,7 @@ function ServicePicker({
         </div>
       </details>
 
-      {/* A <span>, not a <label>: there is no form control here to point at —
+      {/* A <span>, not a <label>: there is no form control here to point at -
           the summary names itself with aria-label. */}
       <span className="float-label" aria-hidden="true">
         <span className="float-only">Services</span>
@@ -239,13 +239,13 @@ function ServicePicker({
 }
 
 /**
- * Pick one, in the same disclosure as the service picker above — so every
+ * Pick one, in the same disclosure as the service picker above - so every
  * question in the flow opens and closes with the same elastic panel instead of
  * handing two of the three off to the OS picker.
  *
  * Radios rather than a listbox: a named group is arrow-key navigable, single-
  * choice and announced as such by the platform, so nothing about the selection
- * is reimplemented here — only the open/closed shell around it.
+ * is reimplemented here - only the open/closed shell around it.
  *
  * `resting` is what the label says before the field is touched; `label` is what
  * it says once it has lifted onto the border. aria-label carries both, so the
@@ -278,9 +278,9 @@ function Select({
       <details ref={ref} className="elastic group rounded-xl bg-bg transition-colors">
         <summary
           // A <summary> is a button and names itself from its content, which is
-          // blank until something is picked — so the question is spelled out
+          // blank until something is picked - so the question is spelled out
           // here, with the answer appended once there is one.
-          aria-label={`${label} — ${resting}${picked ? `: ${picked.label}` : ""}`}
+          aria-label={`${label} - ${resting}${picked ? `: ${picked.label}` : ""}`}
           className="flex min-h-12 cursor-pointer list-none items-center gap-3 px-4 py-3 [&::-webkit-details-marker]:hidden"
         >
           {/* Wraps rather than truncates: these answers are sentences, and at
@@ -292,7 +292,7 @@ function Select({
           />
         </summary>
 
-        <div role="radiogroup" aria-label={`${label} — ${resting}`} className={panelClass}>
+        <div role="radiogroup" aria-label={`${label} - ${resting}`} className={panelClass}>
           {options.map((option) => (
             <label key={option.value} className={optionClass}>
               <input
@@ -300,7 +300,7 @@ function Select({
                 name={id}
                 checked={value === option.value}
                 onChange={() => onChange(option.value)}
-                // Answered, so the panel's work is done — but only for a real
+                // Answered, so the panel's work is done - but only for a real
                 // click. Arrow-keying through a radio group fires a synthetic
                 // click (detail 0) per option, which would shut the panel on
                 // the first keypress, mid-navigation.
@@ -315,7 +315,7 @@ function Select({
         </div>
       </details>
 
-      {/* A <span>, not a <label>: there is no form control here to point at —
+      {/* A <span>, not a <label>: there is no form control here to point at -
           the summary names itself with aria-label. */}
       <span className="float-label" aria-hidden="true">
         <span className="float-only">{label}</span>
@@ -329,7 +329,7 @@ function Select({
  * A number that counts to its new value instead of cutting to it.
  *
  * The spring is seeded with the first value, so the card's own entrance is the
- * only thing that happens when the estimate first appears — the count-up is
+ * only thing that happens when the estimate first appears - the count-up is
  * reserved for the answer changing underneath it, which is the moment worth
  * pointing at.
  */
@@ -381,7 +381,7 @@ function EstimateCard({
 }
 
 /**
- * Section 12 — closing CTA + project configurator.
+ * Section 12 - closing CTA + project configurator.
  *
  * Steps appear one at a time as the one above is answered; the estimate and the
  * contact button only exist once every question has an answer. Everything the
@@ -433,7 +433,7 @@ export default function Cta() {
         className="pointer-events-none absolute left-1/2 top-0 -z-10 h-96 w-96 -translate-x-1/2 rounded-full bg-accent-primary/20 blur-3xl"
       />
 
-      {/* Pitch left, estimator right at 60%. One column below lg — the steps
+      {/* Pitch left, estimator right at 60%. One column below lg - the steps
           need the full width on a phone more than the pitch needs a neighbour. */}
       <div className="mx-auto grid max-w-[1600px] gap-4 lg:grid-cols-[2fr_3fr] lg:items-start lg:gap-8">
         <Reveal variant="words">
@@ -444,7 +444,7 @@ export default function Cta() {
           </h2>
           <p className="mt-5 max-w-md text-lead text-text-muted">
             Pick what you need and we&apos;ll shape a timeline and a price range
-            around it — no forms to guess at, no pushy sales calls.
+            around it - no forms to guess at, no pushy sales calls.
           </p>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
@@ -456,12 +456,12 @@ export default function Cta() {
 
         <Reveal>
           <div className="rounded-2xl border border-border bg-surface p-5 sm:p-6 md:p-8">
-            {/* Step 1 — services. */}
+            {/* Step 1 - services. */}
             <Step number={1} last={selected.length === 0}>
               <ServicePicker selected={selected} onToggle={toggleService} />
             </Step>
 
-            {/* Steps 2..n — one question per selected service, in the order they
+            {/* Steps 2..n - one question per selected service, in the order they
                 were picked, each revealed once the one above is answered. */}
             {selected.map((id, index) => {
               if (selected.slice(0, index).some((prev) => !answers[prev])) return null;
@@ -470,8 +470,8 @@ export default function Cta() {
                 <Step
                   key={id}
                   number={index + 2}
-                  // Nothing renders below an unanswered step — neither the next
-                  // service nor the timeline question — so it owns the end of
+                  // Nothing renders below an unanswered step - neither the next
+                  // service nor the timeline question - so it owns the end of
                   // the line.
                   last={!answers[id]}
                 >
@@ -489,7 +489,7 @@ export default function Cta() {
               );
             })}
 
-            {/* Final step — timeline. */}
+            {/* Final step - timeline. */}
             {allServicesAnswered && (
               <Step number={selected.length + 2} last={!complete}>
                 <Select
@@ -512,7 +512,7 @@ export default function Cta() {
                 // nothing above them needed.
                 //
                 // @container, not sm:, for the split below: this block sits in a
-                // 60% column, so its own width — not the viewport's — decides
+                // 60% column, so its own width - not the viewport's - decides
                 // whether two price cards fit side by side.
                 className="@container border-t border-border pt-6"
               >
@@ -530,7 +530,7 @@ export default function Cta() {
                   />
                 </div>
                 <p className="mt-3 text-xs text-text-muted">
-                  A starting point, not a quote — we&apos;ll confirm both once
+                  A starting point, not a quote - we&apos;ll confirm both once
                   we&apos;ve talked through the detail.
                 </p>
                 <button

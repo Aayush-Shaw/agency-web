@@ -5,7 +5,7 @@ import { Fragment } from "react";
  *
  * The space lives *between* the boxes as an ordinary text node, never inside
  * them. Both give you a wrap opportunity, but only a real space collapses at
- * the end of a line — a trailing `&nbsp;` inside each box keeps its width
+ * the end of a line - a trailing `&nbsp;` inside each box keeps its width
  * there and pushes the last word of every line over, which costs the hero
  * headline an extra line at desktop widths.
  *

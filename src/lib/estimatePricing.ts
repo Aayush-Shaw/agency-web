@@ -1,7 +1,7 @@
 import type { Answers, Service, ServiceId, TimelineId } from "./configurator";
 
 /**
- * The estimator's numbers, all of them, in one file. Nothing here is final —
+ * The estimator's numbers, all of them, in one file. Nothing here is final -
  * they're plausible placeholders. Edit the tables; the UI reads whatever comes
  * out of estimate() and never does arithmetic of its own.
  */
@@ -20,7 +20,7 @@ type Rate = {
  *
  * The key type is derived from the config rather than typed by hand, so adding,
  * renaming or removing an option in configurator.ts fails the build here until
- * its rate is updated. That drift is the only failure this module really has —
+ * its rate is updated. That drift is the only failure this module really has -
  * everything below is branch-free arithmetic.
  */
 type RateKey = {
@@ -74,7 +74,7 @@ const usd = new Intl.NumberFormat("en-US", {
 /** Exported so the cards can format the figures they count up to identically. */
 export const formatUsd = (n: number) => usd.format(n);
 
-/** Quote in round numbers — $4,000, never $3,937. */
+/** Quote in round numbers - $4,000, never $3,937. */
 const toNearest500 = (n: number) => Math.round(n / 500) * 500;
 
 /**

@@ -10,7 +10,7 @@ const STATS = [
   { value: 24, suffix: "h", label: "Avg. response time" },
 ];
 
-/** Section 10 — trust strip with numbers that count up on scroll. */
+/** Section 10 - trust strip with numbers that count up on scroll. */
 export default function Trust() {
   const root = useRef<HTMLDivElement>(null);
 

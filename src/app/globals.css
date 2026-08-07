@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 /* Laptops, not phones. A 1366x768 panel at Windows' default 125% scaling is a
-   514px viewport once browser chrome is out, and 150% leaves 428 — short
+   514px viewport once browser chrome is out, and 150% leaves 428 - short
    enough that a full-height hero stops fitting its own content. Used by the
    hero to tighten its stack; see the Hero stage block below for why an
    overflowing hero is unreachable rather than merely cropped. */
 @custom-variant short (@media (height <= 44rem));
 
 /* ============================================================
-   Design tokens — single source of truth.
+   Design tokens - single source of truth.
 
    One palette: maple red on parchment, slate ink, pine as the tone the
    surfaces are tinted with, and amber as the ramp's light end. This was one of
    six switchable themes; the other five are gone, so every token is a flat
-   value — there is no light-dark() pair to resolve and no [data-theme] switch
+   value - there is no light-dark() pair to resolve and no [data-theme] switch
    left to read. The hero is the one scope that still overrides them, and it
    carries its own flat copy: see "Hero stage" further down.
 
@@ -30,12 +30,12 @@
    at 85% ink it had to stay above 0.64 relative luminance, which capped every
    mesh node around 0.3 and left a flat cream wash. At full ink the floor drops
    to 0.41, which is what lets the nodes run 2-3x heavier. Muted is separated
-   by size and weight instead of by tint — see the .prose scale below.
+   by size and weight instead of by tint - see the .prose scale below.
 
    --mesh-0..3 are the animated field's stops, read off this element by
    MeshGradient.tsx in the order that file expects: -0 the base tone and the
    canvas' clear colour, then -1 the light-mid tone that carries the large
-   areas, -2 the dark chromatic accent, -3 the ink. Plain hex on purpose —
+   areas, -2 the dark chromatic accent, -3 the ink. Plain hex on purpose -
    that component parses them, so a color-mix() here would not survive
    the trip.
    ============================================================ */
@@ -48,7 +48,7 @@
   --raw-accent-primary: #8b1e2d;
   --raw-accent-secondary: #d08856;
   --raw-border: color-mix(in oklab, #1b4332 20%, transparent);
-  /* Hover only — the one lit state the site keeps. */
+  /* Hover only - the one lit state the site keeps. */
   --raw-glow: color-mix(in oklab, #8b1e2d 26%, transparent);
   --mesh-0: #f3eee5;
   --mesh-1: #d08856;
@@ -64,7 +64,7 @@
   --radius-sm: 25px;
   --radius-input: 15px;
 
-  /* Overshoots 1 and settles back — the springy curve used by the estimator's
+  /* Overshoots 1 and settles back - the springy curve used by the estimator's
      picker. The motion/react springs in Cta.tsx are its JS counterpart. */
   --ease-elastic: cubic-bezier(0.34, 1.56, 0.64, 1);
 }
@@ -76,7 +76,7 @@
   }
 
   /* The bigger radii only read as squircles if the corners are actually
-     superellipses — without this they'd just be very round corners. Scoped to
+     superellipses - without this they'd just be very round corners. Scoped to
      the three utilities bound to the tokens below; rounded-full is left out on
      purpose, so pills, icon buttons and avatars keep their circular ends. */
   .rounded-xl,
@@ -120,7 +120,7 @@
 
    Each is clamp(min, <intercept> + <slope>vw, max) solved so the min lands at
    a 375px viewport and the max at 1440px. The endpoints are the sizes the
-   ladder already produced, so the hierarchy is unchanged — only the space
+   ladder already produced, so the hierarchy is unchanged - only the space
    between the breakpoints moves.
 
    Plain @theme, not inline: these are static values, nothing re-resolves them
@@ -130,7 +130,7 @@
   /* Hero h1. Steeper than the others on purpose: solved to hit the sizes the
      old ladder produced (44 at 375, 72 at 768, 96 by ~1100) rather than to
      reach its max at 1440 like the rest. Sloped for 1440 it undershot the
-     ladder by 12% at 768 and 21% at 1024 — a whole tablet-to-small-laptop band
+     ladder by 12% at 768 and 21% at 1024 - a whole tablet-to-small-laptop band
      where the headline stopped out-weighing the sub-heading under it. */
   --text-display: clamp(2.75rem, 1.08rem + 7.13vw, 6rem); /* hero h1  44→96 */
   --text-section-xl: clamp(2.25rem, 1.72rem + 2.25vw, 3.75rem); /* cta  36→60 */
@@ -177,7 +177,7 @@ section[id] {
 
 /* No border-radius here. An outline already follows the shape of whatever it
    is drawn around, so setting a radius on this rule only mattered for elements
-   that had none — and it silently overwrote the radius of every element that
+   that had none - and it silently overwrote the radius of every element that
    did. Unlayered, so it outranked the .rounded-xl utility, which is how a
    squircled input turned into a 2px-cornered box the moment it took focus. */
 :focus-visible {
@@ -186,11 +186,11 @@ section[id] {
 }
 
 /* ============================================================
-   Reusable helpers (token-driven — no hardcoded color)
+   Reusable helpers (token-driven - no hardcoded color)
    ============================================================ */
 
 /* The honey → cinnamon ramp, panning. One definition for the three things
-   that wear it — highlighted words, the CTA/button pills, and the claw mark —
+   that wear it - highlighted words, the CTA/button pills, and the claw mark -
    so the colours are retuned in one place and every one of them moves
    together.
 
@@ -232,7 +232,7 @@ section[id] {
 /* iOS-style glass text: the glyphs are cut-outs onto a filtered copy of
    whatever sits behind them, not a fill of their own.
 
-   backdrop-filter alone can't do this — it filters the element's whole box, so
+   backdrop-filter alone can't do this - it filters the element's whole box, so
    on its own it renders a blurred rectangle with the text sitting on it.
    -webkit-mask-clip:text is the piece that makes it glass: it clips the entire
    element, filtered backdrop included, to the glyph outlines. The mask image
@@ -240,7 +240,7 @@ section[id] {
 
    brightness and saturate do the visible work here, not blur. The aurora
    behind the hero is a smooth gradient, so blurring it returns the same
-   gradient — the lift and the colour boost are what read as glass. The small
+   gradient - the lift and the colour boost are what read as glass. The small
    blur stays only to soften the fringe the mask leaves on glyph edges.
 
    The background-colour is the frosted sheen, and it lands on top of the
@@ -248,11 +248,11 @@ section[id] {
 
    --raw-text, not --color-text, for the reason the Hero stage block records:
    the @theme alias is declared on :root, so it already resolved to the page's
-   slate ink by the time it inherits — inside the hero's .theme-dark scope it
+   slate ink by the time it inherits - inside the hero's .theme-dark scope it
    would hand back that instead of the stage's parchment. */
 .text-glass {
   /* Fallback for engines without mask-clip:text (Firefox today). Plain
-     translucent glyphs — no backdrop-filter, because unclipped it would paint
+     translucent glyphs - no backdrop-filter, because unclipped it would paint
      that blurred rectangle across the headline. */
   color: color-mix(in oklab, var(--raw-text) 62%, transparent);
 }
@@ -272,7 +272,7 @@ section[id] {
 /* Floating field label.
 
    The label rests inside its field, where a placeholder would sit, and lifts
-   onto the top border once the field is focused or filled — so a labelled field
+   onto the top border once the field is focused or filled - so a labelled field
    costs one row of height instead of two.
 
    Here rather than in utility classes because two unrelated controls need it
@@ -282,7 +282,7 @@ section[id] {
 
    .rest-only / .float-only let one label say different things in its two
    states. That exists for the service questions: at 390px the field is 260px
-   wide, where "Website Design & Development — How big is the build?" measures
+   wide, where "Website Design & Development - How big is the build?" measures
    437px and fits in neither state. The prompt fits at rest (163px) and the
    service name fits on the border at 12px (188px), so each state carries the
    half that fits. A label with one span in it is unaffected. */
@@ -292,7 +292,7 @@ section[id] {
   /* One quiet hairline instead of a hard border, and no focus ring on the
      field itself.
 
-     The ring is removed, not the focus indicator — that would fail 2.4.7 and
+     The ring is removed, not the focus indicator - that would fail 2.4.7 and
      leave keyboard users with nothing. The border and the label both take the
      accent colour on focus, which is what marks the field now. */
   > :is(input, details) {
@@ -342,7 +342,7 @@ section[id] {
     > .float-label {
     top: 50%;
     translate: 0 -50%;
-    /* No pill while it sits inside the field — it only exists to notch the
+    /* No pill while it sits inside the field - it only exists to notch the
        border it straddles once floated. */
     background: transparent;
     border-color: transparent;
@@ -360,7 +360,7 @@ section[id] {
 /* Elastic open/close for the configurator's pickers.
 
    ::details-content is the only handle on a <details> panel, and
-   interpolate-size is what lets a height transition end at `auto` — together
+   interpolate-size is what lets a height transition end at `auto` - together
    they animate the disclosure without lifting its open/closed state into
    React, which is the whole reason it is a <details> in the first place.
 
@@ -396,7 +396,7 @@ section[id] {
   }
 }
 
-/* Contact dialog entrance — the panel grows out of the button that opened it,
+/* Contact dialog entrance - the panel grows out of the button that opened it,
    and its contents assemble behind it.
 
    The two run *together*, not one after the other. Sequenced, the send button
@@ -405,18 +405,18 @@ section[id] {
    reads as a single gesture.
 
    Inside prefers-reduced-motion: no-preference rather than relying on the
-   blanket reset at the bottom of this file — that reset zeroes durations but
+   blanket reset at the bottom of this file - that reset zeroes durations but
    not animation-delay, which on a `both`-filled animation would leave the
    staggered rows invisible for their delay and then pop. Under `reduce` these
    rules simply don't exist and the dialog appears, which is correct.
 
    The one thing JS owns is transform-origin: ContactDialog.tsx aims it at the
    opener's position before calling showModal(). Without that it falls back to
-   the element's centre, which is a plain zoom — degraded, not broken. */
+   the element's centre, which is a plain zoom - degraded, not broken. */
 @media (prefers-reduced-motion: no-preference) {
   .dialog-in {
     /* The entrance study's playback control, frozen at the 0.5x that was
-       picked. Everything below is calc'd against it — set it to 1 for the
+       picked. Everything below is calc'd against it - set it to 1 for the
        original speed, or somewhere between to taste. */
     --dlg-speed: 2;
 
@@ -442,7 +442,7 @@ section[id] {
 
   /* The state the panel animates *from* when it opens. A <dialog> goes from
      display:none to open in one step, and without a starting state there is
-     nothing to interpolate — it would animate closed but never open. */
+     nothing to interpolate - it would animate closed but never open. */
   @starting-style {
     .dialog-in[open] {
       opacity: 0;
@@ -484,7 +484,7 @@ section[id] {
   }
 }
 
-/* A scrollbar you only notice once you need it — a hairline in the text colour
+/* A scrollbar you only notice once you need it - a hairline in the text colour
    at low alpha, on no track at all.
 
    The two standard properties rather than ::-webkit-scrollbar: they are one
@@ -507,7 +507,7 @@ section[id] {
     border-color 0.35s ease,
     box-shadow 0.35s ease;
 }
-/* Gated, unlike the Tailwind hover: utilities around it — those are already
+/* Gated, unlike the Tailwind hover: utilities around it - those are already
    wrapped in this same query by the framework, and only the hand-written rules
    in this file are exposed. Without it a tap on a touch device leaves the card
    lifted until something else is tapped, which on iOS means it stays lifted
@@ -526,7 +526,7 @@ section[id] {
 
 /* The touch counterpart to the paw's light (usePawRake.tsx). There is no cursor
    to follow on a phone, so it parks at the centre of whatever is crossing the
-   viewport's middle and fades in there — see useScrollFocus.ts, which sets the
+   viewport's middle and fades in there - see useScrollFocus.ts, which sets the
    attribute.
 
    Driven straight off [data-focus] rather than by a group-data utility at the
@@ -553,13 +553,13 @@ section[id] {
 }
 
 /* Scroll hint. The arrow drifts the way it points and returns, so the pill
-   carries the direction rather than only naming it — the loop is the message
+   carries the direction rather than only naming it - the loop is the message
    here, which is the one thing that earns a looping animation in an interface.
    Held to 4px on a slow cycle for the same reason it is allowed at all: it has
    to read as a hint at the edge of the screen, not compete with the section it
    sits under.
 
-   Only the arrow moves, never the pill — a bobbing border draws the eye to the
+   Only the arrow moves, never the pill - a bobbing border draws the eye to the
    box instead of to the gesture.
 
    No animation-delay, so the blanket reduced-motion reset at the bottom of this
@@ -585,7 +585,7 @@ section[id] {
   display: inline-block;
   width: 1em;
   height: 1em;
-  /* Fill comes from the shared ramp above — a `background` shorthand here
+  /* Fill comes from the shared ramp above - a `background` shorthand here
      would reset the size and position it pans on. */
   -webkit-mask: var(--claw-mask) center / contain no-repeat;
   mask: var(--claw-mask) center / contain no-repeat;
@@ -610,7 +610,7 @@ section[id] {
    takes ~15px off the right of every section, so 20px of page padding reads as
    5px on that edge and the page-centred navbar pill sits half a bar off centre.
    Styling the native one with scrollbar-width/scrollbar-color would keep that
-   gutter — thinner, but still reserved. An overlay claims no layout width at
+   gutter - thinner, but still reserved. An overlay claims no layout width at
    all, so the page is the full viewport wide and the bar floats over the
    padding.
 
@@ -623,7 +623,7 @@ section[id] {
    is not one of them: it comes from the keyframe at the bottom, so what you
    drag is the real scroll offset rather than a JS estimate of it.
 
-   Two gates, and everything — including hiding the native bar — is behind
+   Two gates, and everything - including hiding the native bar - is behind
    both.
 
    @supports: a browser without scroll timelines keeps its own scrollbar
@@ -632,7 +632,7 @@ section[id] {
 
    @media: this is a pointer control, so it only exists where there is a
    pointer. Phones and tablets are excluded outright rather than shown an inert
-   copy — a touch scrollbar is dragged nowhere, and the gutter problem this
+   copy - a touch scrollbar is dragged nowhere, and the gutter problem this
    solves does not exist there either: iOS and Android scrollbars already
    overlay and already cost no layout width, so hiding theirs would give up a
    real affordance and buy nothing.
@@ -640,7 +640,7 @@ section[id] {
    The pair of features is the point. `any-pointer` rather than `pointer`,
    because a touchscreen laptop reports a coarse *primary* pointer while its
    trackpad is the thing reaching for a 4px thumb. `any-hover` alongside it,
-   because a stylus reports a fine pointer with no hover — an Android tablet
+   because a stylus reports a fine pointer with no hover - an Android tablet
    with a pen would otherwise slip through the first test on its own.
 
    CSS and not a JS check, because the server cannot know the pointer type: any
@@ -679,7 +679,7 @@ section[id] {
       user-select: none;
     }
 
-    /* Height lives here and nowhere else — the drag maths measures the track
+    /* Height lives here and nowhere else - the drag maths measures the track
        box rather than deriving it from the viewport less the arrows, so this
        number is no longer shared with ScrollBar.tsx and need not be. */
     .scrollbar-arrow {
@@ -697,11 +697,11 @@ section[id] {
     }
 
     /* Transparent by design: the track is the gap the thumb runs down, nothing
-       more. It stays pressable — that is the jump-to-position.
+       more. It stays pressable - that is the jump-to-position.
 
        container-type is what keeps the two halves of this honest. The thumb's
-       travel is measured off *this box* in both places — 100cqh in the
-       keyframe below, getBoundingClientRect() in ScrollBar.tsx — so the
+       travel is measured off *this box* in both places - 100cqh in the
+       keyframe below, getBoundingClientRect() in ScrollBar.tsx - so the
        animation and the drag maths cannot drift apart. Computing it as 100dvh
        minus the arrows instead is what would drift: dvh and window.innerHeight
        disagree whenever a horizontal bar exists, and the difference shows up
@@ -745,7 +745,7 @@ section[id] {
 
 /* The thumb travels its track, less its own length. 100cqh is the track's
    measured height (see container-type above), which is the same number
-   scrollFor() in ScrollBar.tsx reads off the same box — the two must stay
+   scrollFor() in ScrollBar.tsx reads off the same box - the two must stay
    exact inverses of each other or the thumb drifts from the cursor mid-drag.
    translate rather than top: this stays a compositor property, so scrolling
    never touches layout. */
@@ -759,7 +759,7 @@ section[id] {
    reads as fixed for the whole page it covers.
 
    Fixed would size to the viewport and so paint over the pinned hero above the
-   post-hero sheet's top edge — a wash across the hero for the length of the
+   post-hero sheet's top edge - a wash across the hero for the length of the
    overlap. Sticky is constrained to its containing block, so before the sheet
    reaches the top it sits at the sheet's own top edge and cannot reach the
    hero, and after that it pins at 0 and behaves exactly as fixed would.
@@ -775,7 +775,7 @@ section[id] {
 
 /* The hero's copy wants none of that. Sticky offsets are measured from the
    scroll container's *content* edge, and the hero is a scroll container
-   (overflow-hidden) with a real top padding — so `top: 0` pushed this copy down
+   (overflow-hidden) with a real top padding - so `top: 0` pushed this copy down
    by the full pt-[clamp(3.5rem,11svh,6rem)], 96px at a 900px viewport. The
    canvas ran from 96 to 996: the bottom 96px clipped away, and the top 96px of
    the hero left with no canvas over it at all. That strip is exactly where the
@@ -783,7 +783,7 @@ section[id] {
    nothing covered it and it read as a flat band of raw page background.
 
    Static is the whole fix: no sticky, so no offset, and the box lands at its
-   flow position — the top-left of .hero-backdrop, which is already absolute
+   flow position - the top-left of .hero-backdrop, which is already absolute
    inset-0 over the section. height:100% then tracks the hero rather than the
    viewport, which also drops the 100vh/100svh mismatch on mobile. The -100vh
    margin is left alone; with no following sibling and a parent whose height is
@@ -797,9 +797,9 @@ section[id] {
    Hero stage
 
    The hero renders dark, and the navbar borrows that palette for as long as
-   the hero is still underneath it. This is the site's only other palette — the
+   the hero is still underneath it. This is the site's only other palette - the
    espresso set the page itself used to carry before it settled on the one
-   above — and both scopes re-declare the whole token block rather than
+   above - and both scopes re-declare the whole token block rather than
    overriding a few of it, because a custom property has to be *declared* on an
    element for a subtree to see a different value: setting a couple here and
    letting the rest inherit from :root would mix maple and amber in one bar.
@@ -810,7 +810,7 @@ section[id] {
 
    Both scopes are off while the hero carries no theme-dark (see Hero.tsx): the
    bar borrows the *hero's* palette, so a dark bar over a light hero is
-   parchment ink on parchment. Restore the two together — re-add theme-dark to
+   parchment ink on parchment. Restore the two together - re-add theme-dark to
    the section and put `:root:not([data-past-hero]) header,` back in the
    selector list below. The block itself is left intact so that is one line
    either way.
@@ -819,7 +819,7 @@ section[id] {
 .theme-dark {
   color-scheme: dark;
   /* The stage's own ground, deeper and bluer than the espresso below. Every
-     `bg-bg` inside the hero re-resolves against it — which is Aurora's canvas
+     `bg-bg` inside the hero re-resolves against it - which is Aurora's canvas
      (its CSS paint and the clear colour it reads back off that same utility)
      and the navbar's frost while it is still overhead. */
   --raw-bg: #040713;
@@ -843,7 +843,7 @@ section[id] {
 
 /* The one case where pinning has to be given up. A sticky element held at
    top:0 never scrolls, so anything of it below the fold at scroll 0 stays
-   below the fold forever — the CTAs on a short laptop were cut by 24px and no
+   below the fold forever - the CTAs on a short laptop were cut by 24px and no
    amount of scrolling could reach them. The `short:` tightening on the hero
    keeps it fitting on every viewport we can, and this is the guarantee for the
    ones we can't: if the hero is genuinely taller than the viewport it goes
@@ -855,7 +855,7 @@ section[id] {
 }
 
 /* The hero stays pinned in the layer stack for the whole page, so once it has
-   been buried it has to take itself out of the picture — otherwise every
+   been buried it has to take itself out of the picture - otherwise every
    section below that lets the body background through (Services, Pricing, Faq,
    Trust, WhyUs, Cta all do, on purpose) would show it instead.
    visibility, not display: the hero is in normal flow, and removing its box
@@ -871,7 +871,7 @@ section[id] {
   display: none;
 }
 
-/* Hero entrance — the one place Reveal.tsx's "visible by default" rule
+/* Hero entrance - the one place Reveal.tsx's "visible by default" rule
    backfires. Reveal can rely on it because its content is still off-screen when
    GSAP hides it; the hero animates on load, above the fold, so the server HTML
    paints the finished headline at full opacity and hydration then snaps it away
@@ -879,7 +879,7 @@ section[id] {
    the timeline's own conditions exactly: (scripting: enabled) leaves a no-JS
    render visible, and no-preference leaves it visible under reduced motion,
    where the timeline never runs. GSAP's inline opacity outranks this on arrival
-   — which is also why .hero-cta clears only `transform`, not all props. */
+   - which is also why .hero-cta clears only `transform`, not all props. */
 @media (scripting: enabled) and (prefers-reduced-motion: no-preference) {
   .hero-word,
   .hero-sub,
@@ -889,7 +889,7 @@ section[id] {
 }
 
 /* ============================================================
-   Roll — the label swap every link, button and logo shares
+   Roll - the label swap every link, button and logo shares
 
    Two copies of the text on one reel inside a clip: the resting one rolls out
    of the top as its twin rides in from below. Same twin-element trick as the
@@ -897,7 +897,7 @@ section[id] {
    one direction (up).
 
    The trigger is the nearest interactive ancestor rather than a `group` class,
-   so a call site is one edit — wrap the label in <Roll> — and the whole of the
+   so a call site is one edit - wrap the label in <Roll> - and the whole of the
    control's hit area drives it, padding included. :focus-visible for the
    keyboard. :not(:disabled) because a hover on a disabled submit button is
    still a hover, and a dead control that answers back is worse than one that
@@ -909,7 +909,7 @@ section[id] {
    for the length of the bounce.
 
    The reduced-motion reset at the bottom of this file zeroes the transition,
-   which leaves the label swapping instantly for an identical label — i.e.
+   which leaves the label swapping instantly for an identical label - i.e.
    nothing visibly happens, which is the right answer here.
    ============================================================ */
 .roll {
@@ -927,14 +927,14 @@ section[id] {
 }
 
 /* inset:0, so the twin is the same box as the copy it replaces and wraps the
-   same way — nothing here needs to know how wide the label is. */
+   same way - nothing here needs to know how wide the label is. */
 .roll-twin {
   position: absolute;
   inset: 0;
   translate: 0 100%;
 }
 
-/* Split, and the two halves are not symmetric. :focus-visible is ungated —
+/* Split, and the two halves are not symmetric. :focus-visible is ungated -
    a keyboard is not a mouse, and touch devices get keyboards attached to them.
    :hover is gated for the reason .lift is: on a phone it latches on tap and the
    label sits mid-roll until something else is touched. */
@@ -982,7 +982,7 @@ html.lenis body {
   }
 
   /* The scrollbar is exempt: it is a control, not decoration, and it does not
-     animate on a clock — the reset above is aimed at time-driven motion, but
+     animate on a clock - the reset above is aimed at time-driven motion, but
      duration is also what maps a scroll timeline onto its range, so 0.001ms
      would collapse the thumb's travel and park it at the bottom forever.
      Nothing here moves unless the user scrolls it. */

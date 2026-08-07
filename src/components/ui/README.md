@@ -1,7 +1,7 @@
 # Shared pieces
 
 Small parts reused by many sections. Nothing here is a strip of the page on its
-own — edit one of these and it changes everywhere it's used at once.
+own - edit one of these and it changes everywhere it's used at once.
 
 | File               | What it does                                                |
 | ------------------ | ----------------------------------------------------------- |

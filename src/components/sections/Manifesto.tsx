@@ -5,12 +5,12 @@ import { gsap, useGSAP } from "@/lib/gsap";
 import Words from "@/components/ui/Words";
 
 /**
- * Section 3 — a single bold statement that turns over word by word as you
+ * Section 3 - a single bold statement that turns over word by word as you
  * scroll through it, the way a departure board flips.
  *
  * Scrubbed rather than triggered: the sentence is tied to scroll position, so
  * reading pace and scroll pace are the same thing, and scrolling back up
- * un-reads it. Squarely GSAP's half of the split — ScrollTrigger's scrub is
+ * un-reads it. Squarely GSAP's half of the split - ScrollTrigger's scrub is
  * already driven by the same Lenis-fed ticker as everything else on the page.
  */
 export default function Manifesto() {
@@ -56,7 +56,7 @@ export default function Manifesto() {
   );
 
   return (
-    // id purely so the hero's scroll hint has the *next* section to aim at —
+    // id purely so the hero's scroll hint has the *next* section to aim at -
     // #services would skip this one, which is not what a "scroll down" arrow
     // promises. Not in the navbar; nothing else links here.
     <section id="manifesto" className="px-5 pt-35 pb-10 md:px-8">
@@ -71,7 +71,7 @@ export default function Manifesto() {
         <span className="mf-word text-gradient inline-block">move</span>{" "}
         <Words
           className="mf-word"
-          text="— every pixel, frame, and line of copy considered, so the work feels as sharp as the product behind it."
+          text="- every pixel, frame, and line of copy considered, so the work feels as sharp as the product behind it."
         />
       </p>
     </section>

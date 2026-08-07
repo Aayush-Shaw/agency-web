@@ -12,7 +12,7 @@ import useScrollFocus from "@/components/ui/useScrollFocus";
 /* `when` is the field that turns marketing copy into a record. A quote with a
    name under it is a claim; a quote with a name, a face, a platform and a date
    is something a reader can picture being written. That is the whole argument
-   for this card's order too — see the figcaption note below. */
+   for this card's order too - see the figcaption note below. */
 const REVIEWS = [
   {
     quote:
@@ -25,7 +25,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "The AI video work is a different level. We localized a campaign into four languages in under a week — unheard of for us.",
+      "The AI video work is a different level. We localized a campaign into four languages in under a week - unheard of for us.",
     name: "James Callahan",
     company: "Lumen Finance, UK",
     face: "photo-1507003211169-0a1dd7228f2d",
@@ -73,11 +73,11 @@ const REVIEWS = [
 /** How many of the six a phone gets. Six in one column is a long scroll past
     the same card six times; four is the point where the reader has enough and
     the section still ends. The rest are hidden in CSS rather than sliced in JS
-    — a slice would need the viewport width at render, which the server does not
+    - a slice would need the viewport width at render, which the server does not
     have, and would cost a hydration mismatch to guess at. */
 const PHONE_LIMIT = 4;
 
-/* Google's own mark in its own four colours — the one saturated thing in a
+/* Google's own mark in its own four colours - the one saturated thing in a
    section built from honey and cinnamon, which is exactly why it reads as a
    badge from somewhere else rather than another house graphic. It is drawn
    rather than imported for the reason the footer's socials are: Lucide v1
@@ -129,7 +129,7 @@ const CARD_STAGGER = 0.12;
 const STAR_STAGGER = CARD_STAGGER / 5;
 
 /* Loose enough to trail the pointer a little, tight enough not to wobble after
-   it stops. The paw in Faq.tsx is deliberately looser — that one is a dragged
+   it stops. The paw in Faq.tsx is deliberately looser - that one is a dragged
    object, this is a card being leaned on. */
 const TILT = { stiffness: 170, damping: 20, mass: 0.7 };
 /** Degrees at the card's edge. Past ~6 the text starts to visibly keystone. */
@@ -141,7 +141,7 @@ const MAX_TILT = 4;
  * Two elements, and they are not interchangeable: the outer div is GSAP's (the
  * scroll entrance) and the motion.figure inside is Framer's (the pointer tilt).
  * Both write `transform`, so sharing one node means whichever ran last wins and
- * the other silently stops working. Same split — and the same reason — as the
+ * the other silently stops working. Same split - and the same reason - as the
  * hero's CTA, where Magnetic owns the wrapper and the entrance owns the anchor.
  */
 function ReviewCard({
@@ -149,7 +149,7 @@ function ReviewCard({
   className = "",
 }: {
   review: (typeof REVIEWS)[number];
-  /** Extra classes for the outer (GSAP-owned) box — the phone cut-off uses it. */
+  /** Extra classes for the outer (GSAP-owned) box - the phone cut-off uses it. */
   className?: string;
 }) {
   const box = useRef<HTMLElement>(null);
@@ -165,7 +165,7 @@ function ReviewCard({
 
   // The glass and the paw's clip box are two elements that have to occupy the
   // same plane, so they take one transform between them. Anything less and the
-  // rake slips out from under the card as it tilts — 4deg across a 400px card
+  // rake slips out from under the card as it tilts - 4deg across a 400px card
   // walks its corners ~14px, and the 6px lift opens a strip along the bottom.
   const plane = { rotateX, rotateY, y: lift, transformPerspective: 900 };
 
@@ -173,17 +173,17 @@ function ReviewCard({
     // group/card, named, because two groups are nested here: this one carries
     // the touch focus state (useScrollFocus sets data-focus on it) and the
     // figure inside carries the mouse one. The glow has to hang off this outer
-    // box — it lives in the clip layer, which is the figure's sibling, not its
+    // box - it lives in the clip layer, which is the figure's sibling, not its
     // child, and so cannot see a group on the figure.
     <div className={`review-card group/card relative ${className}`}>
       {/* The paw rakes *behind* the glass, not inside it. backdrop-filter only
-          blurs what is painted behind an element — never its own descendants —
+          blurs what is painted behind an element - never its own descendants -
           so a paw parented to the card would composite on top of the finished
           frost and stay sharp. As a sibling underneath, it is part of the
           backdrop the card samples, and the blur lands on it.
 
           Its own box rather than the card's: this clips the rake to the card's
-          shape (rounded-2xl, squircled to match — see globals.css) without
+          shape (rounded-2xl, squircled to match - see globals.css) without
           being an ancestor of the figure, which is free to tilt and lift past
           these edges. inset-0 of an unpadded wrapper is exactly the card. */}
       <motion.div
@@ -193,7 +193,7 @@ function ReviewCard({
       >
         {paw.layers}
         {/* Behind the glass with the paw, so it is frosted the same way. This
-            is the whole of the touch treatment's light — the claw needs an x/y
+            is the whole of the touch treatment's light - the claw needs an x/y
             the scroll cannot give it, so it stays a mouse reward. */}
         <span className="focus-glow" aria-hidden="true" />
       </motion.div>
@@ -225,12 +225,12 @@ function ReviewCard({
           rotateY.set(0);
           lift.set(0);
         }}
-        // z-10 so the glass sits over the paw layer behind it — that ordering
+        // z-10 so the glass sits over the paw layer behind it - that ordering
         // is what makes the card's backdrop-filter sample the rake at all.
         className="group relative z-10 flex h-full flex-col overflow-hidden rounded-2xl border border-border bg-bg/20 p-6 backdrop-blur-xs md:p-7"
       >
         {/* The card's top hairline lights up left-to-right. Verbatim the
-            mechanic on the FAQ's rows — same origin, same 500ms, same curve —
+            mechanic on the FAQ's rows - same origin, same 500ms, same curve -
             so the two sections answer a hover the same way. */}
         <span
           aria-hidden="true"
@@ -238,8 +238,8 @@ function ReviewCard({
         />
 
         {/* <figcaption> first, not last, and that is the redesign. A review is
-            read attribution-first — you decide whether to care about the words
-            by looking at who wrote them — so the face, the name and the source
+            read attribution-first - you decide whether to care about the words
+            by looking at who wrote them - so the face, the name and the source
             come before the quote, which is also the order Google's own reviews
             are laid out in. A figcaption is allowed to be the figure's first
             child precisely for this. */}
@@ -248,7 +248,7 @@ function ReviewCard({
               hero wall and the work rail: these are remote URLs, and
               next/image would need each host added to images.remotePatterns in
               next.config.ts. Swap all three together when the real assets
-              land. (Tag name spelled out rather than written as markup — in a
+              land. (Tag name spelled out rather than written as markup - in a
               comment it scans as a real tag with no src.) */}
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
@@ -268,7 +268,7 @@ function ReviewCard({
               {review.company}
             </div>
           </div>
-          {/* Grey until the card is engaged with, then its own colours — the
+          {/* Grey until the card is engaged with, then its own colours - the
               sourcing verifies itself when you lean in. Held at grayscale at
               rest so four brand colours aren't shouting from every card in a
               section that otherwise has two. */}
@@ -288,7 +288,7 @@ function ReviewCard({
   );
 }
 
-/** Section 9 — client reviews. */
+/** Section 9 - client reviews. */
 export default function Reviews() {
   const grid = useRef<HTMLDivElement>(null);
   // Touch's stand-in for hover: whichever card is crossing the middle of the
@@ -336,7 +336,7 @@ export default function Reviews() {
         // The stars strike in behind their card, which is the one beat that
         // makes the rating read as something someone gave rather than a row of
         // glyphs that was always there. back.out overshoots each star a little
-        // — a rating is a stamp, not a fade.
+        // - a rating is a stamp, not a fade.
         tl.fromTo(
           ".review-star",
           { opacity: 0, scale: 0.3 },
@@ -360,7 +360,7 @@ export default function Reviews() {
 
   // No background of its own: this is a flat band with nothing overlapping it,
   // so letting the mesh field carry the stretch costs nothing. Process keeps
-  // its background on purpose — it is a raised sheet riding up over WhyUs, and
+  // its background on purpose - it is a raised sheet riding up over WhyUs, and
   // a transparent one would show WhyUs through the overlap.
   return (
     <section id="reviews" className="px-5 py-24 md:px-8 md:py-32">
@@ -373,7 +373,7 @@ export default function Reviews() {
           </h2>
         </Reveal>
 
-        {/* No rake at this level. Each card owns its own — see ReviewCard.
+        {/* No rake at this level. Each card owns its own - see ReviewCard.
             One column on a phone, two on a small tablet, three from md. */}
         <div
           ref={grid}

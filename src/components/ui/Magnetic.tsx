@@ -12,7 +12,7 @@ import {
  * Magnetic hover: the wrapped control drifts toward the cursor and springs
  * back when it leaves.
  *
- * This is Framer's half of the split, not GSAP's — it's pointer-driven rather
+ * This is Framer's half of the split, not GSAP's - it's pointer-driven rather
  * than scroll-driven, and the spring has to survive being retargeted every
  * mousemove without restarting. GSAP would need a tween per frame for this.
  *

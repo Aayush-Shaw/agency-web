@@ -12,7 +12,7 @@ import ScrollHint from "@/components/ui/ScrollHint";
 import Words from "@/components/ui/Words";
 
 /* ============================================================
-   Media wall — tunables.
+   Media wall - tunables.
 
    Everything about the wall's geometry and pace is one of these six values.
    Changing TILT re-solves the cover size on its own (see COVER_W/COVER_H);
@@ -27,12 +27,12 @@ const SCROLL_SPEED = 30;
 /** Gutter between columns, and between tiles inside a column. */
 const GAP = "0.75rem";
 /** Where the wall's left edge sits at md+, as a share of the content band
-    (--bw, set on the wall itself) rather than of the viewport — that is the
+    (--bw, set on the wall itself) rather than of the viewport - that is the
     whole cap: past 72rem the band stops growing and so does the wall. Below md
     it starts at the band's left edge and takes the whole width. Under the text
     column's 50% either way, which is the overlap. */
 const WALL_LEFT = "calc(var(--bw) * 0.45)";
-/** Cover margin over the exact minimum — sub-pixel rounding at the rotated
+/** Cover margin over the exact minimum - sub-pixel rounding at the rotated
     block's corners, nothing more. Every pixel of slack is width the outermost
     columns spend outside the window, so this stays as close to 1 as it can. */
 const COVER_SLACK = 1.03;
@@ -44,7 +44,7 @@ const COVER_SLACK = 1.03;
        W·|cos θ| + H·|sin θ|   wide
        W·|sin θ| + H·|cos θ|   tall
 
-   and those are exactly the block's minimum dimensions — any smaller and a
+   and those are exactly the block's minimum dimensions - any smaller and a
    corner of the window pokes out past a rotated edge. At 45° both collapse to
    the familiar (W + H) / √2.
 
@@ -68,12 +68,12 @@ const COVER_H = `calc((var(--wall-w) * ${SIN} + 100svh * ${COS}) * ${COVER_SLACK
  * One tile in the wall.
  *
  * `span` is the tile's height as a fraction of the block's height, which is
- * what makes the columns masonry-ish rather than a grid of equal cells — and,
+ * what makes the columns masonry-ish rather than a grid of equal cells - and,
  * more importantly, what makes every height known at first layout. The loop
  * below measures the track the moment it mounts; if these were image-driven
  * heights it would be measuring a pile of unloaded <img>s.
  *
- * Per column the spans must sum to **at least 1** — one copy of the list has
+ * Per column the spans must sum to **at least 1** - one copy of the list has
  * to be tall enough to fill the column on its own, or the seamless wrap below
  * shows a gap. They sum to ~1.35 here, so there is room to swap tiles in and
  * out without doing the arithmetic again.
@@ -95,7 +95,7 @@ const vid = (id: string, span: number): Tile => ({
 });
 
 /* One array per column, left to right. Odd columns scroll up, even ones down
-   — see the loop. One video per column, so the wall reads as mixed media
+   - see the loop. One video per column, so the wall reads as mixed media
    everywhere without mounting more than a handful of decoders (each tile is
    rendered twice, so four videos here is eight <video> elements). */
 const COLUMNS: Tile[][] = [
@@ -129,7 +129,7 @@ const COLUMNS: Tile[][] = [
   ],
 ];
 
-/* The wall is decoration — the whole region is aria-hidden, so the tiles carry
+/* The wall is decoration - the whole region is aria-hidden, so the tiles carry
    no alt text by design and there is nothing here for a screen reader to wade
    through. */
 function Tiles({ items }: { items: Tile[] }) {
@@ -138,7 +138,7 @@ function Tiles({ items }: { items: Tile[] }) {
       key={i}
       // shrink-0: without it the flex column squeezes the tiles back down to
       // fit and every span above becomes a suggestion.
-      // marginBottom rather than a `gap` on the track — see the loop for why
+      // marginBottom rather than a `gap` on the track - see the loop for why
       // the two are not interchangeable here.
       className="relative shrink-0 overflow-hidden rounded-xl"
       style={{ height: `calc(var(--cover-h) * ${item.span})`, marginBottom: GAP }}
@@ -158,7 +158,7 @@ function Tiles({ items }: { items: Tile[] }) {
       ) : (
         // Plain <img>, not next/image: these are remote placeholder URLs, and
         // next/image would need each host added to images.remotePatterns in
-        // next.config.ts — a file outside the hero. Swap both together when
+        // next.config.ts - a file outside the hero. Swap both together when
         // the real assets land.
         // eslint-disable-next-line @next/next/no-img-element
         <img
@@ -176,7 +176,7 @@ function Tiles({ items }: { items: Tile[] }) {
    A wash of the bg token over the top was what made the left edge read as a
    cut: however soft the overlay's own fade, the wall underneath still stopped
    dead on a straight vertical line, and a translucent panel over a hard edge
-   is still a hard edge. Masking the wall means there is no edge to hide —
+   is still a hard edge. Masking the wall means there is no edge to hide -
    opacity runs to zero before the boundary, and what shows through is the
    aurora backdrop rather than a tinted copy of it.
 
@@ -185,7 +185,7 @@ function Tiles({ items }: { items: Tile[] }) {
    standard property and WebKit's. Nesting composes them for free.
 
    Vertical: transparent through the navbar's band, so the bar is never over
-   moving media — the reason the old blur strip existed, minus the strip.
+   moving media - the reason the old blur strip existed, minus the strip.
    Horizontal: transparent at the wall's own left edge, full by --fx. 45% of a
    55vw window lands the ramp's end around 70vw, well clear of the text. Below
    md the text is full-width, so the ramp runs nearly the whole way and the
@@ -200,13 +200,13 @@ export default function Hero() {
 
   // The page's one real timeline: each beat overlaps the one before it, so the
   // hero arrives as a single move rather than three separate fades. Durations
-  // come from gsap.defaults() (0.9s power3.out) — the timing measured off the
+  // come from gsap.defaults() (0.9s power3.out) - the timing measured off the
   // reference sites.
   useGSAP(
     () => {
       const mm = gsap.matchMedia();
       mm.add("(prefers-reduced-motion: no-preference)", () => {
-        // fromTo, not from — see the note in Reveal.tsx.
+        // fromTo, not from - see the note in Reveal.tsx.
         const tl = gsap.timeline({ delay: 0.15 });
 
         tl
@@ -219,7 +219,7 @@ export default function Hero() {
           // more its projection slides sideways as it rotates. On a three-line
           // headline that threw the first word of the last line clear off the
           // left edge, where the section's overflow-hidden clipped it. Per-word
-          // perspective pivots each word about its own box — no lateral drift.
+          // perspective pivots each word about its own box - no lateral drift.
           //
           // stagger vs duration is what makes this read as one-by-one rather
           // than one wave: at the old 0.045/1.1 every word was already moving
@@ -252,7 +252,7 @@ export default function Hero() {
           );
 
         // The wall. Each track holds two copies of its column, and one full
-        // cycle slides it by exactly one copy — at which point copy two is
+        // cycle slides it by exactly one copy - at which point copy two is
         // sitting where copy one started and the tween can restart with
         // nothing to see. yPercent (not y) is what keeps that true through a
         // resize: the tiles are sized in viewport units, so the travel has to
@@ -262,7 +262,7 @@ export default function Hero() {
         // margin-bottom instead of the track carrying it as `gap`. With `gap`
         // there is one fewer gutter than tiles (n−1, not n), the two copies
         // are no longer the same height, and the wrap lands half a gutter out
-        // — a visible twitch once a cycle.
+        // - a visible twitch once a cycle.
         //
         // Duration from a measured height so every column drifts at the same
         // px/sec whatever its tiles add up to. offsetHeight is honest here
@@ -297,14 +297,14 @@ export default function Hero() {
   );
 
   // One boolean, published as a DOM attribute rather than React state, for the
-  // same reason the theme is: the two things that need it — the navbar's
-  // borrowed dark palette and the WebGL backdrop's off switch — are both pure
+  // same reason the theme is: the two things that need it - the navbar's
+  // borrowed dark palette and the WebGL backdrop's off switch - are both pure
   // CSS in globals.css, and neither is in this component's tree.
   //
   // scrollY >= the hero's own height is the moment the opaque stack above has
   // covered it completely. offsetHeight, not getBoundingClientRect: sticky
   // pins the visual box at the top but leaves the flow box (and so the height)
-  // honest. Read per event, off an already-clean layout — the same passive
+  // honest. Read per event, off an already-clean layout - the same passive
   // listener shape the navbar uses.
   //
   // data-overflows is the safety valve, and it has to be measured rather than
@@ -336,26 +336,26 @@ export default function Hero() {
 
   // h-svh, not min-h-svh: the hero and the navbar over it are one screenful,
   // seen without scrolling. A minimum let the content set the height, and on a
-  // short laptop it set it taller than the viewport — which is what
+  // short laptop it set it taller than the viewport - which is what
   // #top[data-overflows] in globals.css exists to rescue (it unpins the hero so
   // the buttons stay reachable). An exact height plus type that is sized
   // against svh means the content fits instead of being rescued, and the
   // rescue rule now only fires if something here grows past its budget.
   //
-  // Every vertical step below — the padding, the gaps, the type, the button —
+  // Every vertical step below - the padding, the gaps, the type, the button -
   // is a clamp with an svh term, so the whole stack shrinks with the viewport
   // rather than falling off the bottom of it. The vw terms are the width
   // guards; min() takes whichever is tighter.
   //
   // svh, not dvh: dvh tracks the mobile browser chrome collapsing on scroll,
-  // which would resize the hero mid-scroll — and the hero's height is a live
+  // which would resize the hero mid-scroll - and the hero's height is a live
   // input to three other things (Aurora re-syncs its drawing buffer on resize,
   // the wall's cover size is solved against it, and the data-past-hero
   // threshold above is measured off offsetHeight). svh is the one that holds
   // still, and it is the height that is visible with the mobile chrome *open*
-  // — so the hero fits the first paint, not just the scrolled state.
+  // - so the hero fits the first paint, not just the scrolled state.
   //
-  // The section itself stays full-bleed, and the aurora with it — a backdrop
+  // The section itself stays full-bleed, and the aurora with it - a backdrop
   // that stops short of the edges is just a panel. The 72rem cap the navbar
   // uses is applied to the two pieces of *content* instead: the text column
   // takes it as a max-width, the wall as --bw. Both are min()s against the
@@ -364,17 +364,17 @@ export default function Hero() {
   // in the same band as the bar above them.
   //
   // sticky top-0 with <main> as the containing block: the hero pins on the
-  // first pixel of scroll and the rest of the page — one opaque z-10 stack in
-  // page.tsx — travels up over it. Nothing here is scroll-driven, so there is
+  // first pixel of scroll and the rest of the page - one opaque z-10 stack in
+  // page.tsx - travels up over it. Nothing here is scroll-driven, so there is
   // no scrub to fight native scroll on a phone; the whole effect is two
   // z-indexes.
   //
-  // theme-dark swapped the section onto the site's one other palette — the dark
+  // theme-dark swapped the section onto the site's one other palette - the dark
   // espresso stage. Off with the aurora backdrop: the stage existed to be the
   // ground that backdrop cleared to, and without it the hero just takes the
   // page palette, same as every section below. Put `theme-dark ` back at the
   // head of the className to restore it, and uncomment the navbar half of the
-  // selector in globals.css with it — the bar borrows this palette while the
+  // selector in globals.css with it - the bar borrows this palette while the
   // hero is under it, so the two go back together or the bar is light ink on a
   // light hero.
   return (
@@ -384,7 +384,7 @@ export default function Hero() {
       className="sticky top-0 z-0 flex h-svh items-center overflow-hidden px-5 pt-[clamp(3.5rem,11svh,6rem)] pb-[clamp(1.25rem,3svh,2rem)] md:px-8"
     >
       {/* Hero-only backdrop. It clears to the bg token (opaque), which under
-          theme-dark is the stage's own ground — so this is the hero's whole
+          theme-dark is the stage's own ground - so this is the hero's whole
           background rather than a layer over the page's. It is what fills the
           strip to the left of the wall. Content sits above it; globals.css
           drops it entirely once the page is past the hero, which is what stops
@@ -393,7 +393,7 @@ export default function Hero() {
           mount: page.tsx puts its own inside the post-hero sheet, which is
           opaque and z-10, so that instance physically cannot reach up here.
           Two mounts is the only way one field covers both, and it costs a
-          second WebGL context — both pause through the same
+          second WebGL context - both pause through the same
           IntersectionObserver, so only one is ever drawing.
 
           Same field, same stops, no per-instance palette: this is the page's
@@ -402,7 +402,7 @@ export default function Hero() {
           .mesh-bg brings its own sticky/100vh/z-index:-1; inside this absolute
           z-0 box that resolves to "fills the hero, behind nothing else", so
           there is no CSS to add. And the display:none rule below still applies
-          to .hero-backdrop, which is what kills the render loop past the hero —
+          to .hero-backdrop, which is what kills the render loop past the hero -
           same switch Aurora used.
 
           The Aurora original is kept below. */}
@@ -442,12 +442,12 @@ export default function Hero() {
         style={
           {
             // Same cap as the text band below (and every other section's
-            // mx-auto max-w-[1600px]) — they have to match or the wall stops
+            // mx-auto max-w-[1600px]) - they have to match or the wall stops
             // short of the band's right edge.
             "--bw": "min(100vw, 1600px)",
             // 100% here, 100vw above, and the difference is the scrollbar.
             // --bw has to be a length (it feeds COVER_H), so it takes the vw;
-            // --gut only ever positions, so it takes the percentage — which
+            // --gut only ever positions, so it takes the percentage - which
             // resolves against the section's padding box, the same width
             // mx-auto centres the text band in. With 100vw on both, the wall
             // landed half a scrollbar right of the text and finished short of
@@ -464,11 +464,11 @@ export default function Hero() {
           } as CSSProperties
         }
       >
-        {/* Second mask layer — see WALL_FADE_LEFT for why it is a nested
+        {/* Second mask layer - see WALL_FADE_LEFT for why it is a nested
             element and not a second entry in the list above. */}
         {/* Below md the text column is the full width, so there is no clear
             side for the wall to be on and the horizontal ramp alone can't buy
-            enough contrast — it only reaches 45% of the way across before the
+            enough contrast - it only reaches 45% of the way across before the
             first glyph. The opacity is the phone's answer instead: the wall
             stays a texture behind the type rather than a picture under it.
             Cheaper than a scrim too, and it keeps the "no overlay" rule. */}
@@ -508,19 +508,19 @@ export default function Hero() {
       </div>
 
       {/* Two boxes, and they are not interchangeable. The outer one is the
-          72rem band, centred — so on a 4K screen the headline sits over the
+          72rem band, centred - so on a 4K screen the headline sits over the
           navbar rather than a third of a screen to its left. The inner one is
           the half of that band the text gets.
 
           The split has to be a width on a child, not padding on the band: a
           percentage padding resolves against the *containing block*, which
           here is the section's content box, not the 72rem the band settled at.
-          At 4K that is pr:50% of 3776px on an 1152px box — the text column
+          At 4K that is pr:50% of 3776px on an 1152px box - the text column
           collapses to nothing.
 
           50% of the band against the wall's 55%, so they still overlap by 5%
           and the wall's fade has already taken it to nothing by the time it
-          reaches any glyph. No scrim — see WALL_FADE_LEFT. */}
+          reaches any glyph. No scrim - see WALL_FADE_LEFT. */}
       <div className="relative z-10 mx-auto w-full max-w-[1600px]">
         <div className="md:w-1/2">
           {/* Not --text-display. That token is solved against the viewport
@@ -530,13 +530,13 @@ export default function Hero() {
             that must fit one screen it ignores height entirely.
 
             min(vw, svh) takes whichever constraint is tighter, so the same
-            declaration answers both — 6.2vw is the width budget for the
+            declaration answers both - 6.2vw is the width budget for the
             longest line, 10svh is three lines plus the rest of the stack
             inside the viewport.
 
             The 4.75rem ceiling is the band cap paying for itself, not taste.
             Past 72rem the column stops at 576px however wide the screen gets,
-            and the nowrap line below needs 7.22× the font size — so anything
+            and the nowrap line below needs 7.22× the font size - so anything
             over ~4.98rem overflows into the section's overflow-hidden and is
             silently trimmed. 76px is that limit with enough slack to survive a
             font swap. The floor is still the old ladder's 40px.
@@ -548,10 +548,10 @@ export default function Hero() {
               phrase, which is the same thing said less strictly: nowrap keeps
               it together and lets the *next* line break wherever the column
               width wants it. The size clamp above is what stops nowrap turning
-              into overflow — measured, the phrase sets 7.22× its own font
+              into overflow - measured, the phrase sets 7.22× its own font
               size, so below the band cap it needs 7.22 × 6.2vw = 45vw of the
               50% the column has, and above it 549px of 576. Re-measure that
-              ratio if the wording or the font changes — it overflows
+              ratio if the wording or the font changes - it overflows
               silently. */}
             <span className="whitespace-nowrap">
               <Words className="hero-word" text="We make brands" />
@@ -567,7 +567,7 @@ export default function Hero() {
               the last box but outside the gradient span, so it stays
               text-coloured.
 
-              iOS glass alternative — commented directly below; swap it back in
+              iOS glass alternative - commented directly below; swap it back in
               and comment the gradient trio. `.text-glass` is still in
               globals.css and this is still the live pair of options. Each
               glyph becomes a cut-out onto whatever is behind them, so unlike
@@ -594,17 +594,17 @@ export default function Hero() {
             </span>
           </h1>
 
-          {/* The service list moved down here when the headline lost it — the
+          {/* The service list moved down here when the headline lost it - the
             headline now carries the promise and this carries the proof. */}
           <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
             Digi Bear is a full-service studio crafting websites, social
             content, motion graphics, and AI-generated video for ambitious teams
-            — premium work, fast turnarounds, on your timezone.
+            - premium work, fast turnarounds, on your timezone.
           </p>
 
           {/* Magnetic owns transform on the wrapper; GSAP's entrance owns it on
             the anchor inside. Two elements, so neither clobbers the other. */}
-          {/* Content-width, never full-bleed — a button that spans the column
+          {/* Content-width, never full-bleed - a button that spans the column
               reads as a form field, and on a phone the column is the screen. */}
           <div className="mt-[clamp(1rem,3.8svh,2.25rem)] flex">
             <Magnetic>
@@ -612,7 +612,7 @@ export default function Hero() {
                   carry their own background, radius and glow, and they sit flush
                   so the seam between them is the only thing separating them.
                   The <a> keeps the height (as --cta-h, which is also the disc's
-                  width — that is what makes it a circle rather than an oval),
+                  width - that is what makes it a circle rather than an oval),
                   the text colour the arrows inherit, and the hover scale, so
                   both halves still move as one control.
 
@@ -625,13 +625,13 @@ export default function Hero() {
               >
                 <span className="grid place-items-center rounded-full brand-gradient px-7">
                   {/* The label rolls up while the arrow beside it flies out
-                      diagonally — same swap, and they run on the same hover. */}
+                      diagonally - same swap, and they run on the same hover. */}
                   <Roll>Elevate Your Brand</Roll>
                 </span>
 
                 <span className="grid w-(--cta-h) shrink-0 place-items-center rounded-full brand-gradient">
                   {/* Two arrows on a belt: on hover the seated one flies out
-                    and its twin — parked one trip down-left, outside the clip —
+                    and its twin - parked one trip down-left, outside the clip -
                     takes the slot. Same duration, no delay, or it reads as two
                     animations rather than one.
 
@@ -644,7 +644,7 @@ export default function Hero() {
                     clip has to clear the glyph's *drawn* ink (~15.3px once
                     turned 45°, not its 16px box) while the 24px trip has to
                     exceed clip + ink, or the flying arrow parks a sliver on the
-                    edge — so resize the icon and re-measure both. And rotate-45
+                    edge - so resize the icon and re-measure both. And rotate-45
                     only composes with the translates because Tailwind v4 emits
                     them as separate `rotate`/`translate` properties, applied
                     translate → rotate; as one `transform` the arrows would fly
@@ -669,7 +669,7 @@ export default function Hero() {
       {/* Absolute, so it contributes no height. Every vertical step in this
           section is a clamp solved to make the content fit h-svh exactly, and
           an in-flow pill at the bottom would be the one thing growing past that
-          budget — straight into the #top[data-overflows] rescue this layout
+          budget - straight into the #top[data-overflows] rescue this layout
           exists to avoid needing.
 
           short:hidden is the collision guard rather than a height guess. The

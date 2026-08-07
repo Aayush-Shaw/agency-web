@@ -143,7 +143,7 @@ export default function Aurora(props: AuroraProps) {
     blend = 0.5,
   } = props;
   // Live props for the render loop without re-running the effect. Assigned in
-  // an effect, not during render — react-hooks/refs rejects the latter.
+  // an effect, not during render - react-hooks/refs rejects the latter.
   const propsRef = useRef<AuroraProps>(props);
   useEffect(() => {
     propsRef.current = props;
@@ -161,20 +161,20 @@ export default function Aurora(props: AuroraProps) {
     canvas.style.height = "100%";
     // Double duty: paints the right colour before the first GL frame (and if
     // WebGL2 is missing entirely), and is what we read the clear colour back
-    // from below — getComputedStyle resolves the token for us, so there's no
+    // from below - getComputedStyle resolves the token for us, so there's no
     // hex to keep in sync with globals.css.
     //
     // The utility, not `var(--color-bg)`: the @theme alias is declared on
     // :root, so it already resolved to the page's parchment by the time it
     // inherits. Tailwind inlines this one to the raw token, which re-resolves
-    // against whichever scope the canvas actually sits in — here the hero's
+    // against whichever scope the canvas actually sits in - here the hero's
     // .theme-dark, whose ground is the one this wants.
     canvas.className = "bg-bg";
 
     // preserveDrawingBuffer, because this canvas deliberately stops drawing:
     // one static frame under reduced motion, and nothing at all while paused
     // off-screen. Without it the buffer is discarded after each composite, so
-    // the next repaint that isn't preceded by a draw shows an empty canvas —
+    // the next repaint that isn't preceded by a draw shows an empty canvas -
     // and with alpha:false the compositor treats the canvas as opaque and
     // skips the CSS background, so "empty" paints as blank rather than falling
     // back to the bg token. Costs a buffer copy per frame while animating,
@@ -200,7 +200,7 @@ export default function Aurora(props: AuroraProps) {
     }
     gl.useProgram(program);
 
-    // Single oversized triangle covering the clip volume — ogl's Triangle
+    // Single oversized triangle covering the clip volume - ogl's Triangle
     // geometry, minus the uv attribute the shader never reads.
     const buffer = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, buffer);
@@ -254,7 +254,7 @@ export default function Aurora(props: AuroraProps) {
 
     // Drawing buffer stays at CSS pixels (ogl's default dpr of 1). This is a
     // soft gradient with no edges to alias, so a retina buffer would quadruple
-    // the fragment count for nothing visible — the point of the pause logic
+    // the fragment count for nothing visible - the point of the pause logic
     // below is the same budget.
     const resize = () => {
       const width = ctn.offsetWidth;
@@ -294,7 +294,7 @@ export default function Aurora(props: AuroraProps) {
       onScreen = entry.isIntersecting;
       // Coming back can also mean un-hidden rather than scrolled-to (the hero
       // display:nones this once the page is past it), and resize() bails while
-      // the container measures 0 — so re-sync the buffer before resuming.
+      // the container measures 0 - so re-sync the buffer before resuming.
       if (onScreen) {
         resize();
         start();

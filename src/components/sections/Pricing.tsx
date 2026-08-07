@@ -70,7 +70,7 @@ const Check = () => (
   </svg>
 );
 
-/** Section 8 — pricing, middle tier featured. */
+/** Section 8 - pricing, middle tier featured. */
 export default function Pricing() {
   return (
     <section id="pricing" className="px-5 py-24 md:px-8 md:py-32">

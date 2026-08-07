@@ -7,14 +7,14 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
  * The scrollbar, replacing the native one.
  *
  * Native scrollbars are laid out *inside* the viewport on Windows and Linux, so
- * keeping one costs ~15px off the right of every section — see the note in
+ * keeping one costs ~15px off the right of every section - see the note in
  * globals.css. This is an overlay instead: no layout width, and it carries the
  * brand colour, which a native bar can only half do.
  *
  * The thumb's *position* is not set here. It comes from a scroll-driven CSS
  * animation, so it runs off the main thread and needs no scroll listener; this
  * file only turns pointer input into a scroll position and lets the animation
- * follow. That is also why dragging feels exact — the thumb is showing the real
+ * follow. That is also why dragging feels exact - the thumb is showing the real
  * scroll offset, not a JS estimate of it.
  *
  * window.scrollTo rather than the Lenis instance: Lenis only writes scroll while
@@ -24,12 +24,12 @@ import type { CSSProperties, PointerEvent as ReactPointerEvent } from "react";
  * ~1s it takes to settle.
  */
 
-/** Thumb length. The one number both halves need — CSS sizes the thumb from
-    it, the drag subtracts it from the track — so it goes out as a custom
+/** Thumb length. The one number both halves need - CSS sizes the thumb from
+    it, the drag subtracts it from the track - so it goes out as a custom
     property rather than being written twice. Everything else about the
     geometry is measured, never assumed. */
 const THUMB = 56;
-/** One click of a step arrow — roughly three lines of body copy. */
+/** One click of a step arrow - roughly three lines of body copy. */
 const STEP = 64;
 /** Hold-to-repeat, shaped like a key repeat: a pause to prove it is a hold,
     then a steady tick. Without it a held arrow reads as broken. */
@@ -39,7 +39,7 @@ const REPEAT_EVERY = 40;
 const maxScroll = () =>
   document.documentElement.scrollHeight - window.innerHeight;
 
-/** Solid triangle, the shape a step arrow has always been — with the corners
+/** Solid triangle, the shape a step arrow has always been - with the corners
     taken off, which at this size is the difference between a mark and three
     needles.
 
@@ -68,7 +68,7 @@ export default function ScrollBar() {
   /* Pointer position → document scroll, given where inside the thumb it was
      grabbed. The exact inverse of the scrollbar-thumb keyframe, and it stays
      that way by measuring the same box the keyframe's 100cqh resolves against
-     rather than recomputing it from window.innerHeight — those two disagree
+     rather than recomputing it from window.innerHeight - those two disagree
      while a mobile address bar is collapsing and whenever a horizontal
      scrollbar exists. */
   const scrollFor = (clientY: number, grab: number) => {
@@ -79,8 +79,8 @@ export default function ScrollBar() {
     const t = (clientY - box.top - grab) / travel;
     return Math.min(Math.max(t, 0), 1) * maxScroll();
   };
-  // Drag. Pointer capture is what makes releasing outside the window — or off
-  // the 14px column — still end the drag on this element.
+  // Drag. Pointer capture is what makes releasing outside the window - or off
+  // the 14px column - still end the drag on this element.
   const onThumbDown = (e: ReactPointerEvent<HTMLDivElement>) => {
     e.preventDefault();
     // Or the track underneath would also jump on the same press.

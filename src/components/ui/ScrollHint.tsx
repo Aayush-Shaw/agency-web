@@ -9,7 +9,7 @@ import Roll from "@/components/ui/Roll";
  * moment the dial starts turning. Folding either rule in here would mean the
  * other one fighting it with a variant.
  *
- * With `href` it is a real control, and worth being one — on a phone it saves
+ * With `href` it is a real control, and worth being one - on a phone it saves
  * the swipe it is asking for. `onClick` is the same thing where there is no
  * element to point at: Process is pinned, so its next "screen" is a scroll
  * distance rather than an anchor. Given neither it is decoration and hidden
@@ -17,7 +17,7 @@ import Roll from "@/components/ui/Roll";
  * not making, and the content it points at is the next thing in the document
  * anyway.
  *
- * Label type is Eyebrow's, deliberately — this is the same size of voice.
+ * Label type is Eyebrow's, deliberately - this is the same size of voice.
  */
 export default function ScrollHint({
   href,
@@ -30,7 +30,7 @@ export default function ScrollHint({
 }) {
   const label = (
     <>
-      {/* Word only. The arrow keeps its own bob — see .scroll-hint-arrow. */}
+      {/* Word only. The arrow keeps its own bob - see .scroll-hint-arrow. */}
       <Roll>Scroll</Roll>
       <ArrowDown className="scroll-hint-arrow h-4 w-4 shrink-0" aria-hidden="true" />
     </>

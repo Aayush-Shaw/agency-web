@@ -4,7 +4,7 @@ import { useRef, type ElementType, type ReactNode } from "react";
 import { gsap, useGSAP, SplitText } from "@/lib/gsap";
 
 /**
- * Per-section signature moves. Each is only the *departure* state — the
+ * Per-section signature moves. Each is only the *departure* state - the
  * arrival is always the same full reset below, so adding one is one line.
  *
  * `words` is the exception: it is a different shape rather than a different
@@ -31,7 +31,7 @@ const ARRIVE = { opacity: 1, y: 0, x: 0, scale: 1, filter: "blur(0px)" };
  * and a `text` prop cannot express that. Splitting in the DOM leaves the markup
  * the section actually wrote.
  *
- * Returns SplitText's undo, which matters more than usual here — the word spans
+ * Returns SplitText's undo, which matters more than usual here - the word spans
  * are DOM that React did not render and does not know how to reconcile.
  */
 function flipWords(el: HTMLElement, start: string, y: number) {
@@ -43,7 +43,7 @@ function flipWords(el: HTMLElement, start: string, y: number) {
   // .text-gradient clips one background across its own text, and a *transformed*
   // child is painted outside that clip. Left alone, every word lifted out of a
   // gradient span would render with the inherited `color: transparent` and
-  // nothing behind it — invisible, not just un-gradiented. Moving the class down
+  // nothing behind it - invisible, not just un-gradiented. Moving the class down
   // gives each word its own background box. The ramp restarts per word as a
   // result, which is the trade the hero already makes; see Words.tsx.
   for (const w of split.words) {
@@ -54,8 +54,8 @@ function flipWords(el: HTMLElement, start: string, y: number) {
   // shared vanishing point at the heading's centre slides each word sideways in
   // proportion to its distance from that centre, which throws the outer words of
   // a long heading off their line. Per-word perspective pivots each about its
-  // own box. Same reasoning as the hero — the comment there has the long version.
-  // No `once: true` — see the note on the other scrollTrigger below.
+  // own box. Same reasoning as the hero - the comment there has the long version.
+  // No `once: true` - see the note on the other scrollTrigger below.
   const tl = gsap.timeline({ scrollTrigger: { trigger: el, start } });
   tl.fromTo(
     split.words,
@@ -103,7 +103,7 @@ type RevealProps = {
  * Content is visible by default (CSS); GSAP only hides-then-reveals when it
  * actually runs, so there's no flash of hidden content and reduced-motion /
  * no-JS users simply see the content in place. Cleanup is automatic via the
- * useGSAP scope — no leaked or duplicated ScrollTriggers on unmount.
+ * useGSAP scope - no leaked or duplicated ScrollTriggers on unmount.
  */
 export default function Reveal({
   children,
@@ -150,7 +150,7 @@ export default function Reveal({
             // Do NOT add `once: true` here. It reads like a free optimisation
             // and it costs the whole page: `once` makes a ScrollTrigger kill
             // itself the moment it fires, and landing straight on a deep anchor
-            // (/#contact) fires a dozen of these at once — while Process's
+            // (/#contact) fires a dozen of these at once - while Process's
             // pinned trigger is inside refresh(), walking the same global
             // trigger array. ScrollTrigger.js:1366 reads _triggers[i].end with
             // no guard, the array has shrunk under it, and the throw takes the
@@ -162,7 +162,7 @@ export default function Reveal({
             scrollTrigger: { trigger: el, start },
             // Hand the element back to CSS on arrival. Without this GSAP leaves
             // an inline `transform` behind, and an inline transform outranks
-            // every `hover:-translate-y-*` class on these cards — the hover
+            // every `hover:-translate-y-*` class on these cards - the hover
             // lifts silently stop working the moment a card reveals. Every
             // arrival value equals the CSS default, so clearing is a no-op
             // visually and restores the transition suspended above.

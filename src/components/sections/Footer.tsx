@@ -5,14 +5,14 @@ const NAV = [
   { label: "Services", href: "#services" },
   { label: "Work", href: "#work" },
   { label: "Process", href: "#process" },
-  // Parked with the section itself — see page.tsx.
+  // Parked with the section itself - see page.tsx.
   // { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
   { label: "Contact", href: "#contact" },
 ];
 
 /* Drawn here rather than imported: Lucide v1 dropped its brand icons, and the
-   official marks are three different families anyway — a filled circle-f and a
+   official marks are three different families anyway - a filled circle-f and a
    filled play card next to a hollow camera outline, which is what made the row
    look mismatched.
    So they share a chassis instead. Every mark is a rounded tile of the same
@@ -24,7 +24,7 @@ const NAV = [
    so these sit with the navbar's Sun/Moon and the hero's ArrowUp. */
 const TILE = <rect x="3" y="3" width="18" height="18" rx="5.5" />;
 
-/* YouTube's badge is landscape, not square — a square reads as the wrong brand
+/* YouTube's badge is landscape, not square - a square reads as the wrong brand
    however consistent it is. It keeps the other tiles' width and centre and only
    loses height, so it still belongs to the row. The radius is cut to match:
    5.5 on a 12-tall box is nearly half its height and would round into a
@@ -63,7 +63,7 @@ const SOCIALS = [
     label: "Facebook",
     href: "https://facebook.com/digibear",
     /* An 'f': stem up the centre, hooking right at the top, barred at the
-       waist. Sized so the ink — not the stem — centres on the tile: the two
+       waist. Sized so the ink - not the stem - centres on the tile: the two
        strokes together span x 8.8→15.2 and y 7→17, both centred on 12. Judging
        it by the stem instead is what threw the earlier version 1px right, since
        the hook only ever extends one way. */
@@ -78,7 +78,7 @@ const SOCIALS = [
   {
     label: "YouTube",
     href: "https://youtube.com/@digibear",
-    /* Play triangle, centroid nudged right of centre so it reads as centred —
+    /* Play triangle, centroid nudged right of centre so it reads as centred -
        a right-pointing triangle carries its mass on the left. */
     icon: socialIcon(
       <>
@@ -89,7 +89,7 @@ const SOCIALS = [
   },
 ];
 
-/** Section 13 — footer. */
+/** Section 13 - footer. */
 export default function Footer() {
   return (
     <footer className="border-t border-border bg-surface px-5 pt-14 pb-2 md:px-8">
@@ -99,7 +99,7 @@ export default function Footer() {
             href="#"
             className="flex items-center gap-0 lg:gap-1 font-display text-lg font-bold tracking-tight"
           >
-            {/* Same plain <img> as the navbar lockup — see the note there. */}
+            {/* Same plain <img> as the navbar lockup - see the note there. */}
             <img
               src="/digibear-logo.svg"
               alt=""
@@ -111,7 +111,7 @@ export default function Footer() {
             </Roll>
           </a>
           <p className="mt-4 text-sm leading-relaxed text-text-muted">
-            A full-service digital studio — design, motion, and AI video for
+            A full-service digital studio - design, motion, and AI video for
             ambitious brands in the US, UK, and Europe.
           </p>
         </div>
@@ -120,14 +120,14 @@ export default function Footer() {
             columns and the three social marks stack down the third, so both
             halves are three rows tall and the block squares off. md:contents
             dissolves this wrapper again, leaving the desktop flex row exactly
-            as it was — no second copy of either child. */}
+            as it was - no second copy of either child. */}
         <div className="grid grid-cols-3 gap-x-6 md:contents">
           <nav aria-label="Footer" className="col-span-2">
             <ul className="grid grid-cols-2 gap-x-10 gap-y-3">
               {NAV.map((link) => (
                 // The nav's two columns are the phone grid's first and second,
                 // so the middle column of the footer is this list's even
-                // children — row-major flow puts 2 and 4 in column two. Centred
+                // children - row-major flow puts 2 and 4 in column two. Centred
                 // there, the row reads left / centre / right across the three
                 // columns. Back to flush left at md, where the socials are a
                 // row again and there is no middle column to speak of.
@@ -144,7 +144,7 @@ export default function Footer() {
           </nav>
 
           {/* items-end so the stack hugs the footer's right edge rather than
-            floating mid-column — the marks are 44px in a ~96px column. */}
+            floating mid-column - the marks are 44px in a ~96px column. */}
           <div className="flex flex-col items-end gap-3 md:flex-row md:items-start">
             {SOCIALS.map((social) => (
               <a

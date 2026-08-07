@@ -62,6 +62,6 @@ Thumbs.db
 ehthumbs.db
 Desktop.ini
 
-# markdown — README is the only doc that ships
+# markdown - README is the only doc that ships
 *.md
 !README.md

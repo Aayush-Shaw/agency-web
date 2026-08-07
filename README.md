@@ -4,7 +4,7 @@
 
 **Design, Motion & AI Video Studio**
 
-A single-page marketing site for a full-service digital studio — website design &
+A single-page marketing site for a full-service digital studio - website design &
 development, social media marketing, motion graphics, video editing, and
 AI-generated avatars & video.
 
@@ -21,8 +21,8 @@ AI-generated avatars & video.
 ## Overview
 
 One page, thirteen sections, scroll-driven throughout. The visual language is warm
-and editorial — cream and espresso, honey amber accents, film grain over a fixed
-atmospheric backdrop — with long, low-travel GSAP transitions that read as
+and editorial - cream and espresso, honey amber accents, film grain over a fixed
+atmospheric backdrop - with long, low-travel GSAP transitions that read as
 expensive rather than busy.
 
 Light and dark themes ship as pure `prefers-color-scheme` CSS: no toggle, no JS,
@@ -42,7 +42,7 @@ no flash of the wrong theme.
 
 ## Getting started
 
-**Prerequisites** — Node.js `>=20.9.0` (Next 16 requirement) and npm.
+**Prerequisites** - Node.js `>=20.9.0` (Next 16 requirement) and npm.
 
 ```bash
 # 1. install dependencies
@@ -54,7 +54,7 @@ npm run dev
 
 Open [http://localhost:3000](http://localhost:3000).
 
-No environment variables are required to run the site — the contact endpoint is
+No environment variables are required to run the site - the contact endpoint is
 provider-less by design (see [Contact API](#contact-api)).
 
 ### Scripts
@@ -72,9 +72,9 @@ Every folder holds one kind of thing:
 
 ```
 src/
-├── app/                       # The page itself — wiring, not content
+├── app/                       # The page itself - wiring, not content
 │   ├── api/contact/route.ts   # Handles a submitted contact form
-│   ├── globals.css            # Colours, fonts, spacing — the whole look
+│   ├── globals.css            # Colours, fonts, spacing - the whole look
 │   ├── layout.tsx             # Wrapper around every page: fonts, tab title
 │   └── page.tsx               # The running order of the thirteen sections
 ├── components/
@@ -92,7 +92,7 @@ docs/
 ```
 
 Each of `sections/` and `ui/` has its own README listing every file in plain
-English — [sections](src/components/sections/README.md) ·
+English - [sections](src/components/sections/README.md) ·
 [ui](src/components/ui/README.md).
 
 ## Design system
@@ -109,13 +109,13 @@ and `border-border` always resolve to the live theme value.
 | `--raw-accent-primary`  | `#C9822E` | `#E8A33D` |
 
 **Motion.** `src/lib/gsap.ts` registers GSAP plugins exactly once, client-only,
-and sets the house defaults — `duration: 0.9`, `ease: "power3.out"`. Long duration
+and sets the house defaults - `duration: 0.9`, `ease: "power3.out"`. Long duration
 with short travel is the whole trick; the measurements behind it are in
 [`docs/design-reference-notes.md`](docs/design-reference-notes.md).
 
 **Images.** `dangerouslyAllowSVG` is enabled in `next.config.ts` because every
 asset under `public/` is a first-party SVG. Serve remote SVG through this
-pipeline and that assumption breaks — swap to raster or disable the flag first.
+pipeline and that assumption breaks - swap to raster or disable the flag first.
 
 ## Contact API
 
@@ -131,20 +131,20 @@ Content-Type: application/json
 | `name`    | 2–100 characters                                 |
 | `email`   | valid format, ≤200 characters                    |
 | `message` | 10–2000 characters                               |
-| `website` | honeypot — must be empty; filled = silently ok'd |
+| `website` | honeypot - must be empty; filled = silently ok'd |
 
 Returns `200 { ok: true }` on success, `400 { error }` on malformed JSON or failed
 validation.
 
 > [!WARNING]
 > The route validates and logs; it does **not** send mail yet. Before wiring an
-> email provider, add per-IP rate limiting — the endpoint is public and
+> email provider, add per-IP rate limiting - the endpoint is public and
 > unauthenticated, so the moment it sends mail it becomes a spam relay someone
 > else pays for.
 
 ## Deployment
 
-Deploys to [Vercel](https://vercel.com/new) with zero configuration — push the
+Deploys to [Vercel](https://vercel.com/new) with zero configuration - push the
 repo, import it, done. Any Node 20.9+ host works too:
 
 ```bash

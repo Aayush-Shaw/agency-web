@@ -5,7 +5,7 @@ import Services from "@/components/sections/Services";
 import Work from "@/components/sections/Work";
 import WhyUs from "@/components/sections/WhyUs";
 import Process from "@/components/sections/Process";
-// Pricing is parked, not deleted — uncomment this and the <Pricing /> below,
+// Pricing is parked, not deleted - uncomment this and the <Pricing /> below,
 // plus the "Pricing" entries in Navbar.tsx and Footer.tsx, to bring it back.
 // import Pricing from "@/components/sections/Pricing";
 import Reviews from "@/components/sections/Reviews";
@@ -29,7 +29,7 @@ export default function Home() {
             (Manifesto is 522px on a 844px phone) shows the hero through the
             strip below it.
 
-            The mesh field has to live inside for the same reason — a
+            The mesh field has to live inside for the same reason - a
             body-level backdrop would be behind this sheet and never seen
             again. z-10 + relative makes this a stacking context, so a
             z-index:-1 child paints above the sheet's own background and below
@@ -53,7 +53,7 @@ export default function Home() {
           {/* WhyUs sticks and Process rides up over it, so the two are wrapped
               together: sticky is bounded by its containing block, and without
               this wrapper WhyUs would stay pinned for the whole rest of the
-              page — visible straight through Reviews, Trust, Faq and Cta,
+              page - visible straight through Reviews, Trust, Faq and Cta,
               which are all deliberately transparent. */}
           <div className="relative">
             <WhyUs />

@@ -6,7 +6,7 @@ import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import ScrollHint from "@/components/ui/ScrollHint";
 
-/* Stage content. Position on the dial is the array index — index 0 rests at 12
+/* Stage content. Position on the dial is the array index - index 0 rests at 12
    o'clock, and each step after it sits SPAN degrees further round. Add or
    remove a stage and the geometry, the scroll length and the wrap all re-solve
    on their own; nothing below hardcodes "four". */
@@ -19,12 +19,12 @@ const STEPS = [
   {
     n: "02",
     title: "Design",
-    body: "Concepts, direction, and prototypes. You see and shape the work early — no big reveals, no surprises.",
+    body: "Concepts, direction, and prototypes. You see and shape the work early - no big reveals, no surprises.",
   },
   {
     n: "03",
     title: "Build",
-    body: "We produce the final assets — site, content, motion, or video — with regular check-ins and fast revisions.",
+    body: "We produce the final assets - site, content, motion, or video - with regular check-ins and fast revisions.",
   },
   {
     n: "04",
@@ -40,7 +40,7 @@ const SPAN = 360 / STEPS.length;
    last stage at the apex rather than carrying it round to the first again. A
    full 360 would put Discover back at 12 o'clock at the bottom of the section,
    which reads as "nothing happened" and gives the pin no ending. Holding on
-   Launch is also the cheaper wrap — there is no seam to hide, because the dial
+   Launch is also the cheaper wrap - there is no seam to hide, because the dial
    never crosses one. */
 const TURN = SPAN * (STEPS.length - 1);
 
@@ -70,16 +70,16 @@ const NAV = 80; // fixed navbar this section scrolls under, = pt-20
 const SETTLED = 0.1;
 
 /**
- * Section 7 — how we work, as a scroll-driven dial.
+ * Section 7 - how we work, as a scroll-driven dial.
  *
  * The four stages ride an arc that turns 90° per scroll-step, so whichever one
  * is "now" is the one at the apex. Direction is the one the brief describes
  * point-by-point (3 o'clock swings *up* to 12, the outgoing stage leaves past
- * the top-left) — anticlockwise on a real clock face, so the stages move the
+ * the top-left) - anticlockwise on a real clock face, so the stages move the
  * way the brief says rather than the way the word "clockwise" says.
  *
  * A stage is a numbered marker with its title and description hanging directly
- * underneath it, and the whole thing rides the arc as one piece — text
+ * underneath it, and the whole thing rides the arc as one piece - text
  * included. Nothing is parked in a fixed spot and cross-faded in place; the
  * only reason opacity is here at all is that four of these share one arc, so
  * each has to be gone before the next is legible.
@@ -87,7 +87,7 @@ const SETTLED = 0.1;
  * Scroll is not the only way to drive it. The numbers are buttons and the
  * Scroll pill knows where the dial has got to, but neither of them animates it:
  * both scroll the page to where the stage they want sits at the apex and let
- * the scrub do the turning — see the block above `scrollToStep`. Only the
+ * the scrub do the turning - see the block above `scrollToStep`. Only the
  * stages you can actually see are reachable, which is a property of the dial
  * rather than a rule enforced anywhere: the marker opposite the apex is at
  * opacity 0, and autoAlpha hides it from the pointer and the tab order with it.
@@ -95,7 +95,7 @@ const SETTLED = 0.1;
  * The layout solves itself from measured heights every refresh, which is what
  * lets one design cover a 320x568 phone and a 1920x1080 monitor:
  *
- *   · the dial starts LEAD px under the heading — a fixed, small gap, never a
+ *   · the dial starts LEAD px under the heading - a fixed, small gap, never a
  *     share of the leftover space;
  *   · the arc takes the room that is left, capped at rx so a tall narrow
  *     viewport gets a dome rather than a pointed arch;
@@ -106,11 +106,11 @@ const SETTLED = 0.1;
  * That last point is the whole reason the gap under the heading used to be
  * enormous on a tall phone: the arc was anchored to the bottom of the section
  * and its height was a fraction of the viewport, so every pixel of surplus
- * landed in one place — between the heading and the apex.
+ * landed in one place - between the heading and the apex.
  *
  * There is no reduced-motion branch. It was here, and it was removed on
  * request: this is now the only layout, so a stacked list only ever appears if
- * JavaScript has not run at all — which is not a fallback anyone chose, just
+ * JavaScript has not run at all - which is not a fallback anyone chose, just
  * the markup before `.arc` is applied.
  */
 export default function Process() {
@@ -119,7 +119,7 @@ export default function Process() {
   const head = useRef<HTMLDivElement>(null);
   /* Assigned by the effect, called from the markup. The two controls need the
      live ScrollTrigger to turn a stage index into a scroll position, and it
-     only exists inside the effect — same reason CardRail hands its loop out
+     only exists inside the effect - same reason CardRail hands its loop out
      through a ref rather than rebuilding it per render. */
   const goStep = useRef<(i: number) => void>(() => {});
   const goNext = useRef<() => void>(() => {});
@@ -151,7 +151,7 @@ export default function Process() {
       /* Everything here is measured, nothing is a constant in a stylesheet.
          The heading is why: it is a px-sized block that wraps to more lines as
          the viewport narrows, so any svh expression for the dial is wrong at
-         some size — and wrong means text on top of text. */
+         some size - and wrong means text on top of text. */
       const solve = () => {
         /* Back to the bare navbar clearance before anything is measured. --pad
            lands on the heading's own box, so leaving the last refresh's
@@ -169,7 +169,7 @@ export default function Process() {
 
         const markerR = (markers[0]?.offsetHeight ?? 0) / 2;
 
-        // Straight off the heading's real box, padding included — so LEAD is
+        // Straight off the heading's real box, padding included - so LEAD is
         // the gap you actually see, whether the heading wrapped to one line or
         // three.
         const apex =
@@ -178,14 +178,14 @@ export default function Process() {
           LEAD +
           markerR;
 
-        // The arc takes what is left, but never more than rx — an ellipse
+        // The arc takes what is left, but never more than rx - an ellipse
         // taller than half its own width stops being a dome and becomes a
         // pointed arch, which on a 412x839 phone is a 571px parabola with the
         // stages strung along it. A semicircle is the ceiling.
         ry = Math.max(MIN_RY, Math.min(rx, H - EDGE - markerR - apex));
 
         /* What that cap leaves over. It is only ever non-zero on a viewport
-           tall enough that a semicircle no longer reaches the bottom — which
+           tall enough that a semicircle no longer reaches the bottom - which
            in practice means a phone; a wide one solves to 0 here and is
            untouched, so this needs no breakpoint of its own.
            Half goes above the heading and half stays under the arc, which
@@ -193,7 +193,7 @@ export default function Process() {
            given entirely to one end it reads as the section having slipped,
            and it was landing under the arc, leaving the heading jammed up
            against the navbar with a hole beneath the dial. The navbar
-           clearance and EDGE are not part of the split — they are fixed
+           clearance and EDGE are not part of the split - they are fixed
            obstacles, so the group centres in what is left between them. */
         const slack = Math.max(0, H - EDGE - markerR - apex - ry) / 2;
 
@@ -208,7 +208,7 @@ export default function Process() {
         arms.forEach((arm, i) => {
           const deg = gsap.utils.wrap(0, 360, i * SPAN + turned);
 
-          // One transform per stage, and the text is inside it — so the words
+          // One transform per stage, and the text is inside it - so the words
           // travel with their own number rather than sliding along some other
           // path of their own.
           gsap.set(arm, {
@@ -216,7 +216,7 @@ export default function Process() {
             y: -ry * Math.cos(deg * RAD),
           });
 
-          // 0 at the apex, 180 straight down — same either way round, so a
+          // 0 at the apex, 180 straight down - same either way round, so a
           // stage looks identical arriving and leaving.
           const off = Math.min(deg, 360 - deg);
 
@@ -244,7 +244,7 @@ export default function Process() {
           // A third is what it actually uses, which is: on a phone the text is
           // ~88vw, so it starts crossing the screen edge as soon as it travels
           // with its marker. Nothing can be both that wide and free to move, so
-          // the text is gone by the time the clip would show — at a third of a
+          // the text is gone by the time the clip would show - at a third of a
           // step it has only moved half its own width.
           const span = SPAN / 3;
           const near = gsap.utils.clamp(0, 1, (span - off) / span);
@@ -283,7 +283,7 @@ export default function Process() {
       const last = STEPS.length - 1;
 
       /* Both controls move the *page*, not the dial.
-         The dial has exactly one input — this trigger's progress — so a tween
+         The dial has exactly one input - this trigger's progress - so a tween
          written straight to `dial.p` would be overwritten by the scrub on the
          next scroll event, and the scroll position would still be sitting on
          the old stage underneath it. Scrolling to where the wanted stage rests
@@ -312,7 +312,7 @@ export default function Process() {
         const st = spin.scrollTrigger;
         if (!st) return;
         // Which stage is at the apex right now. Off the trigger's own progress
-        // and not `dial.p` — the scrub leaves that one deliberately lagging, so
+        // and not `dial.p` - the scrub leaves that one deliberately lagging, so
         // pressing Scroll twice quickly would read the same stage both times
         // and ask for the same target twice.
         const here = Math.floor(st.progress * last + SETTLED);
@@ -348,9 +348,9 @@ export default function Process() {
 
      `.arc` takes the vertical padding to zero rather than trimming it: the
      dial is positioned from the section's top edge, and `top` on an absolutely
-     positioned child is measured from the *padding* box — leave py-32 on and
+     positioned child is measured from the *padding* box - leave py-32 on and
      the whole arc drops 128px below where --cy says it is. The heading takes
-     over the top spacing, as --pad, which `solve` sets — see the slack split
+     over the top spacing, as --pad, which `solve` sets - see the slack split
      there for why it is not simply the navbar's height. */
   return (
     <section
@@ -360,7 +360,7 @@ export default function Process() {
       className="relative z-20 mt-[-10svh] overflow-hidden bg-bg px-5 py-24 [corner-shape:squircle] md:px-8 md:py-32 [&.arc]:h-svh [&.arc]:py-0"
     >
       {/* Clears the fixed navbar, which this section scrolls under rather than
-          past — py-0 above took the section's own top padding away with it.
+          past - py-0 above took the section's own top padding away with it.
           --pad is that clearance plus whatever `solve` needs to add to centre
           the group vertically; it falls back to the bare NAV on the pass
           before the first measurement. */}
@@ -370,7 +370,7 @@ export default function Process() {
           {/* Under `.arc` the heading stops being sized against width alone.
               --text-section is a vw clamp with no line-height of its own, so on
               a 320px phone it lands at its 36px floor and then inherits the
-              body's 1.5 leading — 54px a line, 162px for three, which is 29% of
+              body's 1.5 leading - 54px a line, 162px for three, which is 29% of
               a 568px screen spent on the heading. min(vw, svh) is the hero's own
               answer to the same problem: whichever axis is tighter wins, so this
               reads the same at 1440 and gets out of the way on a phone. */}
@@ -384,7 +384,7 @@ export default function Process() {
       {/* The face: a top-half ellipse, --rx wide and --ry tall, with its flat
           edge on the centre line. The radius pair per corner (50%/100%) is what
           makes it an ellipse rather than two quarter-circles, and border-b-0 is
-          what leaves the diameter undrawn — the arc is open at the ends, so
+          what leaves the diameter undrawn - the arc is open at the ends, so
           nothing suggests a circle continuing below.
 
           inset-x-* re-applies the section's own gutter, and that inset is what
@@ -397,7 +397,7 @@ export default function Process() {
       />
 
       {/* Zero-size, parked at the centre of the ellipse, so every stage inside
-          is placed in plain (x, y) from there. Still an <ol> — the stages are a
+          is placed in plain (x, y) from there. Still an <ol> - the stages are a
           sequence whatever shape they are drawn in. */}
       <ol className="mx-auto mt-12 grid max-w-[1600px] gap-x-8 gap-y-10 sm:grid-cols-2 lg:grid-cols-4 in-[.arc]:absolute in-[.arc]:left-1/2 in-[.arc]:top-(--cy) in-[.arc]:mt-0 in-[.arc]:block in-[.arc]:size-0">
         {STEPS.map((step, i) => (
@@ -408,7 +408,7 @@ export default function Process() {
             {/* One moving piece per stage: the marker and its text together. */}
             <div className="proc-arm in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:size-0">
               {/* Tapping a number turns the dial to it, however far round it
-                  is — the handler only names the stage, and the distance falls
+                  is - the handler only names the stage, and the distance falls
                   out of where that stage sits on the scroll.
 
                   A button and not a div with a click: it is a control, and on
@@ -425,7 +425,7 @@ export default function Process() {
                 className="proc-marker font-display text-4xl font-bold text-gradient in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-0 in-[.arc]:grid in-[.arc]:size-10 in-[.arc]:cursor-pointer in-[.arc]:place-items-center in-[.arc]:rounded-full in-[.arc]:border in-[.arc]:border-border in-[.arc]:bg-surface in-[.arc]:text-sm"
               >
                 {/* "You are here". A ring rather than a filled chip because the
-                    numeral is gradient text — fill it and the two gradients sit
+                    numeral is gradient text - fill it and the two gradients sit
                     on top of each other. */}
                 <span
                   aria-hidden="true"
@@ -434,7 +434,7 @@ export default function Process() {
                 {step.n}
               </button>
 
-              {/* Directly under its own number — top-8 is the marker's 20px
+              {/* Directly under its own number - top-8 is the marker's 20px
                   radius plus STACK. */}
               <div className="proc-panel in-[.arc]:absolute in-[.arc]:left-0 in-[.arc]:top-8 in-[.arc]:w-[min(32rem,88vw)] in-[.arc]:text-center">
                 <h3 className="mt-3 text-card font-semibold tracking-tight in-[.arc]:mt-0">
@@ -450,7 +450,7 @@ export default function Process() {
       </ol>
 
       {/* Sits in the slack `solve` leaves under the arc, so it costs the dial
-          nothing — and it is absolute, so it stays out of the height the arc is
+          nothing - and it is absolute, so it stays out of the height the arc is
           solved against.
 
           hidden until `.arc`, because without JS this section is a plain
@@ -459,19 +459,19 @@ export default function Process() {
           than written as `in-[.arc]:inline-flex md:hidden`: those two are the
           same specificity and would decide it on source order.
 
-          inline-flex, not block — it has to restore the display ScrollHint
+          inline-flex, not block - it has to restore the display ScrollHint
           sets for itself. Anything else here silently un-flexes the pill, and
           the label and arrow reflow as plain inline content and wrap onto two
           lines inside the border.
 
-          A press lands the *next stage* on the apex — it reads where the dial
+          A press lands the *next stage* on the apex - it reads where the dial
           has got to and aims at the stage after it, rather than adding a fixed
           viewport and hoping. The two only agree when you press it from a dead
           stop on a stage: pressing it having drifted two thirds of the way to
           Design used to leave you two thirds past Design, so the dial ended up
           resting between two stages with neither block of text legible, and
           every later press inherited the same offset. Past the last stage it
-          means what it always did — see goNext.
+          means what it always did - see goNext.
 
           Not an href: the section is pinned, so the next thing to see is a
           scroll distance and not an element with an id on it. */}

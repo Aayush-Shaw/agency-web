@@ -4,7 +4,7 @@ import { useEffect, useRef } from "react";
 
 /**
  * The animated mesh field behind everything after the hero: two standing
- * columns — maple left, pine right — breathing past each other with the
+ * columns - maple left, pine right - breathing past each other with the
  * parchment splitting them, and an amber horizon sweeping between. It is a
  * flag, read slowly.
  *
@@ -25,7 +25,7 @@ precision highp float;
 uniform vec2 uResolution;
 uniform float uTime;
 uniform vec3 uBase;   // the ground, and the canvas clear colour
-uniform vec3 uNode0;  // amber — carries the large areas
+uniform vec3 uNode0;  // amber - carries the large areas
 uniform vec3 uNode1;  // maple red
 uniform vec3 uNode2;  // pine
 
@@ -43,7 +43,7 @@ float noise(vec2 p) {
 }
 
 /* Three octaves, recentred on zero so it reads as a displacement rather than a
-   brightness. The field below warps its coordinates through this — it is what
+   brightness. The field below warps its coordinates through this - it is what
    separates an organic mesh from a gradient with moving dots in it, and the
    reason it never settles into a pose you recognise. */
 float fbm(vec2 p) {
@@ -52,10 +52,10 @@ float fbm(vec2 p) {
 }
 
 /* The field returns raw weights for (node0, node1, node2). They are allowed to
-   overlap and to exceed 1 — main() normalises the hue and governs the amount,
+   overlap and to exceed 1 - main() normalises the hue and governs the amount,
    so this can be written for the shape it wants rather than for a budget.
 
-   Two standing columns — maple left, pine right — that breathe past each other
+   Two standing columns - maple left, pine right - that breathe past each other
    with the parchment splitting them, and an amber horizon sweeping between. */
 vec3 field(vec2 p, float t, float a) {
   float wob = fbm(p * 1.3 + vec2(t * 0.10, 0.0)) * 0.5;
@@ -70,7 +70,7 @@ void main() {
   vec2 uv = gl_FragCoord.xy / uResolution;
   float a = uResolution.x / uResolution.y;
   // Squared-up space, so shapes stay round on a wide viewport instead of
-  // stretching into lozenges. y stays 0..1 — the amber band runs horizontally
+  // stretching into lozenges. y stays 0..1 - the amber band runs horizontally
   // and wants the viewport's own vertical extent, not the corrected one.
   vec2 p = vec2(uv.x * a, uv.y);
 
@@ -85,8 +85,8 @@ void main() {
      travelling: the amber can take almost the whole budget and still leave the
      ink well past 4.5:1, where the maple and the pine cannot.
 
-     So rather than hand-capping every node — which is what flattened the first
-     pass into a near-flat cream — the amount is scaled by the luminance of
+     So rather than hand-capping every node - which is what flattened the first
+     pass into a near-flat cream - the amount is scaled by the luminance of
      whatever hue actually won this fragment. Dark tints are pulled back
      automatically and keep their character as accents; light ones run free.
      One expression, and the field is legible by construction. */
@@ -136,8 +136,8 @@ export default function MeshGradient() {
     canvas.style.cssText = "display:block;width:100%;height:100%";
 
     // preserveDrawingBuffer, for the same reason Aurora needs it: this canvas
-    // deliberately stops drawing — one static frame under reduced motion, and
-    // nothing at all while the tab is hidden or the layer is off-screen —
+    // deliberately stops drawing - one static frame under reduced motion, and
+    // nothing at all while the tab is hidden or the layer is off-screen -
     // and without it the buffer is discarded after each composite, so the next
     // repaint that isn't preceded by a draw comes up blank.
     const gl = canvas.getContext("webgl2", {
@@ -230,8 +230,8 @@ export default function MeshGradient() {
       if (!raf) render();
     };
 
-    // Three independent reasons not to burn a frame — the user asked for less
-    // motion, the tab is in the background, or the layer isn't on screen — all
+    // Three independent reasons not to burn a frame - the user asked for less
+    // motion, the tab is in the background, or the layer isn't on screen - all
     // routed through one predicate so they can't disagree with each other.
     // Under reduced motion the clock never advances, so what stays on screen is
     // a static snapshot of the field rather than an empty canvas.
@@ -255,7 +255,7 @@ export default function MeshGradient() {
     const io = new IntersectionObserver(([entry]) => {
       onScreen = entry.isIntersecting;
       // Coming back on screen can also mean coming back from a zero-sized
-      // layout, and resize() bails while the container measures 0 — so re-sync
+      // layout, and resize() bails while the container measures 0 - so re-sync
       // the buffer before resuming.
       if (onScreen) resize();
       sync();

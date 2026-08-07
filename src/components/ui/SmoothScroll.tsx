@@ -23,7 +23,7 @@ export default function SmoothScroll({ children }: { children: React.ReactNode }
     const lenis = new Lenis({
       duration: 1.1,
       smoothWheel: true,
-      // Leave phones/tablets on native scrolling — smoothing touch fights the OS.
+      // Leave phones/tablets on native scrolling - smoothing touch fights the OS.
       syncTouch: false,
     });
 

@@ -4,7 +4,7 @@ import "./globals.css";
 import ScrollBar from "@/components/ui/ScrollBar";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 
-// Display: Questrial ships a single 400 weight — there is no bold cut, so the
+// Display: Questrial ships a single 400 weight - there is no bold cut, so the
 // bold on headings is the browser's synthetic emboldening (a deliberate choice:
 // keeping Questrial mattered more than crisp stems at display sizes). Anything
 // >=600 synthesises identically, so font-semibold and font-bold look the same
@@ -15,7 +15,7 @@ const display = Questrial({
   variable: "--font-questrial",
 });
 // Body: Poppins is not a variable font, so only the weights listed here are
-// downloaded — 400 body, 500 nav/labels, 600 buttons and emphasis.
+// downloaded - 400 body, 500 nav/labels, 600 buttons and emphasis.
 const sans = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
@@ -23,17 +23,17 @@ const sans = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Digi Bear — Design, Motion & AI Video Studio",
+  title: "Digi Bear - Design, Motion & AI Video Studio",
   description:
     "Digi Bear is a full-service digital studio for ambitious brands: website design & development, social media marketing, motion graphics, video editing, and AI-generated avatars & video.",
   // Points at the same file the navbar and footer render, rather than a second
-  // copy under app/ as icon.svg — one asset, one place to update it.
+  // copy under app/ as icon.svg - one asset, one place to update it.
   icons: { icon: "/digibear-logo.svg" },
 };
 
 // Tells the UA to render its own surfaces (scrollbars, form controls, the
 // mobile address bar) in the matching scheme before our CSS lands. Flat
-// `light` now that the site has one palette — the hero's dark stage sets its
+// `light` now that the site has one palette - the hero's dark stage sets its
 // own color-scheme locally and doesn't want the whole document following it.
 export const viewport: Viewport = {
   colorScheme: "light",
@@ -45,7 +45,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="min-h-dvh">
-        {/* Film grain — non-interactive, stationary while the page scrolls
+        {/* Film grain - non-interactive, stationary while the page scrolls
             under it, and above the navbar (z-60 vs z-50) so nothing escapes
             it. */}
         <div className="grain" aria-hidden="true" />
