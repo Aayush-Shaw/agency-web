@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { SITE_URL, SOCIAL_LINKS } from "@/lib/constants";
 
 /**
  * /llms.txt - a plain Markdown summary of the agency, services, pricing, and
@@ -58,12 +59,12 @@ export function GET() {
 - Payment methods: bank transfer, all major cards
 
 ## Contact
-- Website: https://digibearorg.com
-- Contact form: https://digibearorg.com/#contact
-- Contact API: POST https://digibearorg.com/api/contact (fields: name, email, message)
-- Instagram: https://instagram.com/digibear
-- Facebook: https://facebook.com/digibear
-- YouTube: https://youtube.com/@digibear
+- Website: ${SITE_URL}
+- Contact form: ${SITE_URL}/#contact
+- Contact API: POST ${SITE_URL}/api/contact (fields: name, email, message)
+- Instagram: ${SOCIAL_LINKS.instagram}
+- Facebook: ${SOCIAL_LINKS.facebook}
+- YouTube: ${SOCIAL_LINKS.youtube}
 
 ## Technical Capabilities
 - Next.js 16 with App Router and Server Components

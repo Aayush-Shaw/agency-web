@@ -1,4 +1,5 @@
 import { ImageResponse } from "next/og";
+import { SITE_DOMAIN } from "@/lib/constants";
 
 /**
  * Dynamic Open Graph image - auto-generated at build time and served at
@@ -133,7 +134,7 @@ export default function OgImage() {
           display: "flex",
         }}
       >
-        digibearorg.com
+        {SITE_DOMAIN}
       </div>
     </div>,
     { ...size },

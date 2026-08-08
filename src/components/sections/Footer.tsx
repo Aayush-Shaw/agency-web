@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { SOCIAL_LINKS } from "@/lib/constants";
 import Roll from "@/components/ui/Roll";
 
 const NAV = [
@@ -49,7 +50,7 @@ const socialIcon = (glyph: ReactNode) => (
 const SOCIALS = [
   {
     label: "Instagram",
-    href: "https://instagram.com/digibear",
+    href: SOCIAL_LINKS.instagram,
     // Lens on the tile's centre, flash offset into the top-right quadrant.
     icon: socialIcon(
       <>
@@ -61,7 +62,7 @@ const SOCIALS = [
   },
   {
     label: "Facebook",
-    href: "https://facebook.com/digibear",
+    href: SOCIAL_LINKS.facebook,
     /* An 'f': stem up the centre, hooking right at the top, barred at the
        waist. Sized so the ink - not the stem - centres on the tile: the two
        strokes together span x 8.8→15.2 and y 7→17, both centred on 12. Judging
@@ -77,7 +78,7 @@ const SOCIALS = [
   },
   {
     label: "YouTube",
-    href: "https://youtube.com/@digibear",
+    href: SOCIAL_LINKS.youtube,
     /* Play triangle, centroid nudged right of centre so it reads as centred -
        a right-pointing triangle carries its mass on the left. */
     icon: socialIcon(

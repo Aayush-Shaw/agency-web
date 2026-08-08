@@ -1,4 +1,5 @@
 import { NextResponse } from "next/server";
+import { SITE_URL, SOCIAL_LINKS } from "@/lib/constants";
 
 /**
  * GET /api/services - machine-readable service catalog for AI agents.
@@ -112,20 +113,20 @@ const SERVICES = [
 export function GET() {
   const payload = {
     agency: "Digi Bear",
-    url: "https://digibearorg.com",
+    url: SITE_URL,
     description:
       "Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing.",
     areaServed: ["United States", "United Kingdom", "Europe"],
     services: SERVICES,
     contact: {
-      formUrl: "https://digibearorg.com/#contact",
-      apiEndpoint: "https://digibearorg.com/api/contact",
+      formUrl: `${SITE_URL}/#contact`,
+      apiEndpoint: `${SITE_URL}/api/contact`,
       apiMethod: "POST",
       requiredFields: ["name", "email", "message"],
       socialMedia: {
-        instagram: "https://instagram.com/digibear",
-        facebook: "https://facebook.com/digibear",
-        youtube: "https://youtube.com/@digibear",
+        instagram: SOCIAL_LINKS.instagram,
+        facebook: SOCIAL_LINKS.facebook,
+        youtube: SOCIAL_LINKS.youtube,
       },
     },
     paymentTerms: {

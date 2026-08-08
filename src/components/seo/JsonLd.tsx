@@ -15,7 +15,9 @@
  * internal key format. If rates change, update both.
  */
 
-const BASE_URL = "https://digibearorg.com";
+import { SITE_URL, SOCIAL_LINKS } from "@/lib/constants";
+
+const BASE_URL = SITE_URL;
 
 /* ------------------------------------------------------------------ */
 /*  Organization                                                       */
@@ -37,11 +39,7 @@ const organization = {
     url: `${BASE_URL}/#contact`,
     availableLanguage: ["English"],
   },
-  sameAs: [
-    "https://instagram.com/digibear",
-    "https://facebook.com/digibear",
-    "https://youtube.com/@digibear",
-  ],
+  sameAs: Object.values(SOCIAL_LINKS),
   areaServed: [
     { "@type": "Place", name: "United States" },
     { "@type": "Place", name: "United Kingdom" },

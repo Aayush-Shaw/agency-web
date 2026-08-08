@@ -4,6 +4,7 @@ import "./globals.css";
 import ScrollBar from "@/components/ui/ScrollBar";
 import SmoothScroll from "@/components/ui/SmoothScroll";
 import JsonLd from "@/components/seo/JsonLd";
+import { SITE_URL } from "@/lib/constants";
 
 // Display: Questrial ships a single 400 weight - there is no bold cut, so the
 // bold on headings is the browser's synthetic emboldening (a deliberate choice:
@@ -24,7 +25,7 @@ const sans = Poppins({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL("https://digibearorg.com"),
+  metadataBase: new URL(SITE_URL),
   title: "Digi Bear - Design, Motion & AI Video Studio",
   description:
     "Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing for ambitious brands in the US, UK, and Europe.",
