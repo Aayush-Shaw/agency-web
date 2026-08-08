@@ -25,7 +25,8 @@ import {
 } from "@/lib/configurator";
 import { estimate, formatUsd } from "@/lib/estimatePricing";
 
-const CONTACT_EMAIL = "hello@digibear.ca";
+const CONTACT_EMAIL = "digibearorg@gmail.com";
+// const CONTACT_EMAIL = "hello@digibear.ca";
 
 /** The site's standard curve (see .lift in globals.css), typed for motion. */
 const EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1];
