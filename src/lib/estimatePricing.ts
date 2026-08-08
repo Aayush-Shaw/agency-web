@@ -32,13 +32,9 @@ const RATES: Record<RateKey, Rate> = {
   "web:standard": { min: 3500, max: 6000, weeks: 4 },
   "web:custom": { min: 8000, max: 15000, weeks: 8 },
 
-  "social:light": { min: 900, max: 1400, weeks: 2 },
-  "social:growth": { min: 1800, max: 2800, weeks: 3 },
-  "social:always-on": { min: 3200, max: 5000, weeks: 4 },
-
-  "motion:logo": { min: 600, max: 1200, weeks: 1 },
-  "motion:kit": { min: 1800, max: 3200, weeks: 3 },
-  "motion:explainer": { min: 3500, max: 6500, weeks: 5 },
+  "design:identity": { min: 800, max: 1600, weeks: 2 },
+  "design:creatives": { min: 1200, max: 2400, weeks: 2 },
+  "design:system": { min: 3000, max: 6000, weeks: 4 },
 
   "video:1-3": { min: 700, max: 1400, weeks: 1 },
   "video:3-5": { min: 1400, max: 2600, weeks: 2 },
@@ -47,6 +43,14 @@ const RATES: Record<RateKey, Rate> = {
   "ai:pilot": { min: 900, max: 1800, weeks: 2 },
   "ai:series": { min: 2200, max: 4000, weeks: 3 },
   "ai:scale": { min: 4500, max: 8000, weeks: 5 },
+
+  "social:light": { min: 900, max: 1400, weeks: 2 },
+  "social:growth": { min: 1800, max: 2800, weeks: 3 },
+  "social:always-on": { min: 3200, max: 5000, weeks: 4 },
+
+  "ads:single": { min: 800, max: 1500, weeks: 2 },
+  "ads:multi": { min: 1800, max: 3500, weeks: 3 },
+  "ads:managed": { min: 3500, max: 6500, weeks: 4 },
 };
 
 /** Rush costs more and buys a shorter calendar; a long runway does the reverse. */

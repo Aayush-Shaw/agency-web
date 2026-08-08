@@ -24,7 +24,7 @@ const STEPS = [
   {
     n: "03",
     title: "Build",
-    body: "We produce the final assets - site, content, motion, or video - with regular check-ins and fast revisions.",
+    body: "We produce the final assets - site, design, content, or video - with regular check-ins and fast revisions.",
   },
   {
     n: "04",

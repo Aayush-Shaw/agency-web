@@ -6,7 +6,7 @@ import { imageUrl, videoUrl } from "@/lib/media";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 
-type Category = "Website" | "Social" | "Motion" | "AI Video";
+type Category = "Website" | "Social" | "Video" | "AI Video";
 
 type Project = {
   title: string;
@@ -34,10 +34,10 @@ const PROJECTS: Project[] = [
   { title: "Bloom Botanics", cat: "Social", src: imageUrl("photo-1551434678-e076c223a692"), aspect: 1.6 },
   { title: "Kite Athletics", cat: "Social", src: imageUrl("photo-1542744173-8e7e53415bb0"), aspect: 1 },
 
-  { title: "Apex Motors", cat: "Motion", src: videoUrl("2278095"), video: true, aspect: 2.2 },
-  { title: "Nova Festival", cat: "Motion", src: imageUrl("photo-1531482615713-2afd69097998"), aspect: 1.3 },
-  { title: "Pulse Records", cat: "Motion", src: videoUrl("6774633"), video: true, aspect: 0.5625 },
-  { title: "Vantage Studios", cat: "Motion", src: imageUrl("photo-1600880292203-757bb62b4baf"), aspect: 1.75 },
+  { title: "Apex Motors", cat: "Video", src: videoUrl("2278095"), video: true, aspect: 2.2 },
+  { title: "Nova Festival", cat: "Video", src: imageUrl("photo-1531482615713-2afd69097998"), aspect: 1.3 },
+  { title: "Pulse Records", cat: "Video", src: videoUrl("6774633"), video: true, aspect: 0.5625 },
+  { title: "Vantage Studios", cat: "Video", src: imageUrl("photo-1600880292203-757bb62b4baf"), aspect: 1.75 },
 
   { title: "Aria · AI Presenter", cat: "AI Video", src: videoUrl("5192157"), video: true, aspect: 1.78 },
   { title: "Meridian Realty", cat: "AI Video", src: imageUrl("photo-1454165804606-c3d57bc86b40"), aspect: 1.45 },
@@ -45,7 +45,7 @@ const PROJECTS: Project[] = [
   { title: "Orbit Robotics", cat: "AI Video", src: imageUrl("photo-1553877522-43269d4ea984"), aspect: 0.9 },
 ];
 
-const TABS = ["All", "Website", "Social", "Motion", "AI Video"] as const;
+const TABS = ["All", "Website", "Social", "Video", "AI Video"] as const;
 
 /** Copies of the list on the rail. Three, not two: the middle one is what you
     see, and the outer two are the runway the wrap jumps between. Two copies

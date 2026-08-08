@@ -43,7 +43,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "Motion graphics that finally match our brand. The team took rough notes and turned them into something we're proud of.",
+      "Branding that finally looks like us. The team took rough notes and turned them into something we're proud of.",
     name: "Marcus Bell",
     company: "Apex Motors, US",
     face: "photo-1500648767791-00dcc994a43e",

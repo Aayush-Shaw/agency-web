@@ -33,7 +33,7 @@ const TIERS: Tier[] = [
     tagline: "For growing brands that need more.",
     features: [
       "Up to two services combined",
-      "Motion graphics & video included",
+      "Video editing & design included",
       "4 rounds of revisions",
       "Priority turnaround",
       "Dedicated project manager",

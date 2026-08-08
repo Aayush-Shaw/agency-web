@@ -14,37 +14,43 @@ import { SITE_URL, SOCIAL_LINKS } from "@/lib/constants";
 export function GET() {
   const body = `# Digi Bear
 
-> Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing for ambitious brands in the US, UK, and Europe.
+> Digi Bear is an all-in-one digital studio covering Next.js web development, graphic design and branding, video editing, AI avatars and AI-generated video, social media management, and paid digital advertising for ambitious brands in the US, UK, and Europe.
 
 ## Services
 
-### Website Design & Development
+### Website Development
 - Tech stack: Next.js, React, TypeScript, Tailwind CSS
-- Deliverables: UX & UI design, responsive build, CMS integration, analytics, Core Web Vitals optimization
+- Deliverables: UX & UI design, responsive build, CMS integration, analytics, SEO and Core Web Vitals optimization
 - Price range: $1,500 – $15,000 (landing page to full custom build)
 - Turnaround: 2–8 weeks
 
-### Social Media Marketing
-- Deliverables: Content strategy, post design, reel production, paid campaigns, monthly reporting
-- Price range: $900 – $5,000/month
-- Turnaround: 2–4 weeks to launch, then ongoing
-
-### Motion Graphics
-- Deliverables: Logo animation, brand motion kit, explainer videos, lower-thirds, transitions
-- Price range: $600 – $6,500
-- Turnaround: 1–5 weeks
+### Graphic Design & Branding
+- Deliverables: Brand identity, logo, color and type system, posters, ad creatives, Instagram posts, print
+- Price range: $800 – $6,000
+- Turnaround: 1–4 weeks
 
 ### Video Editing
-- Deliverables: Short-form and long-form editing, color grading, sound design, captions, platform-specific delivery
+- Deliverables: Reels, promos, short-form and long-form editing, color grading, sound design, captions, platform-specific delivery
 - Price range: $700 – $5,000
 - Turnaround: 1–4 weeks
 
-### AI-Generated Avatars & Video
-- Deliverables: AI presenters, script-to-video, localization, ad variations
+### Cutting-Edge AI Solutions
+- Deliverables: Custom AI avatars, AI-generated video, script-to-video, multi-language versions, ad variations
 - Price range: $900 – $8,000
 - Turnaround: 2–5 weeks
 
+### Social Media Management
+- Deliverables: Content calendar, scheduling and posting, community engagement, account growth, monthly reporting
+- Price range: $900 – $5,000/month
+- Turnaround: 2–4 weeks to launch, then ongoing
+
+### Digital Marketing & Ads
+- Deliverables: Paid ad campaigns, audience targeting, marketing strategy, landing pages, monthly reporting
+- Price range: $800 – $6,500/month
+- Turnaround: 1–3 weeks to launch, then ongoing
+
 ## Key Differentiators
+- One team for the whole stack - web, design, video, AI, social, and ads
 - 150+ projects delivered with 98% client satisfaction
 - Western-timezone communication (US, UK, EU overlap)
 - Dedicated point of contact - no ticket queues

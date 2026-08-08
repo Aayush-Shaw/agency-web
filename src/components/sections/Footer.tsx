@@ -112,10 +112,9 @@ export default function Footer() {
             </Roll>
           </a>
           <p className="mt-4 text-sm leading-relaxed text-text-muted">
-            Digi Bear is a full-service digital studio specializing in Next.js
-            web development, AI-generated video production, motion graphics,
-            social media marketing, and professional video editing for brands in
-            the US, UK, and Europe.
+            Digi Bear is an all-in-one digital studio: websites, branding and
+            graphic design, video editing, AI avatars and video, social media
+            management, and paid ads - for brands in the US, UK, and Europe.
           </p>
         </div>
 

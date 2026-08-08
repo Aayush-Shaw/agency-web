@@ -14,14 +14,14 @@ import { SITE_URL, SOCIAL_LINKS } from "@/lib/constants";
 const SERVICES = [
   {
     id: "web",
-    name: "Website Design & Development",
+    name: "Website Development",
     description:
-      "Fast, conversion-focused websites built with Next.js and React. Includes UX & UI design, CMS integration, analytics setup, and Core Web Vitals optimization.",
+      "Fast, responsive, conversion-focused websites built with Next.js and React. Designed and built in one place, optimized for search and for speed on every device.",
     deliverables: [
       "UX & UI design",
       "Next.js build",
-      "CMS & analytics",
-      "Core Web Vitals optimization",
+      "Mobile responsive",
+      "SEO & Core Web Vitals",
     ],
     techStack: ["Next.js", "React", "TypeScript", "Tailwind CSS", "Vercel"],
     priceRange: { min: 1500, max: 15000, currency: "USD", unit: "project" },
@@ -33,52 +33,33 @@ const SERVICES = [
     ],
   },
   {
-    id: "social",
-    name: "Social Media Marketing",
+    id: "design",
+    name: "Graphic Design & Branding",
     description:
-      "Strategy, content calendars, and paid campaigns tuned to your market. Measured by reach, engagement, and pipeline.",
+      "Posters, ad creatives, and Instagram posts drawn from one consistent brand identity, so everything a business publishes is instantly recognizable.",
     deliverables: [
-      "Content strategy",
-      "Post design",
-      "Paid campaigns",
-      "Monthly reporting",
+      "Brand identity",
+      "Ad creatives",
+      "Social posts",
+      "Posters & print",
     ],
-    priceRange: { min: 900, max: 5000, currency: "USD", unit: "month" },
-    turnaround: "2–4 weeks to launch, then ongoing",
+    priceRange: { min: 800, max: 6000, currency: "USD", unit: "project" },
+    turnaround: "1–4 weeks",
     tiers: [
-      { name: "Light", description: "8 to 12 posts a month", priceRange: { min: 900, max: 1400 } },
-      { name: "Growth", description: "16 to 20 posts, reels included", priceRange: { min: 1800, max: 2800 } },
-      { name: "Always-on", description: "Daily posting plus paid campaigns", priceRange: { min: 3200, max: 5000 } },
-    ],
-  },
-  {
-    id: "motion",
-    name: "Motion Graphics",
-    description:
-      "Logo animations, explainer videos, and social motion built from a consistent brand kit.",
-    deliverables: [
-      "Logo animation",
-      "Explainers",
-      "Social motion",
-      "Lower-thirds kit",
-    ],
-    priceRange: { min: 600, max: 6500, currency: "USD", unit: "project" },
-    turnaround: "1–5 weeks",
-    tiers: [
-      { name: "Logo animation", description: "One sting, a few variants", priceRange: { min: 600, max: 1200 } },
-      { name: "Brand motion kit", description: "Titles, lower-thirds, transitions", priceRange: { min: 1800, max: 3200 } },
-      { name: "Full explainer", description: "60 to 90 seconds, illustrated", priceRange: { min: 3500, max: 6500 } },
+      { name: "Brand identity", description: "Logo, colors, type, guidelines", priceRange: { min: 800, max: 1600 } },
+      { name: "Creative batch", description: "Posters, ads, social posts", priceRange: { min: 1200, max: 2400 } },
+      { name: "Full brand system", description: "Identity plus a creative library", priceRange: { min: 3000, max: 6000 } },
     ],
   },
   {
     id: "video",
     name: "Video Editing",
     description:
-      "Story-first editing for short-form and long-form content with color grading, sound design, and captions.",
+      "Professional editing for Reels, promos, and short-form social video, with color grading, sound design, captions, and platform-specific delivery.",
     deliverables: [
-      "Short & long form",
-      "Color grade",
-      "Sound design",
+      "Reels & shorts",
+      "Promos",
+      "Color & sound",
       "Captions & delivery",
     ],
     priceRange: { min: 700, max: 5000, currency: "USD", unit: "project" },
@@ -91,21 +72,59 @@ const SERVICES = [
   },
   {
     id: "ai",
-    name: "AI-Generated Avatars & Video",
+    name: "Cutting-Edge AI Solutions",
     description:
-      "Lifelike AI presenters and generated scenes for ads, explainers, and localization - produced in days, not weeks.",
+      "Custom AI avatars and high-quality AI-generated video for ads, explainers, and language versions - produced in days, without a film crew.",
     deliverables: [
-      "AI presenters",
+      "Custom AI avatars",
       "Script to video",
-      "Localization",
+      "Multi-language",
       "Ad variations",
     ],
     priceRange: { min: 900, max: 8000, currency: "USD", unit: "project" },
     turnaround: "2–5 weeks",
     tiers: [
-      { name: "Pilot", description: "1 to 3 videos, one presenter", priceRange: { min: 900, max: 1800 } },
+      { name: "Pilot", description: "1 to 3 videos, one avatar", priceRange: { min: 900, max: 1800 } },
       { name: "Series", description: "4 to 8 videos or ad variations", priceRange: { min: 2200, max: 4000 } },
       { name: "At scale", description: "10+ videos, multi-language", priceRange: { min: 4500, max: 8000 } },
+    ],
+  },
+  {
+    id: "social",
+    name: "Social Media Management",
+    description:
+      "End-to-end management of social media handles: content planning, scheduling, posting, community engagement, and account growth.",
+    deliverables: [
+      "Content calendar",
+      "Scheduling & posting",
+      "Community replies",
+      "Growth reporting",
+    ],
+    priceRange: { min: 900, max: 5000, currency: "USD", unit: "month" },
+    turnaround: "2–4 weeks to launch, then ongoing",
+    tiers: [
+      { name: "Light", description: "8 to 12 posts a month", priceRange: { min: 900, max: 1400 } },
+      { name: "Growth", description: "16 to 20 posts, reels included", priceRange: { min: 1800, max: 2800 } },
+      { name: "Always-on", description: "Daily posting plus community management", priceRange: { min: 3200, max: 5000 } },
+    ],
+  },
+  {
+    id: "ads",
+    name: "Digital Marketing & Ads",
+    description:
+      "Targeted paid ad campaigns and marketing strategy built around the intended audience, then optimized against real numbers - clicks, leads, and sales.",
+    deliverables: [
+      "Ad campaigns",
+      "Audience targeting",
+      "Landing pages",
+      "Monthly reporting",
+    ],
+    priceRange: { min: 800, max: 6500, currency: "USD", unit: "month" },
+    turnaround: "1–3 weeks to launch, then ongoing",
+    tiers: [
+      { name: "One campaign", description: "A single channel, one goal", priceRange: { min: 800, max: 1500 } },
+      { name: "Multi-channel", description: "Meta, Google, and beyond", priceRange: { min: 1800, max: 3500 } },
+      { name: "Fully managed", description: "Strategy, creative, monthly tuning", priceRange: { min: 3500, max: 6500 } },
     ],
   },
 ];
@@ -115,7 +134,7 @@ export function GET() {
     agency: "Digi Bear",
     url: SITE_URL,
     description:
-      "Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing.",
+      "Digi Bear is an all-in-one digital studio: Next.js web development, graphic design and branding, video editing, AI avatars and AI-generated video, social media management, and paid digital advertising.",
     areaServed: ["United States", "United Kingdom", "Europe"],
     services: SERVICES,
     contact: {

@@ -3,7 +3,7 @@
  *
  * Renders three schema.org blocks as `<script type="application/ld+json">`:
  *   1. Organization - who Digi Bear is, social profiles, contact
- *   2. Service ×5 - one per service vertical with Offer pricing
+ *   2. Service ×6 - one per service vertical with Offer pricing
  *   3. FAQPage - the five questions from the FAQ section
  *
  * Server component - no "use client". Runs at build/request time and outputs
@@ -31,7 +31,7 @@ const organization = {
   url: BASE_URL,
   logo: `${BASE_URL}/digibear-logo.svg`,
   description:
-    "Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing for ambitious brands in the US, UK, and Europe.",
+    "Digi Bear is an all-in-one digital studio covering Next.js web development, graphic design and branding, video editing, AI avatars and AI-generated video, social media management, and paid digital advertising for ambitious brands in the US, UK, and Europe.",
   foundingDate: "2024",
   contactPoint: {
     "@type": "ContactPoint",
@@ -48,69 +48,82 @@ const organization = {
   knowsAbout: [
     "Next.js Web Development",
     "React Server Components",
-    "AI-Generated Video",
-    "Motion Graphics",
-    "Social Media Marketing",
+    "Graphic Design",
+    "Brand Identity Design",
     "Video Editing",
+    "AI Avatars",
+    "AI-Generated Video",
+    "Social Media Management",
+    "Paid Advertising",
     "Core Web Vitals Optimization",
     "Generative AI for Marketing",
   ],
 };
 
 /* ------------------------------------------------------------------ */
-/*  Services (×5) with Offer pricing                                   */
+/*  Services (×6) with Offer pricing                                   */
 /* ------------------------------------------------------------------ */
 
 const services = [
   {
-    id: "web-design-development",
-    name: "Website Design & Development",
+    id: "website-development",
+    name: "Website Development",
     description:
-      "Fast, conversion-focused websites built with Next.js and React. Includes UX & UI design, CMS integration, analytics setup, and Core Web Vitals optimization. Accessible, SEO-ready, and performant on every device.",
+      "Fast, responsive, conversion-focused websites built with Next.js and React. Includes UX & UI design, CMS integration, analytics setup, SEO, and Core Web Vitals optimization - accessible and performant on every device.",
     serviceType: "Web Development",
     minPrice: 1500,
     maxPrice: 15000,
     turnaround: "2–8 weeks",
   },
   {
-    id: "social-media-marketing",
-    name: "Social Media Marketing",
+    id: "graphic-design-branding",
+    name: "Graphic Design & Branding",
     description:
-      "Strategy, content calendars, and paid campaigns tuned to your market. Includes post design, reel production, and monthly performance reporting measured by reach, engagement, and pipeline.",
-    serviceType: "Digital Marketing",
-    minPrice: 900,
-    maxPrice: 5000,
-    turnaround: "2–4 weeks to launch, ongoing monthly",
-  },
-  {
-    id: "motion-graphics",
-    name: "Motion Graphics",
-    description:
-      "Logo animations, explainer videos, and social motion built from a consistent brand kit. Includes titles, lower-thirds, and transitions so your brand moves the same everywhere.",
-    serviceType: "Animation",
-    minPrice: 600,
-    maxPrice: 6500,
-    turnaround: "1–5 weeks",
+      "Brand identity, posters, ad creatives, and Instagram post design drawn from one consistent visual system, so everything a business publishes is instantly recognizable.",
+    serviceType: "Graphic Design",
+    minPrice: 800,
+    maxPrice: 6000,
+    turnaround: "1–4 weeks",
   },
   {
     id: "video-editing",
     name: "Video Editing",
     description:
-      "Story-first editing for short-form and long-form content with professional color grading, sound design, captions, and delivery specs for every platform.",
+      "Professional editing for Reels, promos, and short-form and long-form video, with color grading, sound design, captions, and delivery specs for every platform.",
     serviceType: "Video Production",
     minPrice: 700,
     maxPrice: 5000,
     turnaround: "1–4 weeks",
   },
   {
-    id: "ai-generated-avatars-video",
-    name: "AI-Generated Avatars & Video",
+    id: "ai-avatars-video",
+    name: "Cutting-Edge AI Solutions",
     description:
-      "Lifelike AI presenters and generated scenes for ads, explainers, and localization. Scale video production without a film crew - produced in days, not weeks.",
+      "Custom AI avatars and high-quality AI-generated video for ads, explainers, and language versions. Scale video production without a film crew - produced in days, not weeks.",
     serviceType: "AI Video Production",
     minPrice: 900,
     maxPrice: 8000,
     turnaround: "2–5 weeks",
+  },
+  {
+    id: "social-media-management",
+    name: "Social Media Management",
+    description:
+      "End-to-end management of social media handles: content planning, scheduling, posting, community engagement, account growth, and monthly performance reporting.",
+    serviceType: "Social Media Marketing",
+    minPrice: 900,
+    maxPrice: 5000,
+    turnaround: "2–4 weeks to launch, ongoing monthly",
+  },
+  {
+    id: "digital-marketing-ads",
+    name: "Digital Marketing & Ads",
+    description:
+      "Targeted paid ad campaigns and marketing strategy built around the intended audience, then optimized against real numbers - clicks, leads, and sales.",
+    serviceType: "Digital Marketing",
+    minPrice: 800,
+    maxPrice: 6500,
+    turnaround: "1–3 weeks to launch, ongoing monthly",
   },
 ];
 

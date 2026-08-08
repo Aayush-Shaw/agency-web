@@ -135,7 +135,7 @@ const optionClass =
  * would reach past the section's bottom edge.
  *
  * ponytail: a disclosure wrapped around a checkbox group, not an ARIA combobox
- * - no type-ahead, no arrow-key roving. The right shape for five fixed options;
+ * - no type-ahead, no arrow-key roving. The right shape for six fixed options;
  * if this list ever grows enough to want searching, that's the upgrade.
  */
 function ServicePicker({
@@ -152,7 +152,7 @@ function ServicePicker({
    * Widest tag first, rather than the order they were picked.
    *
    * flex-wrap fills each row greedily and never looks back, so pick order
-   * leaves holes: "Motion Graphics" then "Website Design & Development" puts a
+   * leaves holes: "Video Editing" then "Graphic Design & Branding" puts a
    * short tag alone on row one because the long one couldn't follow it. Sorting
    * widest-first is first-fit-decreasing - the long tags claim their rows early
    * and the short ones fill in behind them, which is the fewest rows this can

@@ -12,16 +12,17 @@ import { SITE_DOMAIN } from "@/lib/constants";
  * @see https://nextjs.org/docs/app/api-reference/file-conventions/metadata/opengraph-image
  */
 
-export const alt = "Digi Bear - Design, Motion & AI Video Studio";
+export const alt = "Digi Bear - Design, Video & AI Studio";
 export const size = { width: 1200, height: 630 };
 export const contentType = "image/png";
 
 const SERVICES = [
-  "Web Design & Dev",
-  "Social Media",
-  "Motion Graphics",
+  "Web Development",
+  "Branding & Design",
   "Video Editing",
-  "AI Video",
+  "AI Avatars & Video",
+  "Social Media",
+  "Digital Ads",
 ];
 
 export default function OgImage() {
@@ -93,7 +94,7 @@ export default function OgImage() {
           display: "flex",
         }}
       >
-        Design, Motion & AI Video Studio
+        Design, Video & AI Studio
       </div>
 
       {/* Service pills */}

@@ -12,7 +12,6 @@
 
 # testing
 /coverage
-/public/social
 
 # next.js
 /.next/
@@ -41,12 +40,7 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# playwright (design-reference capture)
-/test-results/
-/blob-report/
-/playwright-report/
-/playwright/.cache/
-/.playwright-mcp
+# local-only tooling and notes - never shipped
 /.impeccable
 /docs
 /.claude

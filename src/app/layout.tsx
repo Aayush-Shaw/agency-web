@@ -26,9 +26,9 @@ const sans = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Digi Bear - Design, Motion & AI Video Studio",
+  title: "Digi Bear - Design, Video & AI Studio",
   description:
-    "Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing for ambitious brands in the US, UK, and Europe.",
+    "Digi Bear is an all-in-one digital studio covering Next.js web development, graphic design and branding, video editing, AI avatars and AI-generated video, social media management, and paid digital advertising for ambitious brands in the US, UK, and Europe.",
   // Points at the same file the navbar and footer render, rather than a second
   // copy under app/ as icon.svg - one asset, one place to update it.
   icons: { icon: "/digibear-logo.svg" },
@@ -39,10 +39,11 @@ export const metadata: Metadata = {
     "digital agency",
     "web design agency",
     "Next.js web development",
+    "graphic design and branding",
     "AI video production",
-    "AI-generated avatars",
-    "motion graphics studio",
-    "social media marketing agency",
+    "AI avatars",
+    "social media management",
+    "digital marketing and ads",
     "video editing service",
     "full-service digital studio",
     "Digi Bear",
@@ -63,15 +64,15 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "/",
     siteName: "Digi Bear",
-    title: "Digi Bear - Design, Motion & AI Video Studio",
+    title: "Digi Bear - Design, Video & AI Studio",
     description:
-      "Full-service digital studio: web design & development, social media marketing, motion graphics, video editing, and AI-generated video for ambitious brands.",
+      "All-in-one digital studio: websites, branding & graphic design, video editing, AI avatars & video, social media management, and paid ads.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digi Bear - Design, Motion & AI Video Studio",
+    title: "Digi Bear - Design, Video & AI Studio",
     description:
-      "Full-service digital studio: web design, motion graphics, AI video, social media, and video editing.",
+      "All-in-one digital studio: websites, branding, video editing, AI video, social media, and ads.",
   },
 };
 
