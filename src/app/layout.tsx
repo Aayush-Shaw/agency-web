@@ -3,6 +3,7 @@ import { Questrial, Poppins } from "next/font/google";
 import "./globals.css";
 import ScrollBar from "@/components/ui/ScrollBar";
 import SmoothScroll from "@/components/ui/SmoothScroll";
+import JsonLd from "@/components/seo/JsonLd";
 
 // Display: Questrial ships a single 400 weight - there is no bold cut, so the
 // bold on headings is the browser's synthetic emboldening (a deliberate choice:
@@ -23,12 +24,54 @@ const sans = Poppins({
 });
 
 export const metadata: Metadata = {
-  title: "Digi Bear - Design, Motion & AI Video Studio",
+  metadataBase: new URL("https://digibearorg.com"),
+  title: "Digi Bear — Design, Motion & AI Video Studio",
   description:
-    "Digi Bear is a full-service digital studio for ambitious brands: website design & development, social media marketing, motion graphics, video editing, and AI-generated avatars & video.",
+    "Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing for ambitious brands in the US, UK, and Europe.",
   // Points at the same file the navbar and footer render, rather than a second
   // copy under app/ as icon.svg - one asset, one place to update it.
   icons: { icon: "/digibear-logo.svg" },
+  alternates: {
+    canonical: "/",
+  },
+  keywords: [
+    "digital agency",
+    "web design agency",
+    "Next.js web development",
+    "AI video production",
+    "AI-generated avatars",
+    "motion graphics studio",
+    "social media marketing agency",
+    "video editing service",
+    "full-service digital studio",
+    "Digi Bear",
+  ],
+  robots: {
+    index: true,
+    follow: true,
+    googleBot: {
+      index: true,
+      follow: true,
+      "max-video-preview": -1,
+      "max-image-preview": "large",
+      "max-snippet": -1,
+    },
+  },
+  openGraph: {
+    type: "website",
+    locale: "en_US",
+    url: "/",
+    siteName: "Digi Bear",
+    title: "Digi Bear — Design, Motion & AI Video Studio",
+    description:
+      "Full-service digital studio: web design & development, social media marketing, motion graphics, video editing, and AI-generated video for ambitious brands.",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "Digi Bear — Design, Motion & AI Video Studio",
+    description:
+      "Full-service digital studio: web design, motion graphics, AI video, social media, and video editing.",
+  },
 };
 
 // Tells the UA to render its own surfaces (scrollbars, form controls, the
@@ -45,6 +88,10 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="min-h-dvh">
+        {/* JSON-LD structured data — Organization, Services, FAQPage.
+            Rendered before visual content so crawlers see it immediately. */}
+        <JsonLd />
+
         {/* Film grain - non-interactive, stationary while the page scrolls
             under it, and above the navbar (z-60 vs z-50) so nothing escapes
             it. */}
