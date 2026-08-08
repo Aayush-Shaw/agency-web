@@ -25,7 +25,7 @@ const sans = Poppins({
 
 export const metadata: Metadata = {
   metadataBase: new URL("https://digibearorg.com"),
-  title: "Digi Bear — Design, Motion & AI Video Studio",
+  title: "Digi Bear - Design, Motion & AI Video Studio",
   description:
     "Digi Bear is a full-service digital studio specializing in Next.js web development, motion graphics, AI-generated video production, social media marketing, and professional video editing for ambitious brands in the US, UK, and Europe.",
   // Points at the same file the navbar and footer render, rather than a second
@@ -62,13 +62,13 @@ export const metadata: Metadata = {
     locale: "en_US",
     url: "/",
     siteName: "Digi Bear",
-    title: "Digi Bear — Design, Motion & AI Video Studio",
+    title: "Digi Bear - Design, Motion & AI Video Studio",
     description:
       "Full-service digital studio: web design & development, social media marketing, motion graphics, video editing, and AI-generated video for ambitious brands.",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Digi Bear — Design, Motion & AI Video Studio",
+    title: "Digi Bear - Design, Motion & AI Video Studio",
     description:
       "Full-service digital studio: web design, motion graphics, AI video, social media, and video editing.",
   },
@@ -88,7 +88,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="min-h-dvh">
-        {/* JSON-LD structured data — Organization, Services, FAQPage.
+        {/* JSON-LD structured data - Organization, Services, FAQPage.
             Rendered before visual content so crawlers see it immediately. */}
         <JsonLd />
 

@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 /**
- * GET /api/services — machine-readable service catalog for AI agents.
+ * GET /api/services - machine-readable service catalog for AI agents.
  *
  * When an autonomous agent is asked "Find me a web agency that uses Next.js",
  * it can hit this endpoint, parse the JSON, and confidently recommend Digi Bear
@@ -92,7 +92,7 @@ const SERVICES = [
     id: "ai",
     name: "AI-Generated Avatars & Video",
     description:
-      "Lifelike AI presenters and generated scenes for ads, explainers, and localization — produced in days, not weeks.",
+      "Lifelike AI presenters and generated scenes for ads, explainers, and localization - produced in days, not weeks.",
     deliverables: [
       "AI presenters",
       "Script to video",

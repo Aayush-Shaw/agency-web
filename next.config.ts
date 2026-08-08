@@ -6,7 +6,7 @@ const nextConfig: NextConfig = {
 
   // Ensure AI crawlers receive blocking (non-streamed) metadata so all <head>
   // tags are present in the initial HTML. The default list already covers
-  // Googlebot, Bingbot, Twitterbot, and Slackbot — this extends it with
+  // Googlebot, Bingbot, Twitterbot, and Slackbot - this extends it with
   // LLM-specific agents that need the same treatment.
   htmlLimitedBots:
     /Googlebot|Mediapartners-Google|AdsBot-Google|Google-PageRenderer|Bingbot|BingPreview|Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou|facebookexternalhit|Twitterbot|Slackbot|LinkedInBot|WhatsApp|TelegramBot|GPTBot|ChatGPT-User|ClaudeBot|anthropic-ai|Google-Extended|PerplexityBot|Bytespider|CCBot|Applebot|PetalBot/,

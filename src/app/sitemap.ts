@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 /**
- * Programmatic sitemap — currently a single-page site, so one entry. When
+ * Programmatic sitemap - currently a single-page site, so one entry. When
  * dedicated service pages are added (e.g. /services/ai-generated-video),
  * extend this array or switch to generateSitemaps() for scale.
  *

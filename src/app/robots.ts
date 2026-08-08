@@ -1,7 +1,7 @@
 import type { MetadataRoute } from "next";
 
 /**
- * Programmatic robots.txt — tells search engines and AI crawlers what they can
+ * Programmatic robots.txt - tells search engines and AI crawlers what they can
  * access. AI-specific agents (GPTBot, ClaudeBot, etc.) are explicitly allowed
  * so the site is visible in LLM-generated recommendations.
  *

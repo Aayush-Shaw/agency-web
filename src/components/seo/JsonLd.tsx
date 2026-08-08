@@ -2,11 +2,11 @@
  * JSON-LD structured data for the entire site.
  *
  * Renders three schema.org blocks as `<script type="application/ld+json">`:
- *   1. Organization — who Digi Bear is, social profiles, contact
- *   2. Service ×5 — one per service vertical with Offer pricing
- *   3. FAQPage — the five questions from the FAQ section
+ *   1. Organization - who Digi Bear is, social profiles, contact
+ *   2. Service ×5 - one per service vertical with Offer pricing
+ *   3. FAQPage - the five questions from the FAQ section
  *
- * Server component — no "use client". Runs at build/request time and outputs
+ * Server component - no "use client". Runs at build/request time and outputs
  * static HTML that crawlers and AI agents can parse without executing JS.
  *
  * Pricing ranges are hardcoded from estimatePricing.ts rather than imported,
@@ -108,7 +108,7 @@ const services = [
     id: "ai-generated-avatars-video",
     name: "AI-Generated Avatars & Video",
     description:
-      "Lifelike AI presenters and generated scenes for ads, explainers, and localization. Scale video production without a film crew — produced in days, not weeks.",
+      "Lifelike AI presenters and generated scenes for ads, explainers, and localization. Scale video production without a film crew - produced in days, not weeks.",
     serviceType: "AI Video Production",
     minPrice: 900,
     maxPrice: 8000,
@@ -182,7 +182,7 @@ const faqPage = {
       name: "Who owns the final deliverables?",
       acceptedAnswer: {
         "@type": "Answer",
-        text: "You do. On final payment you receive full ownership plus the source files — designs, project files, and footage. No lock-in, no licensing games.",
+        text: "You do. On final payment you receive full ownership plus the source files - designs, project files, and footage. No lock-in, no licensing games.",
       },
     },
   ],

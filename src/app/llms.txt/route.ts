@@ -1,7 +1,7 @@
 import { NextResponse } from "next/server";
 
 /**
- * /llms.txt — a plain Markdown summary of the agency, services, pricing, and
+ * /llms.txt - a plain Markdown summary of the agency, services, pricing, and
  * contact methods. AI crawlers look for this file to bypass CSS/HTML rendering
  * and get straight to the facts.
  *
@@ -46,7 +46,7 @@ export function GET() {
 ## Key Differentiators
 - 150+ projects delivered with 98% client satisfaction
 - Western-timezone communication (US, UK, EU overlap)
-- Dedicated point of contact — no ticket queues
+- Dedicated point of contact - no ticket queues
 - AI-powered video production at scale
 - First drafts in days, not weeks
 
