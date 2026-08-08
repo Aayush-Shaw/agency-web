@@ -40,10 +40,17 @@ const SERVICES: RailItem[] = [
     detail:
       "Posters, ad creatives, and Instagram posts drawn from one consistent look - so everything you put out is instantly recognizable as yours.",
     deliverables: ["Brand identity", "Ad creatives", "Social posts", "Posters & print"],
+    // The Bézier pen tool, as it looks in Illustrator: nib tapering to a point
+    // at top-left, the split down its middle, the anchor on the curve.
+    // Geometry from lucide-react's `pen-tool` (ISC), inlined rather than
+    // imported so it goes through icon() and carries the same 1.6 stroke as
+    // its five siblings - a <PenTool /> would bring Lucide's own defaults.
     icon: icon(
       <>
-        <path d="M12 19 4 21l2-8 9-9a2.8 2.8 0 0 1 4 4z" />
-        <path d="m14 5 4 4" />
+        <path d="M15.707 21.293a1 1 0 0 1-1.414 0l-1.586-1.586a1 1 0 0 1 0-1.414l5.586-5.586a1 1 0 0 1 1.414 0l1.586 1.586a1 1 0 0 1 0 1.414z" />
+        <path d="m18 13-1.375-6.874a1 1 0 0 0-.746-.776L3.235 2.028a1 1 0 0 0-1.207 1.207L5.35 15.879a1 1 0 0 0 .776.746L13 18" />
+        <path d="m2.3 2.3 7.286 7.286" />
+        <circle cx="11" cy="11" r="2" />
       </>
     ),
   },
@@ -84,10 +91,14 @@ const SERVICES: RailItem[] = [
     detail:
       "Planning, scheduling, posting, and replying to your community - handled end to end while the follower count climbs.",
     deliverables: ["Content calendar", "Scheduling & posting", "Community replies", "Growth reporting"],
+    // A heart inside a speech bubble - likes and comments, which is what
+    // "social media" looks like to anyone who has ever used it. The old
+    // thumbs-up-with-a-tick read as a cloud at this size.
+    // lucide-react `message-circle-heart` (ISC), inlined - see the pen tool above.
     icon: icon(
       <>
-        <path d="M4 15a4 4 0 0 1 4-4h1V6a3 3 0 0 1 6 0v5h1a4 4 0 0 1 0 8H8a4 4 0 0 1-4-4Z" />
-        <path d="m9 13 2 2 4-4" />
+        <path d="M2.992 16.342a2 2 0 0 1 .094 1.167l-1.065 3.29a1 1 0 0 0 1.236 1.168l3.413-.998a2 2 0 0 1 1.099.092 10 10 0 1 0-4.777-4.719" />
+        <path d="M7.828 13.07A3 3 0 0 1 12 8.764a3 3 0 0 1 5.004 2.224 3 3 0 0 1-.832 2.083l-3.447 3.62a1 1 0 0 1-1.45-.001z" />
       </>
     ),
   },
@@ -97,10 +108,15 @@ const SERVICES: RailItem[] = [
     detail:
       "Targeted ad campaigns built around the people you actually want to reach, then tuned against real numbers - clicks, leads, and sales.",
     deliverables: ["Ad campaigns", "Audience targeting", "Landing pages", "Monthly reporting"],
+    // A megaphone - the universal mark for advertising. The horn, the handle
+    // hanging off its underside, and the seam across the mouth; the handle is
+    // what stops it reading as a plain cone.
+    // lucide-react `megaphone` (ISC), inlined - see the pen tool above.
     icon: icon(
       <>
-        <path d="M4 10v4a1 1 0 0 0 1 1h3l6 4V5L8 9H5a1 1 0 0 0-1 1Z" />
-        <path d="M18 9.5a4 4 0 0 1 0 5" />
+        <path d="M11 6a13 13 0 0 0 8.4-2.8A1 1 0 0 1 21 4v12a1 1 0 0 1-1.6.8A13 13 0 0 0 11 14H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2z" />
+        <path d="M6 14a12 12 0 0 0 2.4 7.2 2 2 0 0 0 3.2-2.4A8 8 0 0 1 10 14" />
+        <path d="M8 6v8" />
       </>
     ),
   },
