@@ -12,7 +12,7 @@ export const SITE_DOMAIN = "digibearorg.com";
 // export const SITE_DOMAIN = "agency-web.vercel.app";
 
 export const SOCIAL_LINKS = {
-  instagram: "https://instagram.com/digibearorg",
+  instagram: "https://instagram.com/digibearca",
   facebook: "https://facebook.com/digibear",
   youtube: "https://youtube.com/@digibear",
 } as const;
