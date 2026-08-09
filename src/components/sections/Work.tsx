@@ -13,6 +13,9 @@ type Project = {
   cat: Category;
   src: string;
   video?: boolean;
+  /** Live site. Only the real work has one - the placeholder tiles below stay
+      unclickable rather than linking somewhere that does not exist. */
+  href?: string;
   /** Width ÷ height. The only thing that decides a tile's size: it is given the
       height of the band it sits in and this multiplies it out to a width.
       Below 1 (0.5625 is 9:16) means portrait, and that is also the switch for
@@ -20,10 +23,19 @@ type Project = {
   aspect: number;
 };
 
-/* Same media as the hero's wall - see lib/media.ts. Aspects are the crop each
-   tile is *asked* for, not a measurement, so the rail's width is known at first
-   layout and nothing reflows when an image finally decodes. */
+/* Aspects are the crop each tile is *asked* for, not a measurement, so the
+   rail's width is known at first layout and nothing reflows when an image
+   finally decodes.
+
+   The website tiles at the top are real, shipped sites: 1200x750 hero captures
+   in public/work, hence the flat 1.6 on all four. Everything below is still the
+   placeholder set the hero's wall draws from - see lib/media.ts. */
 const PROJECTS: Project[] = [
+  { title: "AutoNorth Motors", cat: "Website", src: "/work/autonorth-motors.jpg", href: "https://autonorth-motors.vercel.app/", aspect: 1.6 },
+  { title: "Indian Grill", cat: "Website", src: "/work/indian-grill.jpg", href: "https://indiangrill.vercel.app/", aspect: 1.6 },
+  { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.jpg", href: "https://services0987.github.io/jujco-edmonton-hvac/", aspect: 1.6 },
+  { title: "Earls", cat: "Website", src: "/work/earls.jpg", href: "https://services0987.github.io/earls/", aspect: 1.6 },
+
   { title: "Northwind Coffee", cat: "Website", src: imageUrl("photo-1497366754035-f200968a6e72"), aspect: 1.5 },
   { title: "Lumen Finance", cat: "Website", src: imageUrl("photo-1460925895917-afdab827c52f"), aspect: 1.9 },
   { title: "Cedar & Co", cat: "Website", src: imageUrl("photo-1517245386807-bb43f82c33c4"), aspect: 1.15 },
@@ -98,6 +110,10 @@ const DRIFT = 26;
     fling keeps scrolling long after the finger is gone, and writing scrollLeft
     into that momentum kills it - so the drift waits rather than fighting. */
 const YIELD_MS = 1100;
+
+/** How far a press may travel and still count as a click on a tile's link.
+    A mouse wobbles a pixel or two on the way down, so it cannot be zero. */
+const DRAG_SLOP = 4;
 
 /**
  * Section 5 - the work rail.
@@ -235,6 +251,10 @@ export default function Work() {
   // fight this; a wheel mouse has neither, and without it a desktop visitor
   // with no trackpad cannot move the rail at all.
   const grab = useRef<{ x: number; left: number } | null>(null);
+  // Whether the current press has travelled far enough to be a scroll. Without
+  // it, dragging the rail by a linked tile and letting go navigates: the click
+  // that follows pointerup lands on the tile the finger started on.
+  const dragged = useRef(false);
 
   const tiles = (copy: number) =>
     filled.map((p, i) => (
@@ -282,9 +302,9 @@ export default function Work() {
           />
         ) : (
           // Plain <img>, not next/image, for the same reason as the hero wall:
-          // these are remote placeholder URLs and next/image would need each
-          // host in images.remotePatterns. Swap both sections together when the
-          // real assets land.
+          // the placeholder tiles are remote URLs and next/image would need
+          // every host in images.remotePatterns. The real work is local and
+          // could take next/image today, but not while one list feeds both.
           // eslint-disable-next-line @next/next/no-img-element
           <img
             src={p.src}
@@ -304,7 +324,7 @@ export default function Work() {
         {/* flex-wrap, and no truncation on the title: the tag drops to a second
             line only when the two genuinely do not fit, rather than the title
             being cut short to keep them on one. */}
-        <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 bg-bg/10 px-3 py-2 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100">
+        <figcaption className="pointer-events-none absolute inset-x-0 bottom-0 flex flex-wrap items-center justify-between gap-x-2 gap-y-1 bg-bg/10 px-3 py-2 opacity-0 backdrop-blur-sm transition-opacity duration-200 group-hover:opacity-100 group-focus-within:opacity-100">
           <span className="font-display text-sm font-semibold text-white">
             {p.title}
           </span>
@@ -316,6 +336,25 @@ export default function Work() {
             </span>
           )}
         </figcaption>
+
+        {/* The link is a bare overlay rather than a wrapper around the media,
+            so the tile's layout - which is entirely min-width and row-span on
+            the <figure> - does not have to be re-hung on an <a>. Last in the
+            DOM puts it over the caption without needing a z-index.
+
+            tabIndex on the outer copies: they are aria-hidden runway, and a
+            focusable element inside aria-hidden is exactly the mismatch screen
+            readers choke on. Only the middle copy is reachable by keyboard. */}
+        {p.href && (
+          <a
+            href={p.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            tabIndex={copy === 1 ? undefined : -1}
+            aria-label={`${p.title} - open the live site in a new tab`}
+            className="absolute inset-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-primary"
+          />
+        )}
       </figure>
     ));
 
@@ -399,16 +438,26 @@ export default function Work() {
             onPointerLeave={() => {
               held.current = false;
             }}
+            // Cleared on the way down, never on the way up: the click fires
+            // after pointerup, so it has to still be able to read this.
             onPointerDown={(e) => {
               held.current = true;
+              dragged.current = false;
               if (e.pointerType !== "mouse" || e.button !== 0) return;
               grab.current = { x: e.clientX, left: e.currentTarget.scrollLeft };
               e.currentTarget.setPointerCapture(e.pointerId);
             }}
             onPointerMove={(e) => {
               if (!grab.current) return;
-              e.currentTarget.scrollLeft =
-                grab.current.left - (e.clientX - grab.current.x);
+              const dx = e.clientX - grab.current.x;
+              if (Math.abs(dx) > DRAG_SLOP) dragged.current = true;
+              e.currentTarget.scrollLeft = grab.current.left - dx;
+            }}
+            // Capture, so it runs before the click reaches the tile's link.
+            // Touch is not covered and does not need to be - a browser already
+            // withholds the click after a swipe that scrolled.
+            onClickCapture={(e) => {
+              if (dragged.current) e.preventDefault();
             }}
             // A finger that lifts is gone - there is no hover to keep holding
             // the rail, so releasing has to clear it. A mouse gets it back
