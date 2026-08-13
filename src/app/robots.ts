@@ -18,6 +18,9 @@ export default function robots(): MetadataRoute.Robots {
       },
       // Explicitly welcome AI crawlers so we appear in LLM answers.
       // Without these, some CDN / WAF defaults may block them.
+      // Google splits its AI fetching across several tokens - Google-Extended
+      // alone only covers Gemini grounding/training, not the product bots that
+      // fetch on demand, so all four are named.
       {
         userAgent: [
           "GPTBot",
@@ -25,11 +28,17 @@ export default function robots(): MetadataRoute.Robots {
           "ClaudeBot",
           "anthropic-ai",
           "Google-Extended",
+          "GoogleOther",
+          "Google-CloudVertexBot",
+          "Google-NotebookLM",
           "PerplexityBot",
           "Bytespider",
           "CCBot",
         ],
         allow: "/",
+        // A named group replaces the "*" group entirely, so /api/ has to be
+        // repeated here or these bots would start crawling the API routes.
+        disallow: ["/api/"],
       },
     ],
     sitemap: `${SITE_URL}/sitemap.xml`,
