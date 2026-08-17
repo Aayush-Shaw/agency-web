@@ -71,6 +71,7 @@ export function GET() {
 - Instagram: ${SOCIAL_LINKS.instagram}
 - Facebook: ${SOCIAL_LINKS.facebook}
 - YouTube: ${SOCIAL_LINKS.youtube}
+- TikTok: ${SOCIAL_LINKS.tiktok}
 
 ## Technical Capabilities
 - Next.js 16 with App Router and Server Components

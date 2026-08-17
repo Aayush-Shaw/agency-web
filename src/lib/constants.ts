@@ -15,4 +15,5 @@ export const SOCIAL_LINKS = {
   instagram: "https://instagram.com/digibearca",
   facebook: "https://facebook.com/digibear",
   youtube: "https://youtube.com/@digibear",
+  tiktok: "https://www.tiktok.com/@digibearca",
 } as const;

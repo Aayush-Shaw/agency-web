@@ -146,6 +146,7 @@ export function GET() {
         instagram: SOCIAL_LINKS.instagram,
         facebook: SOCIAL_LINKS.facebook,
         youtube: SOCIAL_LINKS.youtube,
+        tiktok: SOCIAL_LINKS.tiktok,
       },
     },
     paymentTerms: {

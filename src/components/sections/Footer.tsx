@@ -88,6 +88,21 @@ const SOCIALS = [
       </>,
     ),
   },
+  {
+    label: "TikTok",
+    href: SOCIAL_LINKS.tiktok,
+    /* A quaver: head bottom-left, stem off its right edge, flag hooking right
+       off the top. Centred on the ink again, not the stem - head left edge 7.9
+       to flag tip 16.3, head bottom 17.6 to stem top 6.6, so both spans centre
+       on ~12. */
+    icon: socialIcon(
+      <>
+        {TILE}
+        <circle cx="10.4" cy="15.1" r="2.5" />
+        <path d="M12.9 15.1V6.6c.4 1.8 1.8 3.1 3.4 3.3" />
+      </>,
+    ),
+  },
 ];
 
 /** Section 13 - footer. */
