@@ -13,7 +13,7 @@ export const SITE_DOMAIN = "digibearca.com";
 
 export const SOCIAL_LINKS = {
   instagram: "https://instagram.com/digibearca",
-  facebook: "https://facebook.com/digibear",
-  youtube: "https://youtube.com/@digibear",
+  facebook: "https://www.facebook.com/profile.php?id=61593288788864",
+  youtube: "https://www.youtube.com/@digibearca",
   tiktok: "https://www.tiktok.com/@digibearca",
 } as const;
