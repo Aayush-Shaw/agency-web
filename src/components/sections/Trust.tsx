@@ -4,10 +4,10 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
 const STATS = [
-  { value: 150, suffix: "+", label: "Projects delivered" },
-  { value: 98, suffix: "%", label: "Client satisfaction" },
-  { value: 40, suffix: "+", label: "Brands served" },
-  { value: 24, suffix: "h", label: "Avg. response time" },
+  { value: 5, suffix: "", label: "Services under one roof" },
+  { value: 100, suffix: "%", label: "In house team" },
+  { value: 24, suffix: "h", label: "Avg. first response" },
+  { value: 5, suffix: "", label: "Days a week available" },
 ];
 
 /** Section 10 - trust strip with numbers that count up on scroll. */
