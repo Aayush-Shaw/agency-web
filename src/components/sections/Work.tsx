@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { imageUrl, videoUrl } from "@/lib/media";
+import { gridVideo, popupVideo } from "@/lib/media";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 
@@ -12,9 +12,9 @@ type Project = {
   title: string;
   cat: Category;
   src: string;
+  popupSrc?: string;
   video?: boolean;
-  /** Live site. Only the real work has one - the placeholder tiles below stay
-      unclickable rather than linking somewhere that does not exist. */
+  /** Live site. Video projects open their local popup source instead. */
   href?: string;
   /** Width ÷ height. The only thing that decides a tile's size: it is given the
       height of the band it sits in and this multiplies it out to a width.
@@ -23,38 +23,45 @@ type Project = {
   aspect: number;
 };
 
-/* Aspects are the crop each tile is *asked* for, not a measurement, so the
-   rail's width is known at first layout and nothing reflows when an image
-   finally decodes.
+const videoProject = (filename: string, aspect: number): Project => ({
+  title: filename
+    .replace(/_AI(?=\.[^.]+$)|\.[^.]+$/g, "")
+    .replaceAll("-", " "),
+  cat: /_AI(?=\.[^.]+$)/.test(filename) ? "AI Video" : "Video",
+  src: gridVideo(filename),
+  popupSrc: popupVideo(filename),
+  video: true,
+  aspect,
+});
 
-   The website tiles at the top are real, shipped sites: 1200x750 hero captures
-   in public/work, hence the flat 1.6 on all four. Everything below is still the
-   placeholder set the hero's wall draws from - see lib/media.ts. */
+/* Video aspects are measured display width ÷ height from each MP4 track. */
 const PROJECTS: Project[] = [
   { title: "AutoNorth Motors", cat: "Website", src: "/work/autonorth-motors.jpg", href: "https://autonorth-motors.vercel.app/", aspect: 1.6 },
   { title: "Indian Grill", cat: "Website", src: "/work/indian-grill.jpg", href: "https://indiangrill.vercel.app/", aspect: 1.6 },
-  { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.jpg", href: "https://services0987.github.io/jujco-edmonton-hvac/", aspect: 1.6 },
+  { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.jpg", href: "https://digibearca.github.io/JUJCO-HVAC-website/", aspect: 1.6 },
   { title: "Earls", cat: "Website", src: "/work/earls.jpg", href: "https://services0987.github.io/earls/", aspect: 1.6 },
-
-  { title: "Northwind Coffee", cat: "Website", src: imageUrl("photo-1497366754035-f200968a6e72"), aspect: 1.5 },
-  { title: "Lumen Finance", cat: "Website", src: imageUrl("photo-1460925895917-afdab827c52f"), aspect: 1.9 },
-  { title: "Cedar & Co", cat: "Website", src: imageUrl("photo-1517245386807-bb43f82c33c4"), aspect: 1.15 },
-  { title: "Atlas Analytics", cat: "Website", src: imageUrl("photo-1504384308090-c894fdcc538d"), aspect: 1.5 },
-
-  { title: "Halo Skincare", cat: "Social", src: imageUrl("photo-1522202176988-66273c2fd55f"), aspect: 0.8 },
-  { title: "Volt Energy", cat: "Social", src: videoUrl("3129576"), video: true, aspect: 0.5625 },
-  { title: "Bloom Botanics", cat: "Social", src: imageUrl("photo-1551434678-e076c223a692"), aspect: 1.6 },
-  { title: "Kite Athletics", cat: "Social", src: imageUrl("photo-1542744173-8e7e53415bb0"), aspect: 1 },
-
-  { title: "Apex Motors", cat: "Video", src: videoUrl("2278095"), video: true, aspect: 2.2 },
-  { title: "Nova Festival", cat: "Video", src: imageUrl("photo-1531482615713-2afd69097998"), aspect: 1.3 },
-  { title: "Pulse Records", cat: "Video", src: videoUrl("6774633"), video: true, aspect: 0.5625 },
-  { title: "Vantage Studios", cat: "Video", src: imageUrl("photo-1600880292203-757bb62b4baf"), aspect: 1.75 },
-
-  { title: "Aria · AI Presenter", cat: "AI Video", src: videoUrl("5192157"), video: true, aspect: 1.78 },
-  { title: "Meridian Realty", cat: "AI Video", src: imageUrl("photo-1454165804606-c3d57bc86b40"), aspect: 1.45 },
-  { title: "Solstice Travel", cat: "AI Video", src: imageUrl("photo-1499750310107-5fef28a66643"), aspect: 2.1 },
-  { title: "Orbit Robotics", cat: "AI Video", src: imageUrl("photo-1553877522-43269d4ea984"), aspect: 0.9 },
+  videoProject("2026-VAI_AI.mp4", 0.5625),
+  videoProject("bronco_AI.mp4", 0.5625),
+  videoProject("BRONCO-1-MAY.mp4", 0.5625),
+  videoProject("bronco-amritpal_AI.mp4", 0.5625),
+  videoProject("bronco-edit_AI.mp4", 1.7792),
+  videoProject("bronco-edit1_AI.mp4", 0.5625),
+  videoProject("bronco-walkarround_AI.mp4", 0.5625),
+  videoProject("cars-cinema_AI.mp4", 1.7778),
+  videoProject("digibear-info_AI.mp4", 0.5625),
+  videoProject("digibear-promo_AI.mp4", 0.5696),
+  videoProject("dodge-helcat.mp4", 0.5625),
+  videoProject("language_AI.mp4", 0.5699),
+  videoProject("mountain_AI.mp4", 0.5625),
+  videoProject("mustang-dealship.mp4", 0.5625),
+  videoProject("mustang-edit_AI.mp4", 1.7792),
+  videoProject("MUSTANG-MACH.mp4", 0.5625),
+  videoProject("mustang-walkarround_AI.mp4", 0.5625),
+  videoProject("rapter.mp4", 0.5625),
+  videoProject("raptor-black.mp4", 0.5625),
+  videoProject("raptor-R.mp4", 0.5625),
+  videoProject("REAL-ESTATE_AI.mp4", 1.7778),
+  videoProject("Video-97762_AI.mp4", 0.5625),
 ];
 
 const TABS = ["All", "Website", "Social", "Video", "AI Video"] as const;
@@ -132,8 +139,14 @@ const DRAG_SLOP = 4;
  */
 export default function Work() {
   const [active, setActive] = useState<(typeof TABS)[number]>("All");
+  const [selected, setSelected] = useState<Project | null>(null);
   const rail = useRef<HTMLDivElement>(null);
+  const modal = useRef<HTMLDialogElement>(null);
   const reduced = useReducedMotion();
+
+  useEffect(() => {
+    if (selected && !modal.current?.open) modal.current?.showModal();
+  }, [selected]);
 
   // Drift gates. Refs, not state: both are written from pointer handlers on
   // every move and read inside a rAF loop - a re-render for either would be a
@@ -187,11 +200,6 @@ export default function Work() {
       w = next;
     });
     ro.observe(el);
-
-    // Muted + playsInline, so no gesture is needed. Kept as an attribute-free
-    // play() for the same reason as the hero: autoPlay would also run these
-    // under prefers-reduced-motion.
-    el.querySelectorAll("video").forEach((v) => void v.play().catch(() => {}));
 
     // A wheel or trackpad gesture gets the same grace period a flick does. It
     // is not on the pointer handlers because a wheel mouse never sends one.
@@ -295,6 +303,7 @@ export default function Work() {
         {p.video ? (
           <video
             src={p.src}
+            autoPlay
             muted
             loop
             playsInline
@@ -352,6 +361,17 @@ export default function Work() {
             rel="noopener noreferrer"
             tabIndex={copy === 1 ? undefined : -1}
             aria-label={`${p.title} - open the live site in a new tab`}
+            className="absolute inset-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-primary"
+          />
+        )}
+        {p.popupSrc && (
+          <button
+            type="button"
+            tabIndex={copy === 1 ? undefined : -1}
+            aria-label={`${p.title} - play video`}
+            onClick={() => {
+              if (!dragged.current) setSelected(p);
+            }}
             className="absolute inset-0 focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-accent-primary"
           />
         )}
@@ -504,6 +524,38 @@ export default function Work() {
           </div>
         </motion.div>
       </motion.div>
+
+      <dialog
+        ref={modal}
+        aria-label={selected ? `${selected.title} video` : "Video preview"}
+        onClose={() => setSelected(null)}
+        onClick={(event) => {
+          if (event.target === event.currentTarget) event.currentTarget.close();
+        }}
+        className="m-auto max-h-none max-w-none overflow-visible bg-transparent p-0 backdrop:bg-black/85"
+      >
+        {selected?.popupSrc && (
+          <div className="relative">
+            <video
+              key={selected.popupSrc}
+              src={selected.popupSrc}
+              autoPlay
+              muted
+              playsInline
+              controls
+              className="max-h-[calc(100svh-2rem)] max-w-[calc(100vw-2rem)] rounded-xl bg-black object-contain"
+            />
+            <button
+              type="button"
+              aria-label="Close video"
+              onClick={() => modal.current?.close()}
+              className="absolute top-2 right-2 grid size-11 place-items-center rounded-full bg-black/70 text-2xl leading-none text-white backdrop-blur-sm transition-colors hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+            >
+              <span aria-hidden>×</span>
+            </button>
+          </div>
+        )}
+      </dialog>
     </section>
   );
 }

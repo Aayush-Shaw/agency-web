@@ -1,9 +1,10 @@
 "use client";
 
 import { useEffect, useRef, type CSSProperties } from "react";
+import Image from "next/image";
 import { ArrowUp } from "lucide-react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { imageUrl, videoUrl } from "@/lib/media";
+import { gridVideo } from "@/lib/media";
 // import Aurora from "@/components/ui/Aurora"; // with the backdrop below
 import Magnetic from "@/components/ui/Magnetic";
 import MeshGradient from "@/components/ui/MeshGradient";
@@ -78,54 +79,45 @@ const COVER_H = `calc((var(--wall-w) * ${SIN} + 100svh * ${COS}) * ${COVER_SLACK
  * shows a gap. They sum to ~1.35 here, so there is room to swap tiles in and
  * out without doing the arithmetic again.
  *
- * Swapping in real assets is one line per tile: replace `src`. Nothing else
- * reads these URLs.
  */
-type Tile = { type: "image" | "video"; src: string; span: number };
+type Tile = { src: string; span: number; image?: true };
 
-const img = (id: string, span: number): Tile => ({
-  type: "image",
-  src: imageUrl(id),
+const vid = (filename: string, span: number): Tile => ({
+  src: gridVideo(filename),
   span,
 });
-const vid = (id: string, span: number): Tile => ({
-  type: "video",
-  src: videoUrl(id),
-  span,
-});
+const img = (src: string, span: number): Tile => ({ src, span, image: true });
 
 /* One array per column, left to right. Odd columns scroll up, even ones down
-   - see the loop. One video per column, so the wall reads as mixed media
-   everywhere without mounting more than a handful of decoders (each tile is
-   rendered twice, so four videos here is eight <video> elements). */
+   - see the loop. */
 const COLUMNS: Tile[][] = [
   [
-    img("photo-1497366754035-f200968a6e72", 0.3),
-    vid("3129576", 0.22),
-    img("photo-1522202176988-66273c2fd55f", 0.34),
-    img("photo-1499750310107-5fef28a66643", 0.26),
-    img("photo-1553877522-43269d4ea984", 0.24),
+    vid("2026-VAI_AI.mp4", 0.3),
+    vid("BRONCO-1-MAY.mp4", 0.22),
+    img("/work/autonorth-motors.jpg", 0.34),
+    vid("bronco_AI.mp4", 0.26),
+    vid("digibear-promo_AI.mp4", 0.24),
   ],
   [
-    img("photo-1460925895917-afdab827c52f", 0.24),
-    img("photo-1551434678-e076c223a692", 0.32),
-    vid("2278095", 0.22),
-    img("photo-1542744173-8e7e53415bb0", 0.3),
-    img("photo-1531482615713-2afd69097998", 0.26),
+    vid("rapter.mp4", 0.24),
+    img("/work/indian-grill.jpg", 0.32),
+    vid("mustang-walkarround_AI.mp4", 0.22),
+    vid("2026-VAI_AI.mp4", 0.3),
+    vid("BRONCO-1-MAY.mp4", 0.26),
   ],
   [
-    img("photo-1600880292203-757bb62b4baf", 0.34),
-    img("photo-1504384308090-c894fdcc538d", 0.24),
-    img("photo-1517245386807-bb43f82c33c4", 0.28),
-    vid("5192157", 0.22),
-    img("photo-1454165804606-c3d57bc86b40", 0.3),
+    img("/work/jujco-hvac.jpg", 0.34),
+    vid("digibear-promo_AI.mp4", 0.24),
+    vid("raptor-R.mp4", 0.28),
+    vid("rapter.mp4", 0.22),
+    vid("raptor-black.mp4", 0.3),
   ],
   [
-    img("photo-1499750310107-5fef28a66643", 0.22),
-    img("photo-1497366754035-f200968a6e72", 0.3),
-    vid("6774633", 0.26),
-    img("photo-1460925895917-afdab827c52f", 0.34),
-    img("photo-1522202176988-66273c2fd55f", 0.24),
+    vid("mustang-walkarround_AI.mp4", 0.22),
+    vid("2026-VAI_AI.mp4", 0.3),
+    vid("BRONCO-1-MAY.mp4", 0.26),
+    img("/work/earls.jpg", 0.34),
+    vid("digibear-promo_AI.mp4", 0.24),
   ],
 ];
 
@@ -143,28 +135,21 @@ function Tiles({ items }: { items: Tile[] }) {
       className="relative shrink-0 overflow-hidden rounded-xl"
       style={{ height: `calc(var(--cover-h) * ${item.span})`, marginBottom: GAP }}
     >
-      {item.type === "video" ? (
+      {item.image ? (
+        <Image
+          src={item.src}
+          alt=""
+          fill
+          sizes="(min-width: 768px) 20vw, 30vw"
+          className="object-cover"
+        />
+      ) : (
         <video
           src={item.src}
+          autoPlay
           muted
           loop
           playsInline
-          // No autoPlay attribute: playback is started from the timeline
-          // below, which only runs when motion is allowed. As an attribute it
-          // would start these under prefers-reduced-motion too, and pausing
-          // them back down after the fact is a race.
-          className="h-full w-full object-cover"
-        />
-      ) : (
-        // Plain <img>, not next/image: these are remote placeholder URLs, and
-        // next/image would need each host added to images.remotePatterns in
-        // next.config.ts - a file outside the hero. Swap both together when
-        // the real assets land.
-        // eslint-disable-next-line @next/next/no-img-element
-        <img
-          src={item.src}
-          alt=""
-          decoding="async"
           className="h-full w-full object-cover"
         />
       )}
@@ -283,11 +268,6 @@ export default function Hero() {
                 repeat: -1,
               }
             );
-            track
-              .querySelectorAll("video")
-              // Muted + playsInline, so this is allowed without a gesture. The
-              // catch is for the tab that is already hidden on load.
-              .forEach((v) => void v.play().catch(() => {}));
           });
       });
       // useGSAP reverts this context on unmount: every tween above, the
@@ -597,7 +577,7 @@ export default function Hero() {
           {/* The service list moved down here when the headline lost it - the
             headline now carries the promise and this carries the proof. */}
           <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
-            We're a full service digital studio for ambitious teams. From websites and branding to video, AI avatars, social content, and ad campaigns, we handle it all with premium quality and fast turnarounds, right in your timezone.
+            We&apos;re a full service digital studio for ambitious teams. From websites and branding to video, AI avatars, social content, and ad campaigns, we handle it all with premium quality and fast turnarounds, right in your timezone.
           </p>
 
           {/* Magnetic owns transform on the wrapper; GSAP's entrance owns it on
