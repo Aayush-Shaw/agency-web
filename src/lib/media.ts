@@ -6,3 +6,5 @@ export const faceUrl = (id: string, size = 96) =>
 
 export const gridVideo = (filename: string) => `/vid/grid/${filename}`;
 export const popupVideo = (filename: string) => `/vid/popup/${filename}`;
+export const posterVideo = (filename: string) =>
+  `/vid/poster/${filename.replace(/\.[^.]+$/, ".jpg")}`;

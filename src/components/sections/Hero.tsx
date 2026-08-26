@@ -4,7 +4,7 @@ import { useEffect, useRef, type CSSProperties } from "react";
 import Image from "next/image";
 import { ArrowUp } from "lucide-react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import { gridVideo } from "@/lib/media";
+import { gridVideo, posterVideo } from "@/lib/media";
 // import Aurora from "@/components/ui/Aurora"; // with the backdrop below
 import Magnetic from "@/components/ui/Magnetic";
 import MeshGradient from "@/components/ui/MeshGradient";
@@ -80,10 +80,11 @@ const COVER_H = `calc((var(--wall-w) * ${SIN} + 100svh * ${COS}) * ${COVER_SLACK
  * out without doing the arithmetic again.
  *
  */
-type Tile = { src: string; span: number; image?: true };
+type Tile = { src: string; span: number; image?: true; poster?: string };
 
 const vid = (filename: string, span: number): Tile => ({
   src: gridVideo(filename),
+  poster: posterVideo(filename),
   span,
 });
 const img = (src: string, span: number): Tile => ({ src, span, image: true });
@@ -145,7 +146,8 @@ function Tiles({ items }: { items: Tile[] }) {
         />
       ) : (
         <video
-          src={item.src}
+          data-src={item.src}
+          poster={item.poster}
           muted
           loop
           playsInline
@@ -299,13 +301,38 @@ export default function Hero() {
     const videos = Array.from(
       el.querySelectorAll<HTMLVideoElement>(".hero-wall video")
     );
+    const near = new Set<HTMLVideoElement>();
     const visible = new Set<HTMLVideoElement>();
     let past = false;
     const syncVideo = (video: HTMLVideoElement) => {
-      if (!past && visible.has(video)) void video.play().catch(() => {});
+      if (past || !near.has(video)) {
+        video.pause();
+        if (video.hasAttribute("src")) {
+          video.removeAttribute("src");
+          video.load();
+        }
+        return;
+      }
+
+      if (!video.hasAttribute("src") && video.dataset.src) {
+        video.src = video.dataset.src;
+        video.load();
+      }
+      if (visible.has(video)) void video.play().catch(() => {});
       else video.pause();
     };
-    const observer = new IntersectionObserver(
+    const nearObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) near.add(video);
+          else near.delete(video);
+          syncVideo(video);
+        });
+      },
+      { root: el, rootMargin: "200px" }
+    );
+    const visibleObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
@@ -316,7 +343,10 @@ export default function Hero() {
       },
       { root: el }
     );
-    videos.forEach((video) => observer.observe(video));
+    videos.forEach((video) => {
+      nearObserver.observe(video);
+      visibleObserver.observe(video);
+    });
 
     const sync = () => {
       const height = el.offsetHeight;
@@ -337,8 +367,13 @@ export default function Hero() {
     return () => {
       window.removeEventListener("scroll", sync);
       window.removeEventListener("resize", sync);
-      observer.disconnect();
-      videos.forEach((video) => video.pause());
+      nearObserver.disconnect();
+      visibleObserver.disconnect();
+      videos.forEach((video) => {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      });
       document.documentElement.removeAttribute("data-past-hero");
     };
   }, []);

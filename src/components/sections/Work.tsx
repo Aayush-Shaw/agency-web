@@ -2,7 +2,7 @@
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
 import { motion, useReducedMotion } from "motion/react";
-import { gridVideo, popupVideo } from "@/lib/media";
+import { gridVideo, popupVideo, posterVideo } from "@/lib/media";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 
@@ -12,6 +12,7 @@ type Project = {
   title: string;
   cat: Category;
   src: string;
+  posterSrc?: string;
   popupSrc?: string;
   video?: boolean;
   /** Live site. Video projects open their local popup source instead. */
@@ -29,6 +30,7 @@ const videoProject = (filename: string, aspect: number): Project => ({
     .replaceAll("-", " "),
   cat: /_AI(?=\.[^.]+$)/.test(filename) ? "AI Video" : "Video",
   src: gridVideo(filename),
+  posterSrc: posterVideo(filename),
   popupSrc: popupVideo(filename),
   video: true,
   aspect,
@@ -266,22 +268,60 @@ export default function Work() {
     if (!el) return;
 
     const videos = Array.from(el.querySelectorAll<HTMLVideoElement>("video"));
-    const observer = new IntersectionObserver(
+    const near = new Set<HTMLVideoElement>();
+    const visible = new Set<HTMLVideoElement>();
+    const syncVideo = (video: HTMLVideoElement) => {
+      if (selected || !near.has(video)) {
+        video.pause();
+        if (video.hasAttribute("src")) {
+          video.removeAttribute("src");
+          video.load();
+        }
+        return;
+      }
+
+      if (!video.hasAttribute("src") && video.dataset.src) {
+        video.src = video.dataset.src;
+        video.load();
+      }
+      if (visible.has(video)) void video.play().catch(() => {});
+      else video.pause();
+    };
+    const nearObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting && !selected)
-            void video.play().catch(() => {});
-          else video.pause();
+          if (entry.isIntersecting) near.add(video);
+          else near.delete(video);
+          syncVideo(video);
+        });
+      },
+      { root: el, rootMargin: "0px 300px" }
+    );
+    const visibleObserver = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) visible.add(video);
+          else visible.delete(video);
+          syncVideo(video);
         });
       },
       { root: el }
     );
-    videos.forEach((video) => observer.observe(video));
+    videos.forEach((video) => {
+      nearObserver.observe(video);
+      visibleObserver.observe(video);
+    });
 
     return () => {
-      observer.disconnect();
-      videos.forEach((video) => video.pause());
+      nearObserver.disconnect();
+      visibleObserver.disconnect();
+      videos.forEach((video) => {
+        video.pause();
+        video.removeAttribute("src");
+        video.load();
+      });
     };
   }, [active, selected]);
 
@@ -332,7 +372,8 @@ export default function Work() {
             contributes but the min-width above. */}
         {p.video ? (
           <video
-            src={p.src}
+            data-src={p.src}
+            poster={p.posterSrc}
             muted
             loop
             playsInline
@@ -495,12 +536,15 @@ export default function Work() {
               dragged.current = false;
               if (e.pointerType !== "mouse" || e.button !== 0) return;
               grab.current = { x: e.clientX, left: e.currentTarget.scrollLeft };
-              e.currentTarget.setPointerCapture(e.pointerId);
             }}
             onPointerMove={(e) => {
               if (!grab.current) return;
               const dx = e.clientX - grab.current.x;
-              if (Math.abs(dx) > DRAG_SLOP) dragged.current = true;
+              if (Math.abs(dx) > DRAG_SLOP) {
+                dragged.current = true;
+                if (!e.currentTarget.hasPointerCapture(e.pointerId))
+                  e.currentTarget.setPointerCapture(e.pointerId);
+              }
               e.currentTarget.scrollLeft = grab.current.left - dx;
             }}
             // Capture, so it runs before the click reaches the tile's link.
