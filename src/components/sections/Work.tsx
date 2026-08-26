@@ -362,9 +362,9 @@ export default function Work() {
     <section id="work" className="px-5 pt-24 md:px-8 md:pt-35 pb-10">
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
-          <Eyebrow>Selected work</Eyebrow>
+          <Eyebrow>Selected projects</Eyebrow>
           <h2 className="mt-4 max-w-3xl text-section font-bold tracking-tight">
-            Work we&apos;re <span className="text-gradient">proud to ship</span>.
+            Project we&apos;re <span className="text-gradient">proud to ship.</span>
           </h2>
         </Reveal>
 

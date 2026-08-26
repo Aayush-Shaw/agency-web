@@ -22,9 +22,9 @@ const icon = (path: ReactNode) => (
 const SERVICES: RailItem[] = [
   {
     heading: "Website Development",
-    description: "Fast, easy-to-use sites that turn visitors into customers.",
+    description: "High quality websites that turn visitors into customers.",
     detail:
-      "Designed and built in one place, so nothing gets lost in handoff. Loads quickly, looks right on every screen, and is built to be found on Google.",
+      "We design and build everything in one place, so nothing gets lost along the way. Your site loads quickly, looks great on every device, and is set up to be found easily on Google.",
     deliverables: ["UX & UI design", "Next.js build", "Mobile responsive", "SEO & speed"],
     icon: icon(
       <>
@@ -38,7 +38,7 @@ const SERVICES: RailItem[] = [
     heading: "Graphic Design & Branding",
     description: "Visuals that make your brand impossible to forget.",
     detail:
-      "Posters, ad creatives, and Instagram posts drawn from one consistent look - so everything you put out is instantly recognizable as yours.",
+      "Posters, ad creatives, and Instagram posts, all built from one consistent look, so everything you put out is instantly recognizable as yours.",
     deliverables: ["Brand identity", "Ad creatives", "Social posts", "Posters & print"],
     // The Bézier pen tool, as it looks in Illustrator: nib tapering to a point
     // at top-left, the split down its middle, the anchor on the curve.
@@ -54,25 +54,25 @@ const SERVICES: RailItem[] = [
       </>
     ),
   },
+  // {
+  //   heading: "Video Editing",
+  //   description: "Reels and promos cut to hold attention.",
+  //   detail:
+  //     "Short-form and long-form edits with sharp pacing, color, and sound - captioned and exported in the right format for every platform.",
+  //   deliverables: ["Reels & shorts", "Promos", "Color & sound", "Captions & delivery"],
+  //   icon: icon(
+  //     <>
+  //       <rect x="3" y="5" width="18" height="14" rx="2" />
+  //       <path d="M3 9h4m10 0h4M3 15h4m10 0h4M8 5v14m8-14v14" />
+  //     </>
+  //   ),
+  // },
   {
-    heading: "Video Editing",
-    description: "Reels and promos cut to hold attention.",
-    detail:
-      "Short-form and long-form edits with sharp pacing, color, and sound - captioned and exported in the right format for every platform.",
-    deliverables: ["Reels & shorts", "Promos", "Color & sound", "Captions & delivery"],
-    icon: icon(
-      <>
-        <rect x="3" y="5" width="18" height="14" rx="2" />
-        <path d="M3 9h4m10 0h4M3 15h4m10 0h4M8 5v14m8-14v14" />
-      </>
-    ),
-  },
-  {
-    heading: "Cutting-Edge AI Solutions",
+    heading: "AI Avatars Content",
     description: "AI avatars and video, without a film crew.",
     detail:
-      "Custom AI presenters and generated video that let you ship ads, explainers, and language versions in days instead of weeks.",
-    deliverables: ["Custom AI avatars", "Script to video", "Multi-language", "Ad variations"],
+      "We create a custom AI avatar for your business and turn it into ready to post social media content. More videos, more reach, more leads, without ever booking a film crew.",
+    deliverables: ["Custom AI avatars", "Script to video", "Multi language", "Ad variations"],
     icon: icon(
       <>
         <circle cx="12" cy="8" r="4" />
@@ -89,7 +89,7 @@ const SERVICES: RailItem[] = [
     heading: "Social Media Management",
     description: "We run your handles so you don't have to.",
     detail:
-      "Planning, scheduling, posting, and replying to your community - handled end to end while the follower count climbs.",
+      "Planning, scheduling, posting, and replying to your community, all handled from start to finish while your follower count grows.",
     deliverables: ["Content calendar", "Scheduling & posting", "Community replies", "Growth reporting"],
     // A heart inside a speech bubble - likes and comments, which is what
     // "social media" looks like to anyone who has ever used it. The old
@@ -106,7 +106,7 @@ const SERVICES: RailItem[] = [
     heading: "Digital Marketing & Ads",
     description: "Campaigns that put you in front of buyers.",
     detail:
-      "Targeted ad campaigns built around the people you actually want to reach, then tuned against real numbers - clicks, leads, and sales.",
+      "Targeted ad campaigns built around the people you actually want to reach, then fine tuned using real numbers like clicks, leads, and sales.",
     deliverables: ["Ad campaigns", "Audience targeting", "Landing pages", "Monthly reporting"],
     // A megaphone - the universal mark for advertising. The horn, the handle
     // hanging off its underside, and the seam across the mouth; the handle is
@@ -130,7 +130,7 @@ export default function Services() {
         <Reveal variant="words">
           <Eyebrow>What we do</Eyebrow>
           <h2 className="mt-2 max-w-3xl text-section font-bold tracking-tight">
-            Six services, one <span className="text-gradient">creative team</span>.
+            Five services, one <span className="text-gradient">creative team.</span>
           </h2>
         </Reveal>
       </div>

@@ -6,7 +6,7 @@ import Roll from "@/components/ui/Roll";
 
 const LINKS = [
   { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
+  { label: "Projects", href: "#work" },
   { label: "Process", href: "#process" },
   { label: "Contact", href: "#contact" },
   // Parked with the section itself - see page.tsx.

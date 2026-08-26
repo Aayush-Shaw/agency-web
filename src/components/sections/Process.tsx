@@ -376,7 +376,7 @@ export default function Process() {
               reads the same at 1440 and gets out of the way on a phone. */}
           <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight in-[.arc]:leading-[1.15]">
             A simple path from{" "}
-            <span className="text-gradient">idea to launch</span>.
+            <span className="text-gradient">idea to launch.</span>
           </h2>
         </Reveal>
       </div>

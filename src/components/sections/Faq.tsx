@@ -196,7 +196,7 @@ export default function Faq() {
         <Reveal variant="words" className="lg:sticky lg:top-28">
           <Eyebrow>Before you ask</Eyebrow>
           <h2 className="mt-5 text-section font-bold tracking-tight">
-            No mysteries, no <span className="text-gradient">fine print</span>.
+            No mysteries, no <span className="text-gradient">fine print.</span>
           </h2>
           <p className="mt-5 max-w-sm text-lead text-text-muted">
             The questions that come up on every first call - answered here

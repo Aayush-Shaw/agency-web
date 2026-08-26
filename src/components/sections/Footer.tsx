@@ -4,7 +4,7 @@ import Roll from "@/components/ui/Roll";
 
 const NAV = [
   { label: "Services", href: "#services" },
-  { label: "Work", href: "#work" },
+  { label: "Projects", href: "#work" },
   { label: "Process", href: "#process" },
   // Parked with the section itself - see page.tsx.
   // { label: "Pricing", href: "#pricing" },
@@ -127,9 +127,7 @@ export default function Footer() {
             </Roll>
           </a>
           <p className="mt-4 text-sm leading-relaxed text-text-muted">
-            Digi Bear is an all-in-one digital studio: websites, branding and
-            graphic design, video editing, AI avatars and video, social media
-            management, and paid ads - for brands in the US, UK, and Europe.
+            An all in one digital studio for ambitious brands. Websites, branding, video, AI avatars, social media, and ads, all under one roof, serving clients across the World.
           </p>
         </div>
 

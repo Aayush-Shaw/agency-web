@@ -369,7 +369,7 @@ export default function Reviews() {
           <Eyebrow>Client reviews</Eyebrow>
           <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight">
             Trusted by brands that{" "}
-            <span className="text-gradient">sweat the details</span>.
+            <span className="text-gradient">sweat the details.</span>
           </h2>
         </Reveal>
 

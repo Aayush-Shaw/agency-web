@@ -590,16 +590,14 @@ export default function Hero() {
             </span>{" "}
             <span className="hero-word text-gradient inline-block">to</span>{" "}
             <span className="hero-word inline-block">
-              <span className="text-gradient">ignore</span>.
+              <span className="text-gradient">ignore.</span>
             </span>
           </h1>
 
           {/* The service list moved down here when the headline lost it - the
             headline now carries the promise and this carries the proof. */}
           <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
-            Digi Bear is an all-in-one studio building websites, branding,
-            video, AI avatars, social content, and ad campaigns for ambitious
-            teams - premium work, fast turnarounds, on your timezone.
+            We're a full service digital studio for ambitious teams. From websites and branding to video, AI avatars, social content, and ad campaigns, we handle it all with premium quality and fast turnarounds, right in your timezone.
           </p>
 
           {/* Magnetic owns transform on the wrapper; GSAP's entrance owns it on

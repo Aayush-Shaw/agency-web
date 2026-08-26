@@ -441,7 +441,7 @@ export default function Cta() {
           <Eyebrow>Let&apos;s talk</Eyebrow>
           <h2 className="mt-5 text-section-xl font-bold leading-[1.05] tracking-tight">
             Ready to build something{" "}
-            <span className="text-gradient">worth watching</span>?
+            <span className="text-gradient">worth watching?</span>
           </h2>
           <p className="mt-5 max-w-md text-lead text-text-muted">
             Pick what you need and we&apos;ll shape a timeline and a price range
