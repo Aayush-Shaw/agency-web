@@ -16,14 +16,11 @@ import ContactDialog, { type Summary } from "@/components/ui/ContactDialog";
 import {
   SERVICES,
   TIMELINES,
-  optionLabel,
   serviceById,
   timelineLabel,
-  type Answers,
   type ServiceId,
   type TimelineId,
 } from "@/lib/configurator";
-import { estimate, formatUsd } from "@/lib/estimatePricing";
 
 const CONTACT_EMAIL = "info@digibearca.com";
 const CONTACT_PHONE = "+1 (780) 281-1000";
@@ -54,6 +51,12 @@ const REVEAL_ELASTIC = {
   initial: { opacity: 0, y: 28, scale: 0.92 },
   animate: { opacity: 1, y: 0, scale: 1 },
   transition: { type: "spring" as const, stiffness: 260, damping: 13, mass: 0.8 },
+};
+
+const TIME_ESTIMATES: Record<TimelineId, string> = {
+  asap: "1–2 weeks",
+  standard: "2–4 weeks",
+  flexible: "4–6 weeks",
 };
 
 /**
@@ -355,6 +358,7 @@ function Count({
   return <motion.span>{text}</motion.span>;
 }
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 function EstimateCard({
   label,
   range: [from, to],
@@ -384,14 +388,10 @@ function EstimateCard({
 /**
  * Section 12 - closing CTA + project configurator.
  *
- * Steps appear one at a time as the one above is answered; the estimate and the
- * contact button only exist once every question has an answer. Everything the
- * flow asks lives in lib/configurator.ts and every number it quotes in
- * lib/estimatePricing.ts, so neither is edited here.
+ * Pick services, choose a timeline, then start a conversation.
  */
 export default function Cta() {
   const [selected, setSelected] = useState<ServiceId[]>([]);
-  const [answers, setAnswers] = useState<Answers>({});
   const [timeline, setTimeline] = useState<TimelineId | "">("");
   const [dialogOpen, setDialogOpen] = useState(false);
   // The dialog grows out of this button, so it needs its position on screen.
@@ -403,23 +403,16 @@ export default function Cta() {
     );
   }
 
-  // Answers for de-selected services are kept on purpose: re-adding a service
-  // brings its answer back instead of making the visitor pick it again. Only
-  // the ids in `selected` are ever read.
-  const answeredCount = selected.filter((id) => answers[id]).length;
-  const allServicesAnswered = selected.length > 0 && answeredCount === selected.length;
-  const complete = allServicesAnswered && timeline !== "";
-
-  const quote = complete ? estimate(selected, answers, timeline) : null;
-
-  const summary: Summary | null = quote
+  const complete = selected.length > 0 && timeline !== "";
+  const timeEstimate = complete ? TIME_ESTIMATES[timeline as TimelineId] : "";
+  const summary: Summary | null = complete
     ? {
         services: selected.map((id) => ({
           label: serviceById(id).label,
-          value: optionLabel(id, answers[id]),
+          value: "Starting from $300",
         })),
         timelinePreference: timelineLabel(timeline as TimelineId),
-        estimate: quote,
+        estimate: { price: "Starting from $300", timeline: timeEstimate },
       }
     : null;
 
@@ -471,37 +464,9 @@ export default function Cta() {
               <ServicePicker selected={selected} onToggle={toggleService} />
             </Step>
 
-            {/* Steps 2..n - one question per selected service, in the order they
-                were picked, each revealed once the one above is answered. */}
-            {selected.map((id, index) => {
-              if (selected.slice(0, index).some((prev) => !answers[prev])) return null;
-              const service = serviceById(id);
-              return (
-                <Step
-                  key={id}
-                  number={index + 2}
-                  // Nothing renders below an unanswered step - neither the next
-                  // service nor the timeline question - so it owns the end of
-                  // the line.
-                  last={!answers[id]}
-                >
-                  <Select
-                    id={`configurator-${id}`}
-                    label={service.label}
-                    resting={service.question}
-                    options={service.options}
-                    value={answers[id] ?? ""}
-                    onChange={(value) =>
-                      setAnswers((current) => ({ ...current, [id]: value }))
-                    }
-                  />
-                </Step>
-              );
-            })}
-
             {/* Final step - timeline. */}
-            {allServicesAnswered && (
-              <Step number={selected.length + 2} last={!complete}>
+            {selected.length > 0 && (
+              <Step number={2} last={!complete}>
                 <Select
                   id="configurator-timeline"
                   label="Timeline"
@@ -513,8 +478,8 @@ export default function Cta() {
               </Step>
             )}
 
-            {/* The estimate, plus the way out of the flow. */}
-            {quote && (
+            {/* Pricing is fixed until custom rates are final. */}
+            {complete && (
               <motion.div
                 {...REVEAL_ELASTIC}
                 // Full width, no step indent: the numbered column belongs to the
@@ -527,21 +492,21 @@ export default function Cta() {
                 className="@container border-t border-border pt-6"
               >
                 <div className="grid gap-3 @sm:grid-cols-2">
-                  <EstimateCard
-                    label="Estimated development timeline"
-                    range={quote.weekRange}
-                    format={String}
-                    suffix=" weeks"
-                  />
-                  <EstimateCard
-                    label="Estimated price range"
-                    range={quote.priceRange}
-                    format={formatUsd}
-                  />
+                  <div className="rounded-2xl border border-border bg-bg p-5">
+                    <p className="text-sm text-text-muted">Estimated timeline</p>
+                    <p className="mt-1.5 text-card-lg font-bold tracking-tight text-gradient">
+                      {timeEstimate}
+                    </p>
+                  </div>
+                  <div className="rounded-2xl border border-border bg-bg p-5">
+                    <p className="text-sm text-text-muted">All services start from</p>
+                    <p className="mt-1.5 text-card-lg font-bold tracking-tight text-gradient">
+                      $300
+                    </p>
+                  </div>
                 </div>
                 <p className="mt-3 text-xs text-text-muted">
-                  A starting point, not a quote - we&apos;ll confirm both once
-                  we&apos;ve talked through the detail.
+                  Final pricing depends on the details of your project.
                 </p>
                 <button
                   ref={openRef}

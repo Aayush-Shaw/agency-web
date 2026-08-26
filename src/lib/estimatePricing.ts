@@ -36,10 +36,6 @@ const RATES: Record<RateKey, Rate> = {
   "design:creatives": { min: 1200, max: 2400, weeks: 2 },
   "design:system": { min: 3000, max: 6000, weeks: 4 },
 
-  "video:1-3": { min: 700, max: 1400, weeks: 1 },
-  "video:3-5": { min: 1400, max: 2600, weeks: 2 },
-  "video:5-plus": { min: 2800, max: 5000, weeks: 4 },
-
   "ai:pilot": { min: 900, max: 1800, weeks: 2 },
   "ai:series": { min: 2200, max: 4000, weeks: 3 },
   "ai:scale": { min: 4500, max: 8000, weeks: 5 },

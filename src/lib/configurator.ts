@@ -2,9 +2,9 @@
  * What the project configurator asks - services, their one follow-up question,
  * and the timeline question. Content only: no prices, no UI.
  *
- * The six services mirror `SERVICES` in components/sections/Services.tsx.
+ * The five services mirror `SERVICES` in components/sections/Services.tsx.
  * They're spelled out again rather than imported because that array carries
- * JSX icons and lives inside a section component - copying six strings beats
+ * JSX icons and lives inside a section component - copying five strings beats
  * making a config file depend on a rendered section.
  *
  * Adding a service: add an entry here, then its rates in ./estimatePricing.ts.
@@ -23,6 +23,16 @@ export const SERVICES = [
     ],
   },
   {
+    id: "ai",
+    label: "AI Avatars Content",
+    question: "How many AI videos?",
+    options: [
+      { value: "pilot", label: "Pilot - 1 to 3 videos, one avatar" },
+      { value: "series", label: "Series - 4 to 8 videos or ad variations" },
+      { value: "scale", label: "At scale - 10+ videos, multi-language" },
+    ],
+  },
+  {
     id: "design",
     label: "Graphic Design & Branding",
     question: "What needs designing?",
@@ -30,26 +40,6 @@ export const SERVICES = [
       { value: "identity", label: "Brand identity - logo, colors, type, guidelines" },
       { value: "creatives", label: "Creative batch - posters, ads, social posts" },
       { value: "system", label: "Full brand system - identity plus a creative library" },
-    ],
-  },
-  {
-    id: "video",
-    label: "Video Editing",
-    question: "How many videos?",
-    options: [
-      { value: "1-3", label: "1 – 3 videos" },
-      { value: "3-5", label: "3 – 5 videos" },
-      { value: "5-plus", label: "5+ videos" },
-    ],
-  },
-  {
-    id: "ai",
-    label: "Cutting-Edge AI Solutions",
-    question: "How many AI videos?",
-    options: [
-      { value: "pilot", label: "Pilot - 1 to 3 videos, one avatar" },
-      { value: "series", label: "Series - 4 to 8 videos or ad variations" },
-      { value: "scale", label: "At scale - 10+ videos, multi-language" },
     ],
   },
   {
