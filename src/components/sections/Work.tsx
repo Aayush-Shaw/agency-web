@@ -157,7 +157,11 @@ export default function Work() {
   const yieldUntil = useRef(0); // momentum/wheel still settling
 
   const shown =
-    active === "All" ? PROJECTS : PROJECTS.filter((p) => p.cat === active);
+    active === "All"
+      ? PROJECTS
+      : PROJECTS.filter((p) =>
+          active === "Social" ? p.video : p.cat === active
+        );
   // Repeat the filtered set up to MIN_TILES, then COPIES of that on the rail.
   // Empty guard so `reps` can never be Infinity.
   const reps = shown.length ? Math.ceil(MIN_TILES / shown.length) : 0;
