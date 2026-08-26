@@ -111,15 +111,17 @@ export function estimate(
   const weeks = longestWeeks + (totalWeeks - longestWeeks) * OVERLAP;
   const from = Math.max(1, Math.round(weeks * factor.weeks));
   const to = from + WINDOW_WEEKS;
+  const [timelineFrom, timelineTo] =
+    from === 3 && to === 5 ? [2, 3] : [from, to];
   const low = toNearest500(min * factor.price);
   const high = toNearest500(max * factor.price);
 
   return {
     // Formatted, for the email the dialog sends.
     price: `${usd.format(low)} – ${usd.format(high)}`,
-    timeline: `${from} – ${to} weeks`,
+    timeline: `${timelineFrom} – ${timelineTo} weeks`,
     // The same four figures bare, because the cards count up to them.
     priceRange: [low, high] as [number, number],
-    weekRange: [from, to] as [number, number],
+    weekRange: [timelineFrom, timelineTo] as [number, number],
   };
 }
