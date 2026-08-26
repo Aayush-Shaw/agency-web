@@ -16,7 +16,7 @@ import useScrollFocus from "@/components/ui/useScrollFocus";
 const REVIEWS = [
   {
     quote:
-      "Digi Bear rebuilt our site and it paid for itself in a month. Sharp design, and they actually hit every deadline.",
+      "Honestly wasn't sure a rebuild was worth it, but it paid for itself in a month. These guys hit every deadline too, which never happens.",
     name: "Sarah Whitmore",
     company: "Northwind Coffee, US",
     face: "photo-1494790108377-be9c29b29330",
@@ -25,7 +25,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "The AI video work is a different level. We localized a campaign into four languages in under a week - unheard of for us.",
+      "We needed a campaign in four languages fast, and I mean fast. The AI video stuff they used got it done in under a week. Still not sure how.",
     name: "James Callahan",
     company: "Lumen Finance, UK",
     face: "photo-1507003211169-0a1dd7228f2d",
@@ -34,7 +34,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "Working across timezones is usually painful. With them it felt like they were down the hall. Same-day replies, every time.",
+      "I was dreading the timezone thing, we're pretty far apart. Turned out to be a non issue. They replied same day, every single time.",
     name: "Elena Fischer",
     company: "Halo Skincare, DE",
     face: "photo-1438761681033-6461ffad8d80",
@@ -43,7 +43,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "Branding that finally looks like us. The team took rough notes and turned them into something we're proud of.",
+      "I sent them a mess of notes and half formed ideas about our brand. They came back with something that actually felt like us. Genuinely impressed.",
     name: "Marcus Bell",
     company: "Apex Motors, US",
     face: "photo-1500648767791-00dcc994a43e",
@@ -52,7 +52,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "Our social finally looks like it belongs to the same brand as the site. Six weeks in, and I've stopped writing captions at midnight.",
+      "Our Instagram used to look nothing like our website. Six weeks with this team and now it all matches. I'm not writing captions at midnight anymore either.",
     name: "Priya Raman",
     company: "Bower & Co, UK",
     face: "photo-1534528741775-53994a69daeb",
@@ -61,7 +61,7 @@ const REVIEWS = [
   },
   {
     quote:
-      "They cut nine months of shoot footage into a launch film and three ad variants. Two rounds of notes and it was done.",
+      "We had nine months of raw footage just sitting there. They turned it into a launch film and three ad cuts. Took two rounds of feedback, that's it.",
     name: "Tomás Herrera",
     company: "Vessel Outdoor, ES",
     face: "photo-1506794778202-cad84cf45f1d",

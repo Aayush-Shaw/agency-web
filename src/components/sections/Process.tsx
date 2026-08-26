@@ -19,17 +19,17 @@ const STEPS = [
   {
     n: "02",
     title: "Design",
-    body: "Concepts, direction, and prototypes. You see and shape the work early - no big reveals, no surprises.",
+    body: "Concepts, direction, and prototypes. You see and shape the work early, with no big reveals and no surprises.",
   },
   {
     n: "03",
     title: "Build",
-    body: "We produce the final assets - site, design, content, or video - with regular check-ins and fast revisions.",
+    body: "We produce the final assets, including the site, design, content, or video, with regular check ins and fast revisions.",
   },
   {
     n: "04",
     title: "Launch",
-    body: "We ship, QA, and hand over clean files. Then we stay on to measure, iterate, and help you grow.",
+    body: "We ship, test everything, and hand over clean files. Then we stay on to measure results, improve what's working, and help you grow.",
   },
 ];
 
