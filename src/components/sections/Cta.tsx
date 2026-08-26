@@ -25,8 +25,8 @@ import {
 } from "@/lib/configurator";
 import { estimate, formatUsd } from "@/lib/estimatePricing";
 
-const CONTACT_EMAIL = "digibearorg@gmail.com";
-// const CONTACT_EMAIL = "hello@digibear.ca";
+const CONTACT_EMAIL = "info@digibearca.com";
+const CONTACT_PHONE = "+1 (780) 281-1000";
 
 /** The site's standard curve (see .lift in globals.css), typed for motion. */
 const EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1];
@@ -452,6 +452,13 @@ export default function Cta() {
             className="mt-6 inline-block font-display text-lg font-semibold text-accent-primary underline-offset-4 hover:underline"
           >
             <Roll>{CONTACT_EMAIL}</Roll>
+          </a>
+          <br />
+          <a
+            href={`tel:${CONTACT_PHONE.replace(/[^+\d]/g, "")}`}
+            className="mt-2 inline-block font-display text-lg font-semibold text-accent-primary underline-offset-4 hover:underline"
+          >
+            <Roll>{CONTACT_PHONE}</Roll>
           </a>
         </Reveal>
 
