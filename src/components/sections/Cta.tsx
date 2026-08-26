@@ -7,7 +7,7 @@ import {
   type ReactNode,
   type RefObject,
 } from "react";
-import { ChevronDown, X } from "lucide-react";
+import { ChevronDown, Mail, Phone, X } from "lucide-react";
 import { motion, useReducedMotion, useSpring, useTransform } from "motion/react";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
@@ -449,15 +449,17 @@ export default function Cta() {
           </p>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
-            className="mt-6 inline-block font-display text-lg font-semibold text-accent-primary underline-offset-4 hover:underline"
+            className="mt-6 inline-flex items-center gap-2 font-display text-lg font-semibold text-accent-primary underline-offset-4 hover:underline"
           >
+            <Mail className="size-5 shrink-0" />
             <Roll>{CONTACT_EMAIL}</Roll>
           </a>
           <br />
           <a
             href={`tel:${CONTACT_PHONE.replace(/[^+\d]/g, "")}`}
-            className="mt-2 inline-block font-display text-lg font-semibold text-accent-primary underline-offset-4 hover:underline"
+            className="mt-2 inline-flex items-center gap-2 font-display text-lg font-semibold text-accent-primary underline-offset-4 hover:underline"
           >
+            <Phone className="size-5 shrink-0" />
             <Roll>{CONTACT_PHONE}</Roll>
           </a>
         </Reveal>
