@@ -237,7 +237,13 @@ export default function Work() {
       const dt = Math.min(now - last, 50);
       last = now;
 
-      if (!onScreen || held.current || now < yieldUntil.current) return;
+      if (
+        !onScreen ||
+        modal.current?.open ||
+        held.current ||
+        now < yieldUntil.current
+      )
+        return;
       if (Math.abs(el.scrollLeft - pos) > 1) pos = el.scrollLeft;
       pos += (DRIFT * dt) / 1000;
       el.scrollLeft = pos;
@@ -254,6 +260,30 @@ export default function Work() {
     // Filtering changes how many tiles are on the rail, and so the copy width
     // every threshold above is measured against.
   }, [active, reduced]);
+
+  useEffect(() => {
+    const el = rail.current;
+    if (!el) return;
+
+    const videos = Array.from(el.querySelectorAll<HTMLVideoElement>("video"));
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting && !selected)
+            void video.play().catch(() => {});
+          else video.pause();
+        });
+      },
+      { root: el }
+    );
+    videos.forEach((video) => observer.observe(video));
+
+    return () => {
+      observer.disconnect();
+      videos.forEach((video) => video.pause());
+    };
+  }, [active, selected]);
 
   // Click-and-drag, mouse only. Touch already has native panning and would
   // fight this; a wheel mouse has neither, and without it a desktop visitor
@@ -303,10 +333,10 @@ export default function Work() {
         {p.video ? (
           <video
             src={p.src}
-            autoPlay
             muted
             loop
             playsInline
+            preload="none"
             className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           />
         ) : (

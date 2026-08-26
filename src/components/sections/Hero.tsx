@@ -146,10 +146,10 @@ function Tiles({ items }: { items: Tile[] }) {
       ) : (
         <video
           src={item.src}
-          autoPlay
           muted
           loop
           playsInline
+          preload="none"
           className="h-full w-full object-cover"
         />
       )}
@@ -293,16 +293,43 @@ export default function Hero() {
   // starts below the fold. globals.css unpins it. Also on resize, since that
   // is the one thing that changes the answer without a scroll.
   useEffect(() => {
+    const el = root.current;
+    if (!el) return;
+
+    const videos = Array.from(
+      el.querySelectorAll<HTMLVideoElement>(".hero-wall video")
+    );
+    const visible = new Set<HTMLVideoElement>();
+    let past = false;
+    const syncVideo = (video: HTMLVideoElement) => {
+      if (!past && visible.has(video)) void video.play().catch(() => {});
+      else video.pause();
+    };
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) visible.add(video);
+          else visible.delete(video);
+          syncVideo(video);
+        });
+      },
+      { root: el }
+    );
+    videos.forEach((video) => observer.observe(video));
+
     const sync = () => {
-      const height = root.current?.offsetHeight ?? 0;
+      const height = el.offsetHeight;
+      const nextPast = window.scrollY >= height;
       document.documentElement.toggleAttribute(
         "data-past-hero",
-        window.scrollY >= height
+        nextPast
       );
-      root.current?.toggleAttribute(
-        "data-overflows",
-        height > window.innerHeight
-      );
+      el.toggleAttribute("data-overflows", height > window.innerHeight);
+      if (nextPast !== past) {
+        past = nextPast;
+        videos.forEach(syncVideo);
+      }
     };
     sync();
     window.addEventListener("scroll", sync, { passive: true });
@@ -310,6 +337,8 @@ export default function Hero() {
     return () => {
       window.removeEventListener("scroll", sync);
       window.removeEventListener("resize", sync);
+      observer.disconnect();
+      videos.forEach((video) => video.pause());
       document.documentElement.removeAttribute("data-past-hero");
     };
   }, []);
