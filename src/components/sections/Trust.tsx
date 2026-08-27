@@ -4,10 +4,10 @@ import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
 
 const STATS = [
-  { value: 5, suffix: "", label: "Services under one roof" },
+  { value: "Five", suffix: "", label: "Services under one roof" },
   { value: 100, suffix: "%", label: "In house team" },
   { value: 24, suffix: "h", label: "Avg. first response" },
-  { value: 5, suffix: "", label: "Days a week available" },
+  { value: "Five", suffix: "", label: "Days a week available" },
 ];
 
 /** Section 10 - trust strip with numbers that count up on scroll. */
@@ -22,6 +22,7 @@ export default function Trust() {
 
       gsap.utils.toArray<HTMLElement>(".stat-num").forEach((el) => {
         const target = Number(el.dataset.value);
+        if (!Number.isFinite(target)) return;
         const counter = { v: 0 };
         el.textContent = "0";
         gsap.to(counter, {
