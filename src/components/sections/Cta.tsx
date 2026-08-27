@@ -437,8 +437,7 @@ export default function Cta() {
             <span className="text-gradient">worth watching?</span>
           </h2>
           <p className="mt-5 max-w-md text-lead text-text-muted">
-            Pick what you need and we&apos;ll shape a timeline and a price range
-            around it - no forms to guess at, no pushy sales calls.
+            Pick what you need and we&apos;ll shape a timeline and a price range around it, no forms to guess at, no pushy sales calls.
           </p>
           <a
             href={`mailto:${CONTACT_EMAIL}`}
