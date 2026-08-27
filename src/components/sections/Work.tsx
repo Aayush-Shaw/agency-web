@@ -64,6 +64,9 @@ const PROJECTS: Project[] = [
   videoProject("raptor-R.mp4", 0.5625),
   videoProject("REAL-ESTATE_AI.mp4", 1.7778),
   videoProject("Video-97762_AI.mp4", 0.5625),
+  videoProject("boutique-1.mp4", 0.5625),
+  videoProject("boutique-2.mp4", 0.5625),
+  videoProject("boutique-3.mp4", 0.5625),
 ];
 
 const TABS = ["All", "Website", "Social", "Video", "AI Video"] as const;

@@ -98,6 +98,7 @@ const COLUMNS: Tile[][] = [
     img("/work/autonorth-motors.jpg", 0.34),
     vid("bronco_AI.mp4", 0.26),
     vid("digibear-promo_AI.mp4", 0.24),
+    vid("boutique-1.mp4", 0.24),
   ],
   [
     vid("rapter.mp4", 0.24),
@@ -105,6 +106,7 @@ const COLUMNS: Tile[][] = [
     vid("mustang-walkarround_AI.mp4", 0.22),
     vid("2026-VAI_AI.mp4", 0.3),
     vid("BRONCO-1-MAY.mp4", 0.26),
+    vid("boutique-2.mp4", 0.24),
   ],
   [
     img("/work/jujco-hvac.jpg", 0.34),
@@ -112,6 +114,7 @@ const COLUMNS: Tile[][] = [
     vid("raptor-R.mp4", 0.28),
     vid("rapter.mp4", 0.22),
     vid("raptor-black.mp4", 0.3),
+    vid("boutique-3.mp4", 0.24),
   ],
   [
     vid("mustang-walkarround_AI.mp4", 0.22),
