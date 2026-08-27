@@ -66,7 +66,7 @@ export default function Manifesto() {
       >
         <Words
           className="mf-word"
-          text="We don't just ship templates. We build brands that move, every pixel, frame, and word crafted with intention, so the work feels as sharp as "
+          text="We don't just ship templates. We build brands that move. Every pixel, frame, and word is crafted with intention, so the work feels as sharp as "
         />{" "}
         <span className="mf-word text-gradient inline-block">the business behind it.</span>
       </p>

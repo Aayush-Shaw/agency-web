@@ -23,22 +23,22 @@ const FAQS = [
     q: "What's your revisions policy?",
     // No tier names in here. Pricing is parked (see page.tsx), so naming Basic
     // / Medium / Pro would point at a section that no longer renders.
-    a: "Every project includes revision rounds, and the count is agreed in your scope before anything starts. We iterate until the work is right rather than nickel-and-diming each change.",
+    a: "Every project includes revision rounds, and the count is agreed in your scope before anything starts. We keep working until it's right, instead of charging you for every small change.",
   },
   {
     topic: "Payment",
     q: "How do you handle payment?",
-    a: "Bank transfer and all major cards. We bill 50% upfront to book the work and 50% on delivery. Larger engagements split into milestones instead.",
+    a: "Bank transfer and all major cards. We bill 50% upfront to book the work and 50% on delivery. Larger engagements are split into milestones instead.",
   },
   {
     topic: "Working hours",
     q: "How do you handle communication?",
-    a: "We work your hours across US, UK, and EU timezones. You get one dedicated point of contact, async updates as we go, and scheduled calls whenever you want a live review.",
+    a: "We work your hours across US, UK, and EU timezones. You get one dedicated point of contact, regular updates as we go, and scheduled calls whenever you want a live review.",
   },
   {
     topic: "Ownership",
     q: "Who owns the final deliverables?",
-    a: "You do. On final payment you receive full ownership plus the source files - designs, project files, and footage. No lock-in, no licensing games.",
+    a: "You do. On final payment you receive full ownership plus the source files, including designs, project files, and footage. No lock in, no licensing games.",
   },
 ];
 

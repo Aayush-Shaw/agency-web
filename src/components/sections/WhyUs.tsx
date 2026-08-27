@@ -24,9 +24,9 @@ const icon = (path: ReactNode) => (
    tuning here. */
 const REASONS: RailItem[] = [
   {
-    heading: "AI-powered video production",
+    heading: "AI powered video production",
     description:
-      "We pair a real creative team with AI tooling to produce polished video at a scale and speed traditional studios can't match.",
+      "We pair a real creative team with AI tools to produce polished video at a speed traditional studios can't match.",
     icon: icon(
       <>
         <rect x="3" y="6" width="14" height="12" rx="2" />
@@ -38,7 +38,7 @@ const REASONS: RailItem[] = [
   {
     heading: "Fast turnaround",
     description:
-      "Tight, predictable timelines. First drafts in days, not weeks - without cutting corners on quality.",
+      "Tight, predictable timelines. First drafts in days, not weeks, without cutting corners on quality.",
     icon: icon(
       <>
         <circle cx="12" cy="13" r="8" />
@@ -47,9 +47,9 @@ const REASONS: RailItem[] = [
     ),
   },
   {
-    heading: "Western-timezone communication",
+    heading: "Western timezone communication",
     description:
-      "We work on your hours. Overlapping US, UK, and EU schedules mean quick replies and same-day feedback loops.",
+      "We work on your hours. Overlapping US, UK, and EU schedules mean quick replies and same day feedback.",
     icon: icon(
       <>
         <circle cx="12" cy="12" r="9" />

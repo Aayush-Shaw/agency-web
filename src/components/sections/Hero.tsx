@@ -644,7 +644,7 @@ export default function Hero() {
           {/* The service list moved down here when the headline lost it - the
             headline now carries the promise and this carries the proof. */}
           <p className="hero-sub mt-[clamp(0.75rem,2.8svh,1.75rem)] max-w-xl text-balance text-[clamp(0.95rem,min(1.35vw,2.05svh),1.2rem)] leading-relaxed text-text-muted">
-            We&apos;re a full service digital studio for ambitious teams. From websites and branding to video, AI avatars, social content, and ad campaigns, we handle it all with premium quality and fast turnarounds, right in your timezone.
+            A full-service digital studio for ambitious teams. From website development and AI avatar videos to social media management, ad campaigns, and design, we deliver premium work with rapid turnarounds.
           </p>
 
           {/* Magnetic owns transform on the wrapper; GSAP's entrance owns it on
