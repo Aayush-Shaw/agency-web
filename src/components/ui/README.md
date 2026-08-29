@@ -1,56 +1,47 @@
-# Shared pieces
+# Shared UI pieces
 
-Small parts reused by many sections. Nothing here is a band of the page on its
-own — edit one of these and it changes everywhere it's used at once.
+These components are reused by multiple page sections. Change one here and all
+of its callers receive the change.
 
-## Layout and text
+## Layout, text, and motion
 
-| File          | What it does                                                     |
-| ------------- | ---------------------------------------------------------------- |
-| `Eyebrow.tsx` | The small uppercase label with a claw mark, above a section heading |
-| `Words.tsx`   | Splits a headline into words so they can animate in one by one    |
-| `Roll.tsx`    | Hover a link and its label rolls up, an identical copy rides in below |
-
-## Motion and scrolling
-
-| File                | What it does                                                       |
-| ------------------- | ------------------------------------------------------------------ |
-| `Reveal.tsx`        | Fades and lifts content in as you scroll to it — the site's default entrance |
-| `SmoothScroll.tsx`  | Makes the whole page's scrolling smooth (mounted once, in `page.tsx`'s wrapper) |
-| `ScrollBar.tsx`     | The brand-coloured scrollbar that replaces the browser's own       |
-| `ScrollHint.tsx`    | The little "keep scrolling" pill; the caller decides where it sits |
-| `useScrollFocus.ts` | On a phone, marks whichever card is crossing the middle of the screen, so scrolling reveals what hovering reveals on desktop |
+| File | Purpose |
+| --- | --- |
+| `Eyebrow.tsx` | Uppercase section label with claw mark |
+| `Words.tsx` | Splits headlines into independently animated words |
+| `Roll.tsx` | Hover label with a rolling duplicate |
+| `Reveal.tsx` | Scroll entrance that fades and lifts content |
+| `SmoothScroll.tsx` | Site-wide Lenis smooth scrolling |
+| `ScrollBar.tsx` | Brand-colored scrollbar |
+| `ScrollHint.tsx` | “Keep scrolling” pill |
+| `useScrollFocus.ts` | Phone behavior that focuses the card near screen center |
 
 ## Pointer effects
 
-| File             | What it does                                                          |
-| ---------------- | --------------------------------------------------------------------- |
-| `Magnetic.tsx`   | Makes a button drift toward the mouse cursor                           |
-| `usePawRake.tsx` | The bear paw that lags behind the cursor and drags a light across the content (used by Reviews and FAQ) |
+| File | Purpose |
+| --- | --- |
+| `Magnetic.tsx` | Pulls buttons toward the pointer |
+| `usePawRake.tsx` | Cursor-following bear paw highlight used by Reviews and FAQ |
 
-## Big pieces
+## Larger shared pieces
 
-| File                | What it does                                                        |
-| ------------------- | ------------------------------------------------------------------- |
-| `CardRail.tsx`      | The curved, draggable row of cards — shared by Services and Why Us   |
-| `ContactDialog.tsx` | The pop-up that takes your details at the end of the estimator       |
-| `MeshGradient.tsx`  | The slow colour field breathing behind everything below the hero     |
+| File | Purpose |
+| --- | --- |
+| `CardRail.tsx` | Curved draggable card rail used by Services and Why Us |
+| `ContactDialog.tsx` | Contact form dialog opened by the estimator |
+| `MeshGradient.tsx` | Animated color field behind the post-hero content |
 
 ## Parked
 
-| File         | What it does                                                             |
-| ------------ | ------------------------------------------------------------------------ |
-| `Aurora.tsx` | The earlier animated glow for the hero. **Not in use** — `MeshGradient.tsx` replaced it. The code to switch back is commented out in `Hero.tsx`; delete both together if you're sure. |
+`Aurora.tsx` is the old hero glow and is not currently used. `MeshGradient.tsx`
+replaced it; remove both the component and its commented switch in `Hero.tsx`
+only when the old implementation is no longer needed.
 
----
+## Shared constraints
 
-**Colours.** Nothing here hard-codes a colour. Every part uses the tokens in
-[`src/app/globals.css`](../../app/globals.css), so changing the palette there
-changes all of these at once. The two WebGL pieces (`MeshGradient`, `Aurora`)
-read their colours from the same tokens at runtime, which is why those specific
-values must stay plain hex — a `color-mix()` there would not survive the trip.
+Colors come from the tokens in [`src/app/globals.css`](../../app/globals.css).
+`MeshGradient.tsx` and `Aurora.tsx` read literal hex values at runtime, so keep
+their color tokens as plain hex rather than `color-mix()` expressions.
 
-**Reduced motion.** Every animated part here checks whether the visitor has
-asked their system for less movement, and shows a still version if so. Keep that
-check if you add one. (The one place in the codebase without it is
-`sections/Process.tsx`, where it was removed on request.)
+Animated components should preserve their reduced-motion behavior. The only
+documented exception is `sections/Process.tsx`.
