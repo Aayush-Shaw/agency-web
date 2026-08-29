@@ -25,7 +25,7 @@ const SERVICES: RailItem[] = [
     description: "High quality websites that turn visitors into customers.",
     detail:
       "We design and build everything in one place, so nothing gets lost along the way. Your site loads quickly, looks great on every device, and is set up to be found easily on Google.",
-    deliverables: ["UX & UI design", "Next.js build", "Mobile responsive", "SEO & speed"],
+    deliverables: ["AI chatbot integration", "Next.js build", "Mobile responsive", "SEO & speed"],
     icon: icon(
       <>
         <rect x="3" y="4" width="18" height="15" rx="2" />
