@@ -40,7 +40,8 @@ const videoProject = (filename: string, aspect: number): Project => ({
 const PROJECTS: Project[] = [
   { title: "AutoNorth Motors", cat: "Website", src: "/work/autonorth-motors.jpg", href: "https://autonorth-motors.vercel.app/", aspect: 1.6 },
   { title: "Indian Grill", cat: "Website", src: "/work/indian-grill.jpg", href: "https://indiangrill.vercel.app/", aspect: 1.6 },
-  { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.jpg", href: "https://digibearca.github.io/JUJCO-HVAC-website/", aspect: 1.6 },
+  { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.png", href: "https://digibearca.github.io/JUJCO-HVAC-website/", aspect: 1.6 },
+  { title: "Auto Loan Calculator", cat: "Website", src: "/work/AutoNorth-Motors.png", href: "https://autonorthab.ca/", aspect: 1.6 },
   { title: "Earls", cat: "Website", src: "/work/earls.jpg", href: "https://services0987.github.io/earls/", aspect: 1.6 },
   videoProject("2026-VAI_AI.mp4", 0.5625),
   videoProject("bronco_AI.mp4", 0.5625),
