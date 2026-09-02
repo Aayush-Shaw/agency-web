@@ -1244,20 +1244,16 @@ html.lenis body {
 .link-sheet-share-btn {
   display: grid;
   place-items: center;
-  width: 3rem;
-  height: 3rem;
+  width: 3.5rem;
+  height: 3.5rem;
   border-radius: 9999px;
-  border: 1.5px solid var(--color-border);
-  background: var(--color-surface);
+  background: transparent;
   color: var(--color-text);
   cursor: pointer;
-  transition:
-    transform 0.25s var(--ease-elastic),
-    border-color 0.2s;
+  transition: transform 0.25s var(--ease-elastic);
 }
 .link-sheet-share-btn:hover {
   transform: translateY(-2px);
-  border-color: var(--color-accent-primary);
 }
 
 /* Bottom sheet open animations */
