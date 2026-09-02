@@ -123,9 +123,10 @@ const shareIcons: Record<string, ReactNode> = {
   ),
   more: (
     <svg {...ICON_PROPS} className="h-5 w-5">
-      <circle cx="12" cy="12" r="1.5" />
-      <circle cx="19" cy="12" r="1.5" />
-      <circle cx="5" cy="12" r="1.5" />
+      <circle cx="12" cy="12" r="10" />
+      <path d="M17 12h.01" />
+      <path d="M12 12h.01" />
+      <path d="M7 12h.01" />
     </svg>
   ),
 };
@@ -459,8 +460,8 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
             }}
           >
             {/* Touchbar / Close handle */}
-            <div className="flex justify-center mb-6 pt-2 pb-2">
-              <span className="block h-1.5 w-12 rounded-full bg-border" />
+            <div className="flex justify-center mb-2">
+              <span className="block h-1.5 w-30 rounded-full bg-border" />
             </div>
 
             {/* Hero card with platform background */}
