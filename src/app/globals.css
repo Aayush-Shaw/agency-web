@@ -1096,8 +1096,26 @@ html.lenis body {
   }
 }
 
+@keyframes link-overlay-fade {
+  0% { opacity: 0; }
+  10% { opacity: 1; }
+  80% { opacity: 1; }
+  100% { opacity: 0; visibility: hidden; }
+}
+
+.link-highlight-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 40;
+  background: rgba(0, 0, 0, 0.85);
+  pointer-events: none;
+  animation: link-overlay-fade 3s ease forwards;
+}
+
 .link-highlight {
-  animation: link-highlight-in 2s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
+  position: relative;
+  z-index: 50;
+  animation: link-highlight-in 3s cubic-bezier(0.2, 0.7, 0.2, 1) forwards;
 }
 
 /* Bottom-sheet dialog ─────────────────────────────────────────── */
@@ -1362,8 +1380,11 @@ html.lenis body {
   z-index: 75;
   display: inline-flex;
   align-items: center;
+  justify-content: center;
   gap: 0.5rem;
   height: 3rem;
+  width: fit-content;
+  white-space: nowrap;
   padding: 0 1.25rem;
   border-radius: 9999px;
   background: #25d366;

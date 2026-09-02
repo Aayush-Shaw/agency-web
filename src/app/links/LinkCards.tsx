@@ -270,6 +270,9 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
 
   return (
     <>
+      {/* ── Spotlight overlay ── */}
+      {highlight && <div className="link-highlight-overlay" aria-hidden="true" />}
+
       {/* ── Social link cards ── */}
       <div className="flex w-full max-w-md flex-col gap-3">
         {LINKS.map((entry) => (
