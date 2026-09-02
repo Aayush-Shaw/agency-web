@@ -1000,10 +1000,10 @@ html.lenis body {
 }
 
 @supports (corner-shape: squircle) {
-  /* .link-card {
+  .link-card {
     border-radius: 30px;
     corner-shape: squircle;
-  } */
+  }
 }
 
 @media (hover: hover) {
