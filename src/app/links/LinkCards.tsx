@@ -2,7 +2,7 @@
 
 import { type ReactNode, type ReactElement, useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { motion, type PanInfo } from "motion/react";
+import { motion, AnimatePresence, type PanInfo } from "motion/react";
 import { SITE_URL, SITE_DOMAIN, SOCIAL_LINKS, CONTACT_PHONE } from "@/lib/constants";
 
 /* ================================================================
@@ -254,7 +254,6 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
 
   /* ── Close bottom sheet ── */
   const closeSheet = useCallback(() => {
-    dialogRef.current?.close();
     setSheet(null);
   }, []);
 
@@ -378,12 +377,14 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
           if (e.target === e.currentTarget) closeSheet();
         }}
       >
-        {sheet && (
-          <motion.div 
-            className="link-sheet-panel"
-            initial={{ y: "100%" }}
-            animate={{ y: 0 }}
-            transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
+        <AnimatePresence onExitComplete={() => dialogRef.current?.close()}>
+          {sheet && (
+            <motion.div 
+              className="link-sheet-panel"
+              initial={{ y: "100%" }}
+              animate={{ y: 0 }}
+              exit={{ y: "100%" }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
             drag="y"
             dragConstraints={{ top: 0, bottom: 0 }}
             dragElastic={0.2}
@@ -404,7 +405,9 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
             >
               {bigIcon(sheet.id)}
               <span className="link-sheet-handle">{sheet.handle}</span>
-              <span className="link-sheet-url">{sheet.href}</span>
+              <span className="link-sheet-url">
+                {sheet.href.replace(/^https?:\/\/(www\.)?/, '')}
+              </span>
             </div>
 
             {/* Copy / Open */}
@@ -471,6 +474,7 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
             </div>
           </motion.div>
         )}
+        </AnimatePresence>
       </dialog>
 
       {/* Toast */}

@@ -1188,7 +1188,10 @@ html.lenis body {
 .link-sheet-url {
   font-size: 0.8125rem;
   opacity: 0.8;
-  word-break: break-all;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 /* Action buttons row */
