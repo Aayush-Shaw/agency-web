@@ -22,8 +22,9 @@ import {
   type TimelineId,
 } from "@/lib/configurator";
 
+import { CONTACT_PHONE } from "@/lib/constants";
+
 const CONTACT_EMAIL = "info@digibearca.com";
-const CONTACT_PHONE = "+1 (780) 281-1000";
 
 /** The site's standard curve (see .lift in globals.css), typed for motion. */
 const EASE: [number, number, number, number] = [0.2, 0.7, 0.2, 1];

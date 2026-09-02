@@ -11,6 +11,8 @@ export const SITE_URL = "https://www.digibearca.com";
 export const SITE_DOMAIN = "digibearca.com";
 // export const SITE_DOMAIN = "agency-web.vercel.app";
 
+export const CONTACT_PHONE = "+1 (780) 281-1000";
+
 export const SOCIAL_LINKS = {
   website: SITE_URL,
   instagram: "https://instagram.com/digibearca",

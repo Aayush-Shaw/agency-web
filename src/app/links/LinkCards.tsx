@@ -2,7 +2,7 @@
 
 import { type ReactNode, type ReactElement, useCallback, useRef, useState } from "react";
 import Image from "next/image";
-import { SITE_URL, SITE_DOMAIN, SOCIAL_LINKS } from "@/lib/constants";
+import { SITE_URL, SITE_DOMAIN, SOCIAL_LINKS, CONTACT_PHONE } from "@/lib/constants";
 
 /* ================================================================
    Icons — same chassis as Footer.tsx: one viewBox, shared stroke
@@ -355,7 +355,7 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
 
       {/* ── Sticky WhatsApp button ── */}
       <a
-        href="https://api.whatsapp.com/send?phone=&text=Hi%20Digi%20Bear!%20I%20found%20you%20via%20your%20links%20page."
+        href={`https://api.whatsapp.com/send?phone=${CONTACT_PHONE.replace(/[^+\d]/g, "")}&text=Hi%20Digi%20Bear!%20I%20found%20you%20via%20your%20links%20page.`}
         target="_blank"
         rel="noopener noreferrer"
         className="link-whatsapp"
