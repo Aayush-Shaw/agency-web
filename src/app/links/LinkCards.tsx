@@ -348,7 +348,9 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
             </span>
 
             {/* Label */}
-            <span>{entry.label}</span>
+            <span className="absolute inset-0 flex items-center justify-center pointer-events-none">
+              {entry.label}
+            </span>
 
             {/* Three-dot button */}
             <button
@@ -365,8 +367,8 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
 
       {/* ── Projects section ── */}
       <div className="mt-12 w-full max-w-md">
-        <h2 className="mb-4 font-display text-3xl font-bold tracking-tight text-text">
-          Our <span className="text-gradient">Websites</span>
+        <h2 className="mb-4 font-display text-3xl font-bold tracking-tight text-text text-center">
+          Featured <span className="text-gradient">Web Projects</span>
         </h2>
         <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
           {PROJECTS.map((project) => (
@@ -384,7 +386,7 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
                 height={250}
                 className="link-project-img"
               />
-              <span className="link-project-title">{project.title}</span>
+              <span className="link-project-title text-center block w-full">{project.title}</span>
             </a>
           ))}
         </div>
@@ -392,8 +394,8 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
 
       {/* ── AI Videos section ── */}
       <div className="mt-12 w-full max-w-md">
-        <h2 className="mb-4 font-display text-3xl font-bold tracking-tight text-text">
-          Our <span className="text-gradient">AI Videos</span>
+        <h2 className="mb-4 font-display text-3xl font-bold tracking-tight text-text text-center">
+          AI-Videos <span className="text-gradient">Showcase</span>
         </h2>
         <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
           {AI_VIDEOS.map((vid) => (
@@ -409,6 +411,7 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
                 playsInline
                 className="w-full aspect-9/16 object-cover pointer-events-none"
               />
+              {/* <span className="link-project-title text-center block w-full mt-2">{vid.title}</span> */}
             </div>
           ))}
         </div>
