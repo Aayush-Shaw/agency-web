@@ -2,6 +2,7 @@
 
 import { type ReactNode, type ReactElement, useCallback, useRef, useState } from "react";
 import Image from "next/image";
+import { motion, type PanInfo } from "motion/react";
 import { SITE_URL, SITE_DOMAIN, SOCIAL_LINKS, CONTACT_PHONE } from "@/lib/constants";
 
 /* ================================================================
@@ -378,19 +379,23 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
         }}
       >
         {sheet && (
-          <div className="link-sheet-panel">
-            {/* Close button */}
-            <div className="flex justify-end mb-2">
-              <button 
-                type="button" 
-                className="p-2 text-text-muted hover:text-text rounded-full transition-colors -mr-2 -mt-2"
-                onClick={closeSheet}
-                aria-label="Close"
-              >
-                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
-                  <path d="M18 6L6 18M6 6l12 12" />
-                </svg>
-              </button>
+          <motion.div 
+            className="link-sheet-panel"
+            initial={{ y: "100%" }}
+            animate={{ y: 0 }}
+            transition={{ duration: 0.6, ease: [0.2, 0.7, 0.2, 1] }}
+            drag="y"
+            dragConstraints={{ top: 0, bottom: 0 }}
+            dragElastic={0.2}
+            onDragEnd={(e, info: PanInfo) => {
+              if (info.offset.y > 100 || info.velocity.y > 500) {
+                closeSheet();
+              }
+            }}
+          >
+            {/* Touchbar / Close handle */}
+            <div className="flex justify-center mb-6 pt-2 pb-2">
+              <span className="block h-1.5 w-12 rounded-full bg-border" />
             </div>
 
             {/* Hero card with platform background */}
@@ -464,7 +469,7 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
                 </a>
               ))}
             </div>
-          </div>
+          </motion.div>
         )}
       </dialog>
 

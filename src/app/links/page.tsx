@@ -71,7 +71,7 @@ export default async function LinksPage(props: {
           className="mb-8 flex flex-col items-center text-text"
         >
           {/* Circular logo container */}
-          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border-2 border-border bg-surface shadow-lg">
+          <div className="flex h-20 w-20 items-center justify-center overflow-hidden rounded-full border p-2 pl-3 border-border bg-bg shadow-lg">
             <Image
               src="/digibear-logo.svg"
               alt="Digi Bear logo"
