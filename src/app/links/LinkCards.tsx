@@ -376,8 +376,19 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
       >
         {sheet && (
           <div className="link-sheet-panel">
-            {/* Drag handle */}
-            <span className="link-sheet-close" aria-hidden="true" />
+            {/* Close button */}
+            <div className="flex justify-end mb-2">
+              <button 
+                type="button" 
+                className="p-2 text-text-muted hover:text-text rounded-full transition-colors -mr-2 -mt-2"
+                onClick={closeSheet}
+                aria-label="Close"
+              >
+                <svg viewBox="0 0 24 24" className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth={2} strokeLinecap="round" strokeLinejoin="round">
+                  <path d="M18 6L6 18M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
 
             {/* Hero card with platform background */}
             <div
