@@ -62,8 +62,13 @@ const Arrow = ({ up }: { up?: boolean }) => (
   </svg>
 );
 
+import { usePathname } from "next/navigation";
+
 export default function ScrollBar() {
+  const pathname = usePathname();
   const track = useRef<HTMLDivElement>(null);
+
+  if (pathname === "/links") return null;
 
   /* Pointer position → document scroll, given where inside the thumb it was
      grabbed. The exact inverse of the scrollbar-thumb keyframe, and it stays
