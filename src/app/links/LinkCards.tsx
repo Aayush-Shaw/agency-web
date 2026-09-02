@@ -399,7 +399,7 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
       {/* ── AI Videos section ── */}
       <div className="mt-12 w-full max-w-md">
         <h2 className="mb-4 font-display text-3xl font-bold tracking-tight text-text text-center">
-          AI-Videos <span className="text-gradient">Showcase</span>
+          <span className="text-gradient">AI-Videos </span>Showcase
         </h2>
         <div className="flex gap-3 overflow-x-auto pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none">
           {AI_VIDEOS.map((vid) => (
