@@ -99,7 +99,30 @@ const shareIcons: Record<string, ReactNode> = {
     <svg {...ICON_PROPS} className="h-5 w-5">
       <path d="M16 8a6 6 0 0 1 6 6v7h-4v-7a2 2 0 0 0-4 0v7h-4v-7a6 6 0 0 1 6-6z" />
       <rect x="2" y="9" width="4" height="12" />
-      <circle cx="4" cy="4" r="2" />
+    </svg>
+  ),
+  messenger: (
+    <svg {...ICON_PROPS} className="h-5 w-5">
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+      <path d="m8 14 3-3 2 2 3-4" />
+    </svg>
+  ),
+  snapchat: (
+    <svg {...ICON_PROPS} className="h-5 w-5">
+      <path d="M12 2C8 2 6 5 6 9c0 1.5.5 3 1.5 4-1.5 1-2.5 1.5-2.5 1.5s1 1.5 2 1.5v1.5C7 19 9 20 12 20s5-1 5-2.5V16c1 0 2-.5 2-1.5s-1-.5-2.5-1.5C17.5 12 18 10.5 18 9c0-4-2-7-6-7z" />
+    </svg>
+  ),
+  email: (
+    <svg {...ICON_PROPS} className="h-5 w-5">
+      <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z" />
+      <polyline points="22,6 12,13 2,6" />
+    </svg>
+  ),
+  more: (
+    <svg {...ICON_PROPS} className="h-5 w-5">
+      <circle cx="12" cy="12" r="1.5" />
+      <circle cx="19" cy="12" r="1.5" />
+      <circle cx="5" cy="12" r="1.5" />
     </svg>
   ),
 };
@@ -204,12 +227,25 @@ function shareUrl(linkId: string) {
   return `${SITE_URL}/links?highlight=${linkId}`;
 }
 
-const SHARE_APPS = [
+interface ShareApp {
+  id: string;
+  label: string;
+  url?: (link: string) => string;
+  action?: (link: string) => void;
+}
+
+const SHARE_APPS: ShareApp[] = [
   {
     id: "whatsapp",
     label: "WhatsApp",
     url: (text: string) =>
       `https://api.whatsapp.com/send?text=${encodeURIComponent(text)}`,
+  },
+  {
+    id: "messenger",
+    label: "Messenger",
+    url: (link: string) =>
+      `fb-messenger://share/?link=${encodeURIComponent(link)}`,
   },
   {
     id: "facebook",
@@ -229,6 +265,27 @@ const SHARE_APPS = [
     url: (link: string) =>
       `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(link)}`,
   },
+  {
+    id: "snapchat",
+    label: "Snapchat",
+    url: (link: string) =>
+      `https://snapchat.com/scan?attachmentUrl=${encodeURIComponent(link)}`,
+  },
+  {
+    id: "email",
+    label: "Email",
+    url: (link: string) =>
+      `mailto:?subject=Check%20this%20out&body=${encodeURIComponent(link)}`,
+  },
+  {
+    id: "more",
+    label: "More",
+    action: (link: string) => {
+      if (typeof navigator !== "undefined" && navigator.share) {
+        navigator.share({ title: "Digi Bear", url: link }).catch(() => {});
+      }
+    },
+  },
 ];
 
 /* ================================================================
@@ -245,9 +302,10 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
     (e: React.MouseEvent, entry: LinkEntry) => {
       e.preventDefault();
       e.stopPropagation();
+      // Show the native modal first so it gains layout and display: flex.
+      dialogRef.current?.showModal();
+      // Then render the sheet contents so Framer Motion can measure them accurately.
       setSheet(entry);
-      // Wait one tick so React renders the dialog before showModal.
-      requestAnimationFrame(() => dialogRef.current?.showModal());
     },
     [],
   );
@@ -457,19 +515,35 @@ export default function LinkCards({ highlight }: { highlight?: string }) {
 
             {/* Share via apps */}
             <p className="link-sheet-share-label">Share via</p>
-            <div className="link-sheet-share-row">
+            <div className="flex gap-4 overflow-x-auto pb-4 snap-x snap-mandatory [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] scrollbar-none w-full justify-start px-2">
               {SHARE_APPS.map((app) => (
-                <a
-                  key={app.id}
-                  href={app.url(shareUrl(sheet.id))}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="link-sheet-share-btn"
-                  aria-label={`Share on ${app.label}`}
-                  onClick={closeSheet}
-                >
-                  {shareIcons[app.id]}
-                </a>
+                <div key={app.id} className="flex flex-col items-center gap-1.5 shrink-0 snap-start">
+                  {app.action ? (
+                    <button
+                      type="button"
+                      className="link-sheet-share-btn"
+                      aria-label={`Share on ${app.label}`}
+                      onClick={() => {
+                        app.action!(shareUrl(sheet.id));
+                        closeSheet();
+                      }}
+                    >
+                      {shareIcons[app.id]}
+                    </button>
+                  ) : (
+                    <a
+                      href={app.url!(shareUrl(sheet.id))}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link-sheet-share-btn"
+                      aria-label={`Share on ${app.label}`}
+                      onClick={closeSheet}
+                    >
+                      {shareIcons[app.id]}
+                    </a>
+                  )}
+                  <span className="text-[0.65rem] text-text-muted">{app.label}</span>
+                </div>
               ))}
             </div>
           </motion.div>
