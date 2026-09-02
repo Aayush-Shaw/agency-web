@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import { SITE_URL } from "@/lib/constants";
-import LinkCards from "./LinkCards";
 import MeshGradient from "@/components/ui/MeshGradient";
+import LinkCards from "./LinkCards";
 
 export const metadata: Metadata = {
   title: "Links | Digi Bear",

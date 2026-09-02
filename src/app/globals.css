@@ -1126,7 +1126,12 @@ html.lenis body {
   display: flex;
   align-items: flex-end;
   justify-content: center;
+  margin: 0;
   padding: 0;
+  width: 100dvw;
+  height: 100dvh;
+  max-width: none;
+  max-height: none;
   border: none;
   background: transparent;
   /* The dialog element itself spans the viewport; the backdrop is its own
