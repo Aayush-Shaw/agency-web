@@ -14,7 +14,6 @@ export default function LinkActions() {
       referrer && new URL(referrer).origin === window.location.origin;
 
     if (isInternal && window.history.length > 1) router.back();
-    else router.push("/");
   };
 
   const share = async () => {
