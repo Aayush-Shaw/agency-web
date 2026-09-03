@@ -3,6 +3,7 @@ import Image from "next/image";
 import { SITE_URL } from "@/lib/constants";
 import MeshGradient from "@/components/ui/MeshGradient";
 import LinkCards from "./LinkCards";
+import LinkActions from "./LinkActions";
 
 export const metadata: Metadata = {
   title: "Links | Digi Bear",
@@ -62,6 +63,8 @@ export default async function LinksPage(props: {
       {/* Animated mesh gradient background — same field as the main page,
           sitting behind all content. */}
       <MeshGradient />
+
+      <LinkActions />
 
       {/* Content sits above the mesh. */}
       <div className="relative z-10 flex w-full flex-col items-center px-5 pt-10 pb-28">

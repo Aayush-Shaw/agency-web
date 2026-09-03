@@ -225,9 +225,9 @@ const PROJECTS = [
 
 const AI_VIDEOS = [
   { title: "DigiBear Promo", src: "/vid/grid/digibear-promo_AI.mp4" },
-  { title: "Mustang Walkaround", src: "/vid/grid/mustang-walkarround_AI.mp4" },
-  { title: "Language", src: "/vid/grid/language_AI.mp4" },
-  { title: "Bronco", src: "/vid/grid/bronco_AI.mp4" },
+  { title: "Mustang Walkaround", src: "/vid/grid/bronco-edit1_AI.mp4" },
+  { title: "Language", src: "/vid/grid/jujco_AI.mp4" },
+  { title: "Bronco", src: "/vid/grid/citc_AI.mp4" },
 ];
 
 /* ================================================================

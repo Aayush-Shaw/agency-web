@@ -24,10 +24,12 @@ type Project = {
   aspect: number;
 };
 
-const videoProject = (filename: string, aspect: number): Project => ({
-  title: filename
-    .replace(/_AI(?=\.[^.]+$)|\.[^.]+$/g, "")
-    .replaceAll("-", " "),
+const videoProject = (filename: string, aspect: number, title?: string): Project => ({
+  title:
+    title ??
+    filename
+      .replace(/_AI(?=\.[^.]+$)|\.[^.]+$/g, "")
+      .replaceAll("-", " "),
   cat: /_AI(?=\.[^.]+$)/.test(filename) ? "AI Video" : "Video",
   src: gridVideo(filename),
   posterSrc: posterVideo(filename),
@@ -51,6 +53,7 @@ const PROJECTS: Project[] = [
   videoProject("bronco-edit1_AI.mp4", 0.5625),
   videoProject("bronco-walkarround_AI.mp4", 0.5625),
   videoProject("cars-cinema_AI.mp4", 1.7778),
+  videoProject("citc_AI.mp4", 0.5625, "CITC"),
   videoProject("digibear-info_AI.mp4", 0.5625),
   videoProject("digibear-promo_AI.mp4", 0.5696),
   videoProject("dodge-helcat.mp4", 0.5625),
@@ -60,6 +63,7 @@ const PROJECTS: Project[] = [
   videoProject("mustang-edit_AI.mp4", 1.7792),
   videoProject("MUSTANG-MACH.mp4", 0.5625),
   videoProject("mustang-walkarround_AI.mp4", 0.5625),
+  videoProject("jujco_AI.mp4", 0.5625, "JUJCO"),
   videoProject("rapter.mp4", 0.5625),
   videoProject("raptor-black.mp4", 0.5625),
   videoProject("raptor-R.mp4", 0.5625),
