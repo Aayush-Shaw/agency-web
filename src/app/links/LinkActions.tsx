@@ -9,7 +9,11 @@ export default function LinkActions() {
   const [copied, setCopied] = useState(false);
 
   const goBack = () => {
-    if (window.history.length > 1) router.back();
+    const referrer = document.referrer;
+    const isInternal =
+      referrer && new URL(referrer).origin === window.location.origin;
+
+    if (isInternal && window.history.length > 1) router.back();
     else router.push("/");
   };
 
