@@ -12,7 +12,7 @@ const SOCIAL_IMAGE = `${SITE_URL}/og-image.jpg?v=1`;
 export const metadata: Metadata = {
   title: "Links | Digi Bear",
   description:
-    "All of Digi Bear's official links in one place — website, TikTok, YouTube, Instagram, and Facebook.",
+    "All of Digi Bear's official links in one place - website, TikTok, YouTube, Instagram, and Facebook.",
   alternates: { canonical: "/links" },
   openGraph: {
     type: "website",
@@ -20,7 +20,7 @@ export const metadata: Metadata = {
     siteName: "Digi Bear",
     title: "Links | Digi Bear",
     description:
-      "All of Digi Bear's official links in one place — website, TikTok, YouTube, Instagram, and Facebook.",
+      "All of Digi Bear's official links in one place - website, TikTok, YouTube, Instagram, and Facebook.",
     images: [
       {
         url: SOCIAL_IMAGE,

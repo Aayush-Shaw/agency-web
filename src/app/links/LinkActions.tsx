@@ -21,7 +21,7 @@ export default function LinkActions() {
   const share = async () => {
     const data = {
       title: "Digi Bear",
-      text: "Digi Bear — Design, Video & AI Studio",
+      text: "Digi Bear - Design, Video & AI Studio",
       url: window.location.href,
     };
 
