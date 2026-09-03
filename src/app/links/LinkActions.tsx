@@ -14,14 +14,33 @@ export default function LinkActions() {
       window.history.back();
       return;
     }
+    // Links opened from WhatsApp (or similar apps) on iOS Chrome arrive in a
+    // fresh tab with no real previous history entry. history.back() silently
+    // does nothing, and window.close() is blocked for tabs not opened by JS.
+    //
+    // Strategy: call history.back() and wait 300ms. If the page is still
+    // visible (no "pagehide"), we know back-navigation failed — try closing
+    // the tab, and ultimately redirect to home as a last resort.
+    const fallback = window.setTimeout(() => {
+      window.close();
+      // If we're still here, window.close() was blocked (iOS Chrome).
+      window.location.replace("about:blank");
+    }, 300);
 
     window.close();
+    window.addEventListener(
+      "pagehide",
+      () => window.clearTimeout(fallback),
+      { once: true },
+    );
+
+    window.history.back();
   };
 
   const share = async () => {
     const data = {
       title: "Digi Bear",
-      text: "Digi Bear - Design, Video & AI Studio",
+      text: "Digi Bear | Design, Video & AI Studio",
       url: window.location.href,
     };
 
