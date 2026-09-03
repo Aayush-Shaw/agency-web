@@ -1,15 +1,21 @@
 "use client";
 
 import { useState } from "react";
-import { useRouter } from "next/navigation";
 import { ArrowLeft, Share2 } from "lucide-react";
 
 export default function LinkActions() {
-  const router = useRouter();
   const [copied, setCopied] = useState(false);
 
   const goBack = () => {
-    router.back();
+    // Links opened by WhatsApp on Android often arrive in a Chrome Custom Tab
+    // with no earlier history entry. In that case `history.back()` is a no-op;
+    // closing the tab returns the person to WhatsApp instead.
+    if (window.history.length > 1) {
+      window.history.back();
+      return;
+    }
+
+    window.close();
   };
 
   const share = async () => {
