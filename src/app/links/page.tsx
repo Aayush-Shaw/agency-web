@@ -5,6 +5,10 @@ import MeshGradient from "@/components/ui/MeshGradient";
 import LinkCards from "./LinkCards";
 import LinkActions from "./LinkActions";
 
+// A versioned, absolute URL ensures social crawlers fetch the current card
+// instead of retaining a previously cached preview for this route.
+const SOCIAL_IMAGE = `${SITE_URL}/og-image.jpg?v=1`;
+
 export const metadata: Metadata = {
   title: "Links | Digi Bear",
   description:
@@ -19,7 +23,7 @@ export const metadata: Metadata = {
       "All of Digi Bear's official links in one place — website, TikTok, YouTube, Instagram, and Facebook.",
     images: [
       {
-        url: "/og-image.jpg",
+        url: SOCIAL_IMAGE,
         width: 1200,
         height: 630,
         alt: "Digi Bear's featured web projects and AI video showcase",
@@ -27,10 +31,10 @@ export const metadata: Metadata = {
     ],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "Links | Digi Bear",
     description: "All of Digi Bear's official links in one place.",
-    images: ["/og-image.jpg"],
+    images: [SOCIAL_IMAGE],
   },
 };
 
