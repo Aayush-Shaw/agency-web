@@ -17,11 +17,20 @@ export const metadata: Metadata = {
     title: "Links | Digi Bear",
     description:
       "All of Digi Bear's official links in one place — website, TikTok, YouTube, Instagram, and Facebook.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Digi Bear's featured web projects and AI video showcase",
+      },
+    ],
   },
   twitter: {
     card: "summary",
     title: "Links | Digi Bear",
     description: "All of Digi Bear's official links in one place.",
+    images: ["/og-image.jpg"],
   },
 };
 

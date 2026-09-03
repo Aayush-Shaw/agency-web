@@ -67,12 +67,21 @@ export const metadata: Metadata = {
     title: "Digi Bear - Design, Video & AI Studio",
     description:
       "All-in-one digital studio: websites, branding & graphic design, video editing, AI avatars & video, social media management, and paid ads.",
+    images: [
+      {
+        url: "/og-image.jpg",
+        width: 1200,
+        height: 630,
+        alt: "Digi Bear's featured web projects and AI video showcase",
+      },
+    ],
   },
   twitter: {
     card: "summary_large_image",
     title: "Digi Bear - Design, Video & AI Studio",
     description:
       "All-in-one digital studio: websites, branding, video editing, AI video, social media, and ads.",
+    images: ["/og-image.jpg"],
   },
 };
 
