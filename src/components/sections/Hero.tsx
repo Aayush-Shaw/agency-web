@@ -27,6 +27,7 @@ const TILT = 15;
 const SCROLL_SPEED = 30;
 /** Gutter between columns, and between tiles inside a column. */
 const GAP = "0.75rem";
+const HERO_COLUMN_PLAYBACK_MS = 3000;
 /** Where the wall's left edge sits at md+, as a share of the content band
     (--bw, set on the wall itself) rather than of the viewport - that is the
     whole cap: past 72rem the band stops growing and so does the wall. Below md
@@ -153,11 +154,11 @@ function Tiles({ items }: { items: Tile[] }) {
       ) : (
         <video
           data-src={item.src}
-          poster={item.poster}
+          data-poster-src={item.poster}
           muted
           loop
           playsInline
-          preload="none"
+          preload="metadata"
           className="h-full w-full object-cover"
         />
       )}
@@ -309,10 +310,39 @@ export default function Hero() {
     );
     const near = new Set<HTMLVideoElement>();
     const visible = new Set<HTMLVideoElement>();
+    const columnForVideo = new Map<HTMLVideoElement, HTMLElement>();
+    const currentByColumn = new Map<HTMLElement, HTMLVideoElement | null>();
+    const columns = new Set<HTMLElement>();
+    videos.forEach((video) => {
+      const column = video.closest<HTMLElement>("[data-hero-column]");
+      if (!column) return;
+      columnForVideo.set(video, column);
+      columns.add(column);
+      currentByColumn.set(column, null);
+    });
     let past = false;
-    const syncVideo = (video: HTMLVideoElement) => {
+    let playbackQueued = false;
+
+    const pauseVideo = (video: HTMLVideoElement, reset = false) => {
+      video.pause();
+      if (reset) {
+        try { video.currentTime = 0; } catch { /* ignore */ }
+      }
+    };
+
+    const loadVideo = (video: HTMLVideoElement) => {
+      if (!video.hasAttribute("poster") && video.dataset.posterSrc) {
+        video.poster = video.dataset.posterSrc;
+      }
+      if (!video.hasAttribute("src") && video.dataset.src) {
+        video.src = video.dataset.src;
+        video.load();
+      }
+    };
+
+    const syncSource = (video: HTMLVideoElement) => {
       if (past || !near.has(video)) {
-        video.pause();
+        pauseVideo(video);
         if (video.hasAttribute("src")) {
           video.removeAttribute("src");
           video.load();
@@ -320,12 +350,58 @@ export default function Hero() {
         return;
       }
 
-      if (!video.hasAttribute("src") && video.dataset.src) {
-        video.src = video.dataset.src;
-        video.load();
+      loadVideo(video);
+    };
+
+    const playable = (column: HTMLElement) =>
+      [...visible].filter(
+        (video) => near.has(video) && columnForVideo.get(video) === column,
+      );
+
+    const start = (column: HTMLElement, video: HTMLVideoElement) => {
+      loadVideo(video);
+      currentByColumn.set(column, video);
+      void video.play().catch(() => {});
+    };
+
+    const ensureColumnPlayback = (column: HTMLElement) => {
+      if (past || document.hidden) return;
+
+      const current = currentByColumn.get(column);
+      const candidates = playable(column);
+      if (current && candidates.includes(current)) return;
+      if (current) pauseVideo(current, true);
+      currentByColumn.set(column, null);
+      if (candidates[0]) start(column, candidates[0]);
+    };
+
+    const advanceColumnPlayback = (column: HTMLElement) => {
+      if (past || document.hidden) return;
+
+      const current = currentByColumn.get(column);
+      const candidates = playable(column);
+      if (candidates.length === 0) {
+        if (current) pauseVideo(current, true);
+        currentByColumn.set(column, null);
+        return;
       }
-      if (visible.has(video)) void video.play().catch(() => {});
-      else video.pause();
+
+      const currentIndex = current ? candidates.indexOf(current) : -1;
+      if (current) pauseVideo(current, true);
+      start(column, candidates[(currentIndex + 1) % candidates.length]);
+    };
+
+    const ensureAllColumnPlayback = () => {
+      columns.forEach(ensureColumnPlayback);
+    };
+
+    const scheduleEnsureAllColumnPlayback = () => {
+      if (playbackQueued) return;
+      playbackQueued = true;
+      queueMicrotask(() => {
+        playbackQueued = false;
+        ensureAllColumnPlayback();
+      });
     };
     const nearObserver = new IntersectionObserver(
       (entries) => {
@@ -333,10 +409,11 @@ export default function Hero() {
           const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) near.add(video);
           else near.delete(video);
-          syncVideo(video);
+          syncSource(video);
         });
+        scheduleEnsureAllColumnPlayback();
       },
-      { root: el, rootMargin: "200px" }
+      { root: el, rootMargin: "200px" },
     );
     const visibleObserver = new IntersectionObserver(
       (entries) => {
@@ -344,15 +421,29 @@ export default function Hero() {
           const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) visible.add(video);
           else visible.delete(video);
-          syncVideo(video);
+          syncSource(video);
         });
+        scheduleEnsureAllColumnPlayback();
       },
-      { root: el }
+      { root: el },
     );
     videos.forEach((video) => {
       nearObserver.observe(video);
       visibleObserver.observe(video);
     });
+
+    const intervalId = window.setInterval(() => {
+      columns.forEach(advanceColumnPlayback);
+    }, HERO_COLUMN_PLAYBACK_MS);
+    const onVisibilityChange = () => {
+      if (document.hidden) {
+        videos.forEach((video) => pauseVideo(video));
+        columns.forEach((column) => currentByColumn.set(column, null));
+      } else {
+        scheduleEnsureAllColumnPlayback();
+      }
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
 
     const sync = () => {
       const height = el.offsetHeight;
@@ -364,7 +455,12 @@ export default function Hero() {
       el.toggleAttribute("data-overflows", height > window.innerHeight);
       if (nextPast !== past) {
         past = nextPast;
-        videos.forEach(syncVideo);
+        videos.forEach(syncSource);
+        if (past) {
+          columns.forEach((column) => currentByColumn.set(column, null));
+        } else {
+          scheduleEnsureAllColumnPlayback();
+        }
       }
     };
     sync();
@@ -375,8 +471,10 @@ export default function Hero() {
       window.removeEventListener("resize", sync);
       nearObserver.disconnect();
       visibleObserver.disconnect();
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
       videos.forEach((video) => {
-        video.pause();
+        pauseVideo(video);
         video.removeAttribute("src");
         video.load();
       });
@@ -544,7 +642,11 @@ export default function Hero() {
               // flex-1 is what makes the columns equal-width for any COLUMNS
               // length; overflow-hidden keeps each track's spill off its
               // neighbours' rows.
-              <div key={i} className="relative flex-1 overflow-hidden">
+              <div
+                key={i}
+                data-hero-column={i}
+                className="relative flex-1 overflow-hidden"
+              >
                 <div className="hero-track flex flex-col will-change-transform">
                   {/* Two copies, which is the whole trick: the tween only ever
                       has to travel the length of one. */}

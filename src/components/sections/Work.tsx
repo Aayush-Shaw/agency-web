@@ -70,6 +70,8 @@ const YIELD_MS = 1100;
     A mouse wobbles a pixel or two on the way down, so it cannot be zero. */
 const DRAG_SLOP = 4;
 
+const VIDEO_CAROUSEL_INTERVAL_MS = 3000;
+
 /**
  * Section 5 - the work rail.
  *
@@ -91,6 +93,8 @@ export default function Work() {
   const rail = useRef<HTMLDivElement>(null);
   const modal = useRef<HTMLDialogElement>(null);
   const reduced = useReducedMotion();
+  const hoverVideoStart = useRef<(video: HTMLVideoElement) => void>(() => {});
+  const hoverVideoEnd = useRef<(video: HTMLVideoElement) => void>(() => {});
 
   useEffect(() => {
     if (selected && !modal.current?.open) modal.current?.showModal();
@@ -218,9 +222,30 @@ export default function Work() {
     const videos = Array.from(el.querySelectorAll<HTMLVideoElement>("video"));
     const near = new Set<HTMLVideoElement>();
     const visible = new Set<HTMLVideoElement>();
-    const syncVideo = (video: HTMLVideoElement) => {
+    let current: HTMLVideoElement | null = null;
+    let hovered: HTMLVideoElement | null = null;
+    let playbackQueued = false;
+
+    const loadVideo = (video: HTMLVideoElement) => {
+      if (!video.hasAttribute("poster") && video.dataset.posterSrc) {
+        video.poster = video.dataset.posterSrc;
+      }
+      if (!video.hasAttribute("src") && video.dataset.src) {
+        video.src = video.dataset.src;
+        video.load();
+      }
+    };
+
+    const pauseVideo = (video: HTMLVideoElement, reset = false) => {
+      video.pause();
+      if (reset) {
+        try { video.currentTime = 0; } catch { /* ignore */ }
+      }
+    };
+
+    const syncSource = (video: HTMLVideoElement) => {
       if (selected || !near.has(video)) {
-        video.pause();
+        pauseVideo(video);
         if (video.hasAttribute("src")) {
           video.removeAttribute("src");
           video.load();
@@ -228,23 +253,84 @@ export default function Work() {
         return;
       }
 
-      if (!video.hasAttribute("src") && video.dataset.src) {
-        video.src = video.dataset.src;
-        video.load();
-      }
-      if (visible.has(video)) void video.play().catch(() => {});
-      else video.pause();
+      loadVideo(video);
     };
+
+    const playable = () =>
+      [...visible].filter((video) => near.has(video) && videos.includes(video));
+
+    const start = (video: HTMLVideoElement) => {
+      loadVideo(video);
+      current = video;
+      void video.play().catch(() => {});
+    };
+
+    const ensurePlaying = () => {
+      if (selected || document.hidden || hovered) return;
+
+      const candidates = playable();
+      if (current && candidates.includes(current)) return;
+      if (current) pauseVideo(current, true);
+      current = null;
+      if (candidates[0]) start(candidates[0]);
+    };
+
+    const advance = () => {
+      if (selected || document.hidden || hovered) return;
+
+      const candidates = playable();
+      if (candidates.length === 0) {
+        if (current) pauseVideo(current, true);
+        current = null;
+        return;
+      }
+
+      const currentIndex = current ? candidates.indexOf(current) : -1;
+      if (current) pauseVideo(current, true);
+      start(candidates[(currentIndex + 1) % candidates.length]);
+    };
+
+    const scheduleEnsurePlaying = () => {
+      if (playbackQueued) return;
+      playbackQueued = true;
+      queueMicrotask(() => {
+        playbackQueued = false;
+        ensurePlaying();
+      });
+    };
+
+    hoverVideoStart.current = (video) => {
+      if (selected || hovered === video) return;
+
+      hovered = video;
+      if (current && current !== video) {
+        pauseVideo(current, true);
+        current = null;
+      }
+      loadVideo(video);
+      void video.play().catch(() => {});
+    };
+
+    hoverVideoEnd.current = (video) => {
+      if (hovered !== video) return;
+
+      pauseVideo(video, true);
+      hovered = null;
+      if (current === video) current = null;
+      scheduleEnsurePlaying();
+    };
+
     const nearObserver = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) near.add(video);
           else near.delete(video);
-          syncVideo(video);
+          syncSource(video);
         });
+        scheduleEnsurePlaying();
       },
-      { root: el, rootMargin: "0px 300px" }
+      { root: el, rootMargin: "0px 300px" },
     );
     const visibleObserver = new IntersectionObserver(
       (entries) => {
@@ -252,21 +338,33 @@ export default function Work() {
           const video = entry.target as HTMLVideoElement;
           if (entry.isIntersecting) visible.add(video);
           else visible.delete(video);
-          syncVideo(video);
+          syncSource(video);
         });
+        scheduleEnsurePlaying();
       },
-      { root: el }
+      { root: el },
     );
     videos.forEach((video) => {
       nearObserver.observe(video);
       visibleObserver.observe(video);
     });
 
+    const intervalId = window.setInterval(advance, VIDEO_CAROUSEL_INTERVAL_MS);
+    const onVisibilityChange = () => {
+      if (document.hidden) videos.forEach((video) => pauseVideo(video));
+      else scheduleEnsurePlaying();
+    };
+    document.addEventListener("visibilitychange", onVisibilityChange);
+
     return () => {
       nearObserver.disconnect();
       visibleObserver.disconnect();
+      window.clearInterval(intervalId);
+      document.removeEventListener("visibilitychange", onVisibilityChange);
+      hoverVideoStart.current = () => {};
+      hoverVideoEnd.current = () => {};
       videos.forEach((video) => {
-        video.pause();
+        pauseVideo(video);
         video.removeAttribute("src");
         video.load();
       });
@@ -310,6 +408,16 @@ export default function Work() {
         className={`group relative overflow-hidden rounded-xl border border-border bg-surface [corner-shape:squircle] ${
           TALL(p.aspect) ? "row-span-2" : ""
         }`}
+        onPointerEnter={p.video ? (event) => {
+          if (event.pointerType !== "mouse") return;
+          const video = event.currentTarget.querySelector<HTMLVideoElement>("video");
+          if (video) hoverVideoStart.current(video);
+        } : undefined}
+        onPointerLeave={p.video ? (event) => {
+          if (event.pointerType !== "mouse") return;
+          const video = event.currentTarget.querySelector<HTMLVideoElement>("video");
+          if (video) hoverVideoEnd.current(video);
+        } : undefined}
       >
         {/* Absolutely positioned, and that is load-bearing rather than tidy: the
             columns are `max-content`, and an in-flow <img> or <video> offers its
@@ -321,11 +429,11 @@ export default function Work() {
         {p.video ? (
           <video
             data-src={p.src}
-            poster={p.posterSrc}
+            data-poster-src={p.posterSrc}
             muted
             loop
             playsInline
-            preload="none"
+            preload="metadata"
             className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           />
         ) : (
@@ -426,22 +534,38 @@ export default function Work() {
           aria-label="Filter work by category"
           className="mt-4 flex flex-wrap gap-2"
         >
-          {TABS.map((tab) => (
-            <motion.button
-              key={tab}
-              type="button"
-              whileTap={{ scale: 0.94 }}
-              aria-pressed={active === tab}
-              onClick={() => setActive(tab)}
-              className={`inline-flex min-h-11 items-center rounded-full border px-4 text-sm font-medium transition-colors ${
-                active === tab
-                  ? "border-transparent brand-gradient text-bg"
-                  : "border-border text-text-muted hover:border-accent-primary hover:text-text"
-              }`}
-            >
-              {tab}
-            </motion.button>
-          ))}
+          {TABS.map((tab) => {
+            const isSelected = active === tab;
+
+            return (
+              <motion.button
+                key={tab}
+                type="button"
+                whileTap={{ scale: 0.9 }}
+                whileHover={{ scale: 1.05 }}
+                aria-pressed={isSelected}
+                onClick={() => setActive(tab)}
+                className={`relative inline-flex min-h-11 items-center overflow-hidden rounded-full border px-4 text-sm font-medium transition-colors ${
+                  isSelected
+                    ? "border-transparent text-bg"
+                    : "border-border text-text-muted hover:border-accent-primary hover:text-text"
+                }`}
+              >
+                {isSelected && (
+                  <motion.span
+                    layoutId="work-filter-pill"
+                    className="absolute inset-0 z-0 rounded-full brand-gradient shadow-lg"
+                    transition={{
+                      type: "spring",
+                      stiffness: 400,
+                      damping: 28,
+                    }}
+                  />
+                )}
+                <span className="relative z-1">{tab}</span>
+              </motion.button>
+            );
+          })}
         </div>
       </div>
 
@@ -467,6 +591,7 @@ export default function Work() {
           MotionConfig's reducedMotion="user" (SmoothScroll.tsx) drops the
           transform on its own, leaving the fade. */}
       <motion.div
+        key={active}
         initial="out"
         whileInView="in"
         viewport={{ once: true, amount: 0.3 }}
