@@ -16,29 +16,58 @@ const FILTER_TABS: { id: FilterCategory; label: string }[] = [
 ];
 
 const CAROUSEL_INTERVAL_MS = 3000;
+const VIDEO_LOAD_MARGIN = "300px 0px";
+
+function loadVideoSource(video: HTMLVideoElement) {
+  if (!video.hasAttribute("poster") && video.dataset.posterSrc) {
+    video.poster = video.dataset.posterSrc;
+  }
+
+  if (!video.hasAttribute("src") && video.dataset.src) {
+    video.src = video.dataset.src;
+    video.load();
+  }
+}
+
+function unloadVideoSource(video: HTMLVideoElement) {
+  video.pause();
+  if (video.hasAttribute("src")) {
+    video.removeAttribute("src");
+    video.load();
+  }
+}
 
 /**
- * On touch devices (hover: none), cycles through visible video cards one at a
- * time. Each card registers its video element; the hook uses
- * IntersectionObserver to know which are on-screen, then plays one for
- * CAROUSEL_INTERVAL_MS before moving to the next. Only one video plays at any
- * moment — minimal CPU/battery impact.
+ * Loads card videos shortly before they enter the viewport and cycles through
+ * visible videos one at a time. Hovering a card temporarily takes precedence
+ * over the automatic playback.
  */
-function useMobileVideoCarousel(paused: boolean) {
+function useGalleryVideoController(paused: boolean) {
   const videos = useRef<Map<string, HTMLVideoElement>>(new Map());
   const visible = useRef<Set<string>>(new Set());
   const observer = useRef<IntersectionObserver | null>(null);
+  const loadObserver = useRef<IntersectionObserver | null>(null);
   const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentKey = useRef<string | null>(null);
-  const isTouchDevice = useRef(false);
+  const hoveredKey = useRef<string | null>(null);
+  const loadImmediately = useRef(false);
+  const playNext = useRef<() => void>(() => {});
+  const playbackQueued = useRef(false);
 
-  // One-time check for touch device
-  useEffect(() => {
-    isTouchDevice.current = window.matchMedia("(hover: none)").matches;
+  const requestPlayback = useCallback(() => {
+    if (playbackQueued.current) return;
+
+    playbackQueued.current = true;
+    queueMicrotask(() => {
+      playbackQueued.current = false;
+      playNext.current();
+    });
   }, []);
 
-  // Set up IntersectionObserver once
+  // Track which cards are visible enough for one-at-a-time playback.
   useEffect(() => {
+    if (!("IntersectionObserver" in window)) return;
+
     observer.current = new IntersectionObserver(
       (entries) => {
         for (const entry of entries) {
@@ -46,6 +75,7 @@ function useMobileVideoCarousel(paused: boolean) {
           if (!key) continue;
           if (entry.isIntersecting) {
             visible.current.add(key);
+            requestPlayback();
           } else {
             visible.current.delete(key);
           }
@@ -54,26 +84,88 @@ function useMobileVideoCarousel(paused: boolean) {
       { threshold: 0.3 },
     );
 
-    return () => observer.current?.disconnect();
+    videos.current.forEach((video) => observer.current?.observe(video));
+
+    return () => {
+      observer.current?.disconnect();
+      observer.current = null;
+    };
+  }, [requestPlayback]);
+
+  // Attach media URLs only when a card is in or near the viewport.
+  useEffect(() => {
+    if (!("IntersectionObserver" in window)) {
+      loadImmediately.current = true;
+      videos.current.forEach(loadVideoSource);
+      return;
+    }
+
+    loadObserver.current = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          const video = entry.target as HTMLVideoElement;
+          if (entry.isIntersecting) loadVideoSource(video);
+          else unloadVideoSource(video);
+        }
+      },
+      { rootMargin: VIDEO_LOAD_MARGIN },
+    );
+
+    videos.current.forEach((video) => loadObserver.current?.observe(video));
+
+    return () => {
+      loadObserver.current?.disconnect();
+      loadObserver.current = null;
+    };
   }, []);
 
   // Register / unregister a video card
   const register = useCallback((key: string, el: HTMLVideoElement) => {
     videos.current.set(key, el);
     observer.current?.observe(el);
+    loadObserver.current?.observe(el);
+    if (loadImmediately.current) loadVideoSource(el);
   }, []);
 
   const unregister = useCallback((key: string, el: HTMLVideoElement) => {
     videos.current.delete(key);
     visible.current.delete(key);
     observer.current?.unobserve(el);
-    if (currentKey.current === key) {
-      el.pause();
+    loadObserver.current?.unobserve(el);
+    unloadVideoSource(el);
+    if (currentKey.current === key) currentKey.current = null;
+    if (hoveredKey.current === key) hoveredKey.current = null;
+  }, []);
+
+  const hoverStart = useCallback((key: string) => {
+    hoveredKey.current = key;
+
+    if (currentKey.current && currentKey.current !== key) {
+      const current = videos.current.get(currentKey.current);
+      current?.pause();
+      try { if (current) current.currentTime = 0; } catch { /* ignore */ }
       currentKey.current = null;
+    }
+
+    const video = videos.current.get(key);
+    if (video) {
+      loadVideoSource(video);
+      void video.play().catch(() => {});
     }
   }, []);
 
-  // Carousel interval — only runs on touch devices
+  const hoverEnd = useCallback((key: string) => {
+    if (hoveredKey.current !== key) return;
+
+    const video = videos.current.get(key);
+    video?.pause();
+    try { if (video) video.currentTime = 0; } catch { /* ignore */ }
+    hoveredKey.current = null;
+    if (currentKey.current === key) currentKey.current = null;
+    requestPlayback();
+  }, [requestPlayback]);
+
+  // Cycle visible videos on every device unless a card is being hovered.
   useEffect(() => {
     if (intervalId.current) {
       clearInterval(intervalId.current);
@@ -90,8 +182,7 @@ function useMobileVideoCarousel(paused: boolean) {
     }
 
     function tick() {
-      if (!isTouchDevice.current) return;
-      if (document.hidden) return;
+      if (document.hidden || hoveredKey.current) return;
 
       // Pause current
       if (currentKey.current) {
@@ -124,25 +215,26 @@ function useMobileVideoCarousel(paused: boolean) {
       }
     }
 
+    playNext.current = tick;
+
     // Play first one immediately, then cycle
     tick();
     intervalId.current = setInterval(tick, CAROUSEL_INTERVAL_MS);
 
-    // Pause/resume on tab visibility
+    // Pause every card when the tab is hidden. The interval resumes playback.
     function onVisChange() {
-      if (document.hidden && currentKey.current) {
-        videos.current.get(currentKey.current)?.pause();
-      }
+      if (document.hidden) videos.current.forEach((video) => video.pause());
     }
     document.addEventListener("visibilitychange", onVisChange);
 
     return () => {
       if (intervalId.current) clearInterval(intervalId.current);
+      playNext.current = () => {};
       document.removeEventListener("visibilitychange", onVisChange);
     };
   }, [paused]);
 
-  return { register, unregister };
+  return { register, unregister, hoverStart, hoverEnd };
 }
 
 function cardVariants(idx: number) {
@@ -185,6 +277,8 @@ function cardVariants(idx: number) {
 export default function ProjectsGallery() {
   const [active, setActive] = useState<FilterCategory>("Website");
   const [selected, setSelected] = useState<Project | null>(null);
+  const [animateFilterChange, setAnimateFilterChange] = useState(false);
+  const [isFooterVisible, setIsFooterVisible] = useState(false);
   const modal = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
@@ -193,19 +287,27 @@ export default function ProjectsGallery() {
     }
   }, [selected]);
 
+  // Keep the mobile controls fixed until the footer reaches the viewport, then
+  // anchor them to the end of the projects section instead of covering it.
+  useEffect(() => {
+    const footer = document.getElementById("site-footer");
+    if (!footer || !("IntersectionObserver" in window)) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setIsFooterVisible(entry.isIntersecting);
+    });
+
+    observer.observe(footer);
+    return () => observer.disconnect();
+  }, []);
+
   const filtered = useMemo(
     () => PROJECTS.filter((p) => p.cat === active),
     [active],
   );
 
   // Mobile: auto-cycle visible videos one at a time (paused when modal open)
-  const carousel = useMobileVideoCarousel(Boolean(selected));
-
-  // Skip entrance animation on first page load to prevent scroll jump
-  const hasMounted = useRef(false);
-  useEffect(() => {
-    hasMounted.current = true;
-  }, []);
+  const carousel = useGalleryVideoController(Boolean(selected));
 
   return (
     <>
@@ -270,7 +372,10 @@ export default function ProjectsGallery() {
                   whileTap={{ scale: 0.9 }}
                   whileHover={{ scale: 1.05 }}
                   aria-pressed={isSelected}
-                  onClick={() => setActive(tab.id)}
+                  onClick={() => {
+                    setAnimateFilterChange(true);
+                    setActive(tab.id);
+                  }}
                   className={`relative overflow-hidden inline-flex min-h-10 items-center rounded-full border px-4 py-1.5 text-sm font-medium transition-colors duration-200 ${
                     isSelected
                       ? "border-transparent text-bg"
@@ -300,7 +405,9 @@ export default function ProjectsGallery() {
       {/* Bottom backdrop blur layer — fades in from top to bottom */}
       <div
         aria-hidden="true"
-        className="pointer-events-none fixed inset-x-0 bottom-0 z-40 h-24 backdrop-blur-xs sm:hidden"
+        className={`pointer-events-none inset-x-0 bottom-0 z-40 h-24 backdrop-blur-xs sm:hidden ${
+          isFooterVisible ? "absolute" : "fixed"
+        }`}
         style={{
           maskImage: "linear-gradient(to top, black 40%, transparent 100%)",
           WebkitMaskImage: "linear-gradient(to top, black 40%, transparent 100%)",
@@ -309,7 +416,9 @@ export default function ProjectsGallery() {
       <div
         role="group"
         aria-label="Filter projects by category"
-        className="fixed bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 sm:hidden"
+        className={`bottom-5 left-1/2 z-50 flex -translate-x-1/2 items-center gap-2 sm:hidden ${
+          isFooterVisible ? "absolute" : "fixed"
+        }`}
       >
         {FILTER_TABS.map((tab, i) => {
           const isSelected = active === tab.id;
@@ -328,7 +437,10 @@ export default function ProjectsGallery() {
               }}
               whileTap={{ scale: 0.85 }}
               aria-pressed={isSelected}
-              onClick={() => setActive(tab.id)}
+              onClick={() => {
+                setAnimateFilterChange(true);
+                setActive(tab.id);
+              }}
               className={`relative overflow-hidden whitespace-nowrap rounded-full px-3.5 py-2.5 text-sm font-semibold shadow-xl backdrop-blur-md transition-colors duration-200 ${
                 isSelected
                   ? "text-bg shadow-2xl"
@@ -356,7 +468,7 @@ export default function ProjectsGallery() {
       <AnimatePresence mode="wait">
         <motion.div
           key={active}
-          initial={hasMounted.current ? "hidden" : false}
+          initial={animateFilterChange ? "hidden" : false}
           animate="visible"
           exit="exit"
           variants={{
@@ -391,6 +503,8 @@ export default function ProjectsGallery() {
                 carouselKey={`${project.title}-${idx}`}
                 onRegister={carousel.register}
                 onUnregister={carousel.unregister}
+                onHoverStart={carousel.hoverStart}
+                onHoverEnd={carousel.hoverEnd}
               />
             </motion.div>
           ))}
@@ -405,7 +519,7 @@ export default function ProjectsGallery() {
         onClick={(event) => {
           if (event.target === event.currentTarget) event.currentTarget.close();
         }}
-        className="m-auto max-h-none max-w-none overflow-visible bg-transparent p-0 backdrop:bg-black/85"
+        className="m-auto max-h-none max-w-none overflow-visible bg-transparent p-0 backdrop:bg-black/70"
       >
         {selected?.popupSrc && (
           <div className="relative">
@@ -421,7 +535,7 @@ export default function ProjectsGallery() {
               type="button"
               aria-label="Close video"
               onClick={() => modal.current?.close()}
-              className="absolute top-2 right-2 grid size-11 place-items-center rounded-full bg-black/70 text-2xl leading-none text-white backdrop-blur-sm transition-colors hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white cursor-pointer"
+              className="absolute top-2 right-2 grid size-11 place-items-center rounded-full bg-black/10 text-2xl leading-none text-white backdrop-blur-sm transition-colors hover:bg-black focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white cursor-pointer"
             >
               <X className="h-5 w-5" aria-hidden="true" />
             </button>
@@ -439,6 +553,8 @@ interface ProjectCardProps {
   carouselKey: string;
   onRegister: (key: string, el: HTMLVideoElement) => void;
   onUnregister: (key: string, el: HTMLVideoElement) => void;
+  onHoverStart: (key: string) => void;
+  onHoverEnd: (key: string) => void;
 }
 
 function ProjectCard({
@@ -448,10 +564,12 @@ function ProjectCard({
   carouselKey,
   onRegister,
   onUnregister,
+  onHoverStart,
+  onHoverEnd,
 }: ProjectCardProps) {
   const videoRef = useRef<HTMLVideoElement>(null);
 
-  // Register video with the mobile carousel on mount
+  // Register the video for viewport loading and touch-device playback.
   useEffect(() => {
     const el = videoRef.current;
     if (!el || !project.video) return;
@@ -467,20 +585,11 @@ function ProjectCard({
   }, [isModalOpen]);
 
   const handleMouseEnter = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    void video.play().catch(() => {});
+    onHoverStart(carouselKey);
   };
 
   const handleMouseLeave = () => {
-    const video = videoRef.current;
-    if (!video) return;
-    video.pause();
-    try {
-      video.currentTime = 0;
-    } catch {
-      // ignore
-    }
+    onHoverEnd(carouselKey);
   };
 
   return (
@@ -499,8 +608,8 @@ function ProjectCard({
           <video
             ref={videoRef}
             data-carousel-key={carouselKey}
-            src={project.src}
-            poster={project.posterSrc}
+            data-src={project.src}
+            data-poster-src={project.posterSrc}
             muted
             loop
             playsInline
@@ -564,4 +673,3 @@ function ProjectCard({
     </motion.div>
   );
 }
-

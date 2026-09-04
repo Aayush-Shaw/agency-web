@@ -64,7 +64,7 @@ const SOCIALS = [
 /** Section 13 - footer. */
 export default function Footer() {
   return (
-    <footer className="border-t border-border bg-surface px-5 pt-14 pb-2 md:px-8">
+    <footer id="site-footer" className="border-t border-border bg-surface px-5 pt-14 pb-2 md:px-8">
       <div className="mx-auto flex max-w-[1600px] flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="max-w-xs">
           <a
