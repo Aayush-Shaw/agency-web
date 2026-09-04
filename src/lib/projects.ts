@@ -44,6 +44,7 @@ export const PROJECTS: Project[] = [
   { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.png", href: "https://digibearca.github.io/JUJCO-HVAC-website/", aspect: 1.6 },
   { title: "Auto Loan Calculator", cat: "Website", src: "/work/AutoNorth-Motors.png", href: "https://autonorthab.ca/", aspect: 1.6 },
   { title: "Earls", cat: "Website", src: "/work/earls.jpg", href: "https://services0987.github.io/earls/", aspect: 1.6 },
+  { title: "Restaurant", cat: "Website", src: "/work/Restaurant.png", href: "https://services0987.github.io/SR/", aspect: 1.6 },
   // Landscape video placed 1st on top of the grid
   videoProject("cars-cinema_AI.mp4", 1.7778, "Cars Cinema"),
   videoProject("bronco-edit_AI.mp4", 1.7792, "Bronco Edit", "Video"),
