@@ -1,80 +1,18 @@
 "use client";
 
 import { useEffect, useRef, useState, type CSSProperties } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import { gridVideo, popupVideo, posterVideo } from "@/lib/media";
 import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
-
-type Category = "Website" | "Social" | "Video" | "AI Video";
-
-type Project = {
-  title: string;
-  cat: Category;
-  src: string;
-  posterSrc?: string;
-  popupSrc?: string;
-  video?: boolean;
-  /** Live site. Video projects open their local popup source instead. */
-  href?: string;
-  /** Width ÷ height. The only thing that decides a tile's size: it is given the
-      height of the band it sits in and this multiplies it out to a width.
-      Below 1 (0.5625 is 9:16) means portrait, and that is also the switch for
-      which band it gets - see TALL below. */
-  aspect: number;
-};
-
-const videoProject = (filename: string, aspect: number, title?: string): Project => ({
-  title:
-    title ??
-    filename
-      .replace(/_AI(?=\.[^.]+$)|\.[^.]+$/g, "")
-      .replaceAll("-", " "),
-  cat: /_AI(?=\.[^.]+$)/.test(filename) ? "AI Video" : "Video",
-  src: gridVideo(filename),
-  posterSrc: posterVideo(filename),
-  popupSrc: popupVideo(filename),
-  video: true,
-  aspect,
-});
-
-/* Video aspects are measured display width ÷ height from each MP4 track. */
-const PROJECTS: Project[] = [
-  { title: "AutoNorth Motors", cat: "Website", src: "/work/autonorth-motors.jpg", href: "https://autonorth-motors.vercel.app/", aspect: 1.6 },
-  { title: "Indian Grill", cat: "Website", src: "/work/indian-grill.jpg", href: "https://indiangrill.vercel.app/", aspect: 1.6 },
-  { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.png", href: "https://digibearca.github.io/JUJCO-HVAC-website/", aspect: 1.6 },
-  { title: "Auto Loan Calculator", cat: "Website", src: "/work/AutoNorth-Motors.png", href: "https://autonorthab.ca/", aspect: 1.6 },
-  { title: "Earls", cat: "Website", src: "/work/earls.jpg", href: "https://services0987.github.io/earls/", aspect: 1.6 },
-  videoProject("2026-VAI_AI.mp4", 0.5625),
-  videoProject("bronco_AI.mp4", 0.5625),
-  videoProject("BRONCO-1-MAY.mp4", 0.5625),
-  videoProject("bronco-amritpal_AI.mp4", 0.5625),
-  videoProject("bronco-edit_AI.mp4", 1.7792),
-  videoProject("bronco-edit1_AI.mp4", 0.5625),
-  videoProject("bronco-walkarround_AI.mp4", 0.5625),
-  videoProject("cars-cinema_AI.mp4", 1.7778),
-  videoProject("citc_AI.mp4", 0.5625, "CITC"),
-  videoProject("digibear-info_AI.mp4", 0.5625),
-  videoProject("digibear-promo_AI.mp4", 0.5696),
-  videoProject("dodge-helcat.mp4", 0.5625),
-  videoProject("language_AI.mp4", 0.5699),
-  videoProject("mountain_AI.mp4", 0.5625),
-  videoProject("mustang-dealship.mp4", 0.5625),
-  videoProject("mustang-edit_AI.mp4", 1.7792),
-  videoProject("MUSTANG-MACH.mp4", 0.5625),
-  videoProject("mustang-walkarround_AI.mp4", 0.5625),
-  videoProject("jujco_AI.mp4", 0.5625, "JUJCO"),
-  videoProject("rapter.mp4", 0.5625),
-  videoProject("raptor-black.mp4", 0.5625),
-  videoProject("raptor-R.mp4", 0.5625),
-  videoProject("REAL-ESTATE_AI.mp4", 1.7778),
-  videoProject("Video-97762_AI.mp4", 0.5625),
-  videoProject("boutique-1.mp4", 0.5625),
-  videoProject("boutique-2.mp4", 0.5625),
-  videoProject("boutique-3.mp4", 0.5625),
-];
-
-const TABS = ["All", "Website", "Social", "Video", "AI Video"] as const;
+import Roll from "@/components/ui/Roll";
+import {
+  PROJECTS,
+  TABS,
+  type Category,
+  type Project,
+} from "@/lib/projects";
 
 /** Copies of the list on the rail. Three, not two: the middle one is what you
     see, and the outer two are the runway the wrap jumps between. Two copies
@@ -167,9 +105,7 @@ export default function Work() {
   const shown =
     active === "All"
       ? PROJECTS
-      : PROJECTS.filter((p) =>
-          active === "Social" ? p.video : p.cat === active
-        );
+      : PROJECTS.filter((p) => p.cat === active);
   // Repeat the filtered set up to MIN_TILES, then COPIES of that on the rail.
   // Empty guard so `reps` can never be Infinity.
   const reps = shown.length ? Math.ceil(MIN_TILES / shown.length) : 0;
@@ -464,12 +400,25 @@ export default function Work() {
   return (
     <section id="work" className="px-5 pt-24 md:px-8 md:pt-35 pb-10">
       <div className="mx-auto max-w-[1600px]">
-        <Reveal variant="words">
-          <Eyebrow>Selected projects</Eyebrow>
-          <h2 className="mt-4 max-w-3xl text-section font-bold tracking-tight">
-            Project we&apos;re <span className="text-gradient">proud to ship.</span>
-          </h2>
-        </Reveal>
+        <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
+          <Reveal variant="words">
+            <Eyebrow>Selected projects</Eyebrow>
+            <h2 className="mt-4 max-w-3xl text-section font-bold tracking-tight leading-tight">
+              Project we&apos;re <span className="text-gradient">proud to ship.</span>
+            </h2>
+          </Reveal>
+
+          {/* Desktop/laptop: Right side of the head */}
+          <div className="hidden lg:block shrink-0 pb-1">
+            {/* <Link
+              href="/projects"
+              className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface px-6 text-sm font-semibold text-text shadow-xs transition-all hover:border-accent-primary hover:text-accent-primary"
+            >
+              <Roll>View all projects</Roll>
+              <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+            </Link> */}
+          </div>
+        </div>
 
         {/* Category filter */}
         <div
@@ -610,6 +559,17 @@ export default function Work() {
           </div>
         </motion.div>
       </motion.div>
+
+      {/* For smaller screens: Below the grid with full width */}
+      {/* <div className="mx-auto mt-4 max-w-[1600px] lg:hidden">
+        <Link
+          href="/projects"
+          className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-surface px-6 text-sm font-semibold text-text shadow-xs transition-all hover:border-accent-primary hover:text-accent-primary"
+        >
+          <Roll>View all projects</Roll>
+          <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
+        </Link>
+      </div> */}
 
       <dialog
         ref={modal}
