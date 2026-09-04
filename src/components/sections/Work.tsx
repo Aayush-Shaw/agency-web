@@ -518,13 +518,13 @@ export default function Work() {
 
           {/* Desktop/laptop: Right side of the head */}
           <div className="hidden lg:block shrink-0 pb-1">
-            {/* <Link
+            <Link
               href="/projects"
               className="group inline-flex min-h-11 items-center gap-2 rounded-full border border-border bg-surface px-6 text-sm font-semibold text-text shadow-xs transition-all hover:border-accent-primary hover:text-accent-primary"
             >
               <Roll>View all projects</Roll>
               <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
-            </Link> */}
+            </Link>
           </div>
         </div>
 
@@ -686,7 +686,7 @@ export default function Work() {
       </motion.div>
 
       {/* For smaller screens: Below the grid with full width */}
-      {/* <div className="mx-auto mt-4 max-w-[1600px] lg:hidden">
+      <div className="mx-auto mt-4 max-w-[1600px] lg:hidden">
         <Link
           href="/projects"
           className="group flex min-h-12 w-full items-center justify-center gap-2 rounded-full border border-border bg-surface px-6 text-sm font-semibold text-text shadow-xs transition-all hover:border-accent-primary hover:text-accent-primary"
@@ -694,7 +694,7 @@ export default function Work() {
           <Roll>View all projects</Roll>
           <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
         </Link>
-      </div> */}
+      </div>
 
       <dialog
         ref={modal}
