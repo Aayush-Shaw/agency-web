@@ -39,10 +39,10 @@ export const videoProject = (
 
 /* Video aspects are measured display width ÷ height from each MP4 track. */
 export const PROJECTS: Project[] = [
-  { title: "AutoNorth Motors", cat: "Website", src: "/work/autonorth-motors.jpg", href: "https://autonorth-motors.vercel.app/", aspect: 1.6 },
+  { title: "AutoNorth Motors", cat: "Website", src: "/work/AutoNorth-Motors.jpg", href: "https://autonorth-motors.vercel.app/", aspect: 1.6 },
   { title: "Indian Grill", cat: "Website", src: "/work/indian-grill.jpg", href: "https://indiangrill.vercel.app/", aspect: 1.6 },
   { title: "JUJCO Heating & Cooling", cat: "Website", src: "/work/jujco-hvac.png", href: "https://digibearca.github.io/JUJCO-HVAC-website/", aspect: 1.6 },
-  { title: "Auto Loan Calculator", cat: "Website", src: "/work/AutoNorth-Motors.png", href: "https://autonorthab.ca/", aspect: 1.6 },
+  { title: "Auto Loan Calculator", cat: "Website", src: "/work/Auto-loan-calculator.png", href: "https://autonorthab.ca/", aspect: 1.6 },
   { title: "Earls", cat: "Website", src: "/work/earls.jpg", href: "https://services0987.github.io/earls/", aspect: 1.6 },
   { title: "Restaurant", cat: "Website", src: "/work/Restaurant.png", href: "https://services0987.github.io/SR/", aspect: 1.6 },
   // Landscape video placed 1st on top of the grid

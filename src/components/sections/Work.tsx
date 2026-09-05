@@ -437,19 +437,21 @@ export default function Work() {
             className="pointer-events-none absolute inset-0 h-full w-full object-cover"
           />
         ) : (
-          // Plain <img>, not next/image, for the same reason as the hero wall:
-          // the placeholder tiles are remote URLs and next/image would need
-          // every host in images.remotePatterns. The real work is local and
-          // could take next/image today, but not while one list feeds both.
-          // eslint-disable-next-line @next/next/no-img-element
-          <img
-            src={p.src}
-            alt={`${p.title} - ${p.cat} project`}
-            loading="lazy"
-            decoding="async"
-            draggable={false}
-            className="pointer-events-none absolute inset-0 h-full w-full object-cover"
-          />
+          <picture className="pointer-events-none absolute inset-0 h-full w-full">
+            <source
+              type="image/webp"
+              srcSet={p.src}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={p.src.replace(/\.webp$/i, ".jpg")}
+              alt={`${p.title} - ${p.cat} project`}
+              loading="lazy"
+              decoding="async"
+              draggable={false}
+              className="h-full w-full object-cover"
+            />
+          </picture>
         )}
 
         {/* A bar across the foot of the tile, not a floating pill. Hover only,

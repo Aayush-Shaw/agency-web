@@ -216,9 +216,9 @@ const LINKS: LinkEntry[] = [
    ================================================================ */
 
 const PROJECTS = [
-  { title: "AutoNorth Motors", src: "/work/autonorth-motors.jpg", href: "https://autonorth-motors.vercel.app/" },
+  { title: "AutoNorth Motors", src: "/work/AutoNorth-Motors.jpg", href: "https://autonorth-motors.vercel.app/" },
   { title: "Indian Grill", src: "/work/indian-grill.jpg", href: "https://indiangrill.vercel.app/" },
-  { title: "Auto Loan Calculator", src: "/work/AutoNorth-Motors.png", href: "https://autonorthab.ca/" },
+  { title: "Auto Loan Calculator", src: "/work/Auto-loan-calculator.png", href: "https://autonorthab.ca/" },
   { title: "Earls", src: "/work/earls.jpg", href: "https://services0987.github.io/earls/" },
   { title: "JUJCO Heating & Cooling", src: "/work/jujco-hvac.png", href: "https://digibearca.github.io/JUJCO-HVAC-website/" },
 ];

@@ -617,14 +617,21 @@ function ProjectCard({
             className="pointer-events-none h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
           />
         ) : (
-          /* Plain img for website projects - no visit button overlay on hover */
-          /* eslint-disable-next-line @next/next/no-img-element */
-          <img
-            src={project.src}
-            alt={project.title}
-            loading="lazy"
-            className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
-          />
+          /* Responsive picture with modern WebP and progressive JPG fallback */
+          <picture className="block h-full w-full overflow-hidden">
+            <source
+              type="image/webp"
+              srcSet={project.src}
+            />
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img
+              src={project.src.replace(/\.webp$/i, ".jpg")}
+              alt={project.title}
+              loading="lazy"
+              decoding="async"
+              className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+            />
+          </picture>
         )}
       </div>
 

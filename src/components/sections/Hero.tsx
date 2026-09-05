@@ -94,26 +94,23 @@ const img = (src: string, span: number): Tile => ({ src, span, image: true });
    - see the loop. */
 const COLUMNS: Tile[][] = [
   [
-    vid("2026-VAI_AI.mp4", 0.3),
     vid("BRONCO-1-MAY.mp4", 0.22),
-    img("/work/autonorth-motors.jpg", 0.16),
+    img("/work/Auto-loan-calculator.webp", 0.16),
     vid("bronco_AI.mp4", 0.26),
     vid("citc_AI.mp4", 0.36),
     vid("digibear-promo_AI.mp4", 0.46),
-    vid("boutique-1.mp4", 0.35),
   ],
   [
     vid("rapter.mp4", 0.24),
-    img("/work/indian-grill.jpg", 0.16),
+    img("/work/AutoNorth-Motors.webp", 0.16),
     vid("mustang-walkarround_AI.mp4", 0.36),
     vid("jujco_AI.mp4", 0.36),
     vid("2026-VAI_AI.mp4", 0.3),
     vid("BRONCO-1-MAY.mp4", 0.26),
-    img("/work/AutoNorth-Motors.png", 0.16),
     vid("boutique-2.mp4", 0.35),
   ],
   [
-    img("/work/jujco-hvac.png", 0.16),
+    img("/work/indian-grill.webp", 0.16),
     vid("digibear-promo_AI.mp4", 0.46),
     vid("raptor-R.mp4", 0.36),
     vid("rapter.mp4", 0.22),
@@ -124,7 +121,7 @@ const COLUMNS: Tile[][] = [
     vid("mustang-walkarround_AI.mp4", 0.22),
     vid("2026-VAI_AI.mp4", 0.3),
     vid("BRONCO-1-MAY.mp4", 0.26),
-    img("/work/earls.jpg", 0.16),
+    img("/work/earls.webp", 0.16),
     vid("digibear-promo_AI.mp4", 0.46),
   ],
 ];
@@ -695,7 +692,7 @@ export default function Hero() {
 
             No text-balance: the first line is nowrap and the balancer would be
             reasoning about a line it cannot break. */}
-          <h1 className="text-[clamp(2.5rem,min(6.2vw,11svh),4.75rem)] font-bold leading-[1.05] tracking-tight">
+          <h1 className="text-[clamp(2.5rem,min(6.2vw,11svh),4.75rem)] font-extrabold leading-[1.05] tracking-tight">
             {/* One line, always. The break used to be a hard <br> after this
               phrase, which is the same thing said less strictly: nowrap keeps
               it together and lets the *next* line break wherever the column

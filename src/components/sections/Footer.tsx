@@ -6,9 +6,8 @@ const NAV = [
   { label: "Services", href: "#services" },
   { label: "Projects", href: "#work" },
   { label: "Process", href: "#process" },
-  // Parked with the section itself - see page.tsx.
-  // { label: "Pricing", href: "#pricing" },
   { label: "FAQ", href: "#faq" },
+  { label: "Links", href: "/links" },
   { label: "Contact", href: "#contact" },
 ];
 
@@ -87,22 +86,14 @@ export default function Footer() {
           </p>
         </div>
 
-        {/* One three-column row on a phone: the five links fill the first two
-            columns and the three social marks stack down the third, so both
-            halves are three rows tall and the block squares off. md:contents
-            dissolves this wrapper again, leaving the desktop flex row exactly
-            as it was - no second copy of either child. */}
-        <div className="grid grid-cols-3 gap-x-6 md:contents">
-          <nav aria-label="Footer" className="col-span-2">
+        {/* On mobile screens, nav links and social marks stack with the socials
+            stretching to full width with dynamic equal spacing between icons.
+            md:contents dissolves this wrapper on desktop, leaving the desktop flex row layout. */}
+        <div className="flex flex-col gap-8 md:contents">
+          <nav aria-label="Footer">
             <ul className="grid grid-cols-2 gap-x-10 gap-y-3">
               {NAV.map((link) => (
-                // The nav's two columns are the phone grid's first and second,
-                // so the middle column of the footer is this list's even
-                // children - row-major flow puts 2 and 4 in column two. Centred
-                // there, the row reads left / centre / right across the three
-                // columns. Back to flush left at md, where the socials are a
-                // row again and there is no middle column to speak of.
-                <li key={link.href} className="even:text-center md:even:text-left">
+                <li key={link.href}>
                   <a
                     href={link.href}
                     className="inline-block py-1.5 text-sm text-text-muted transition-colors hover:text-text"
@@ -114,9 +105,7 @@ export default function Footer() {
             </ul>
           </nav>
 
-          {/* items-end so the stack hugs the footer's right edge rather than
-            floating mid-column - the marks are 44px in a ~96px column. */}
-          <div className="flex flex-col items-end gap-3 md:flex-row md:items-start">
+          <div className="flex w-full flex-row items-center justify-between gap-3 md:w-auto md:justify-start md:items-start">
             {SOCIALS.map((social) => (
               <a
                 key={social.label}

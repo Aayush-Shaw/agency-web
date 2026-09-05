@@ -10,6 +10,14 @@ const nextConfig: NextConfig = {
   // LLM-specific agents that need the same treatment.
   htmlLimitedBots:
     /Googlebot|Mediapartners-Google|AdsBot-Google|Google-PageRenderer|Bingbot|BingPreview|Slurp|DuckDuckBot|Baiduspider|YandexBot|Sogou|facebookexternalhit|Twitterbot|Slackbot|LinkedInBot|WhatsApp|TelegramBot|GPTBot|ChatGPT-User|ClaudeBot|anthropic-ai|Google-Extended|PerplexityBot|Bytespider|CCBot|Applebot|PetalBot/,
+
+  // Image Optimization: Deliver modern formats (AVIF first, WebP fallback) with 1-year edge caching
+  images: {
+    formats: ["image/avif", "image/webp"],
+    deviceSizes: [640, 750, 828, 1080, 1200, 1920],
+    imageSizes: [16, 32, 48, 64, 96, 128, 256, 384],
+    minimumCacheTTL: 31536000,
+  },
 };
 
 export default nextConfig;
