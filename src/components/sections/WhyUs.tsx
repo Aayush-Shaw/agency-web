@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import CardRail, { type RailItem } from "@/components/ui/CardRail";
 
@@ -100,8 +99,7 @@ export default function WhyUs() {
     >
       <div className="mx-auto w-full max-w-[1600px]">
         <Reveal variant="words">
-          <Eyebrow>Why Digi Bear</Eyebrow>
-          <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight">
+          <h2 className="max-w-3xl text-section font-bold tracking-tight leading-tight">
             Built to feel like your{" "}
             <span className="text-gradient">in-house team.</span>
           </h2>

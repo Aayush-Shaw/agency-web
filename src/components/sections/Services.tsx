@@ -1,5 +1,4 @@
 import type { ReactNode } from "react";
-import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import CardRail, { type RailItem } from "@/components/ui/CardRail";
 
@@ -128,8 +127,7 @@ export default function Services() {
     <section id="services" className="px-2 pt-24 md:px-8 md:pt-30 pb-10">
       <div className="mx-auto max-w-[1600px]">
         <Reveal variant="words">
-          <Eyebrow>What we do</Eyebrow>
-          <h2 className="mt-2 max-w-3xl text-section font-bold tracking-tight">
+          <h2 className="max-w-3xl text-section font-bold tracking-tight leading-tight">
             Five services, one <span className="text-gradient">creative team.</span>
           </h2>
         </Reveal>

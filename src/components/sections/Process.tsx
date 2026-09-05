@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP } from "@/lib/gsap";
-import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import ScrollHint from "@/components/ui/ScrollHint";
 
@@ -366,7 +365,6 @@ export default function Process() {
           before the first measurement. */}
       <div ref={head} className="mx-auto max-w-[1600px] in-[.arc]:pt-(--pad)">
         <Reveal variant="words">
-          <Eyebrow>How we work</Eyebrow>
           {/* Under `.arc` the heading stops being sized against width alone.
               --text-section is a vw clamp with no line-height of its own, so on
               a 320px phone it lands at its 36px floor and then inherits the
@@ -374,7 +372,7 @@ export default function Process() {
               a 568px screen spent on the heading. min(vw, svh) is the hero's own
               answer to the same problem: whichever axis is tighter wins, so this
               reads the same at 1440 and gets out of the way on a phone. */}
-          <h2 className="mt-5 max-w-3xl text-section font-bold tracking-tight in-[.arc]:leading-[1.15]">
+          <h2 className="max-w-3xl text-section font-bold tracking-tight in-[.arc]:leading-[1.15]">
             A simple path from{" "}
             <span className="text-gradient">idea to launch.</span>
           </h2>

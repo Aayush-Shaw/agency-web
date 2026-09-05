@@ -9,7 +9,6 @@ import {
 } from "react";
 import { ChevronDown, Mail, Phone, X } from "lucide-react";
 import { motion, useReducedMotion, useSpring, useTransform } from "motion/react";
-import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import Roll from "@/components/ui/Roll";
 import ContactDialog, { type Summary } from "@/components/ui/ContactDialog";
@@ -432,8 +431,7 @@ export default function Cta() {
           need the full width on a phone more than the pitch needs a neighbour. */}
       <div className="mx-auto grid max-w-[1600px] gap-4 lg:grid-cols-[2fr_3fr] lg:items-start lg:gap-8">
         <Reveal variant="words">
-          <Eyebrow>Let&apos;s talk</Eyebrow>
-          <h2 className="mt-5 text-section-xl font-bold leading-[1.05] tracking-tight">
+          <h2 className="text-section-xl font-bold leading-tight tracking-tight">
             Ready to build something{" "}
             <span className="text-gradient">worth watching?</span>
           </h2>

@@ -2,7 +2,6 @@
 
 import { useRef } from "react";
 import { gsap, useGSAP, SplitText } from "@/lib/gsap";
-import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import usePawRake from "@/components/ui/usePawRake";
 import useScrollFocus from "@/components/ui/useScrollFocus";
@@ -194,8 +193,7 @@ export default function Faq() {
       <div className="mx-auto grid max-w-[1600px] gap-12 lg:grid-cols-[2fr_3fr] lg:items-start lg:gap-16">
         {/* top-28 is the fixed navbar's 5rem plus air. */}
         <Reveal variant="words" className="lg:sticky lg:top-28">
-          <Eyebrow>Before you ask</Eyebrow>
-          <h2 className="mt-5 text-section font-bold tracking-tight">
+          <h2 className="text-section font-bold tracking-tight leading-tight">
             No mysteries, no <span className="text-gradient">fine print.</span>
           </h2>
           <p className="mt-5 max-w-sm text-lead text-text-muted">

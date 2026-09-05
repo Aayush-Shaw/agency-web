@@ -7,7 +7,6 @@ of its callers receive the change.
 
 | File | Purpose |
 | --- | --- |
-| `Eyebrow.tsx` | Uppercase section label with claw mark |
 | `Words.tsx` | Splits headlines into independently animated words |
 | `Roll.tsx` | Hover label with a rolling duplicate |
 | `Reveal.tsx` | Scroll entrance that fades and lifts content |

@@ -4,7 +4,6 @@ import { useEffect, useRef, useState, type CSSProperties } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { motion, useReducedMotion } from "motion/react";
-import Eyebrow from "@/components/ui/Eyebrow";
 import Reveal from "@/components/ui/Reveal";
 import Roll from "@/components/ui/Roll";
 import {
@@ -533,8 +532,7 @@ export default function Work() {
       <div className="mx-auto max-w-[1600px]">
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <Reveal variant="words">
-            <Eyebrow>Selected projects</Eyebrow>
-            <h2 className="mt-4 max-w-3xl text-section font-bold tracking-tight leading-tight">
+            <h2 className="max-w-3xl text-section font-bold tracking-tight leading-tight">
               Project we&apos;re <span className="text-gradient">proud to ship.</span>
             </h2>
           </Reveal>
