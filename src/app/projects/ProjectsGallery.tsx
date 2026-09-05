@@ -18,11 +18,14 @@ const FILTER_TABS: { id: FilterCategory; label: string }[] = [
 const CAROUSEL_INTERVAL_MS = 3000;
 const VIDEO_LOAD_MARGIN = "300px 0px";
 
-function loadVideoSource(video: HTMLVideoElement) {
+function showVideoPoster(video: HTMLVideoElement) {
   if (!video.hasAttribute("poster") && video.dataset.posterSrc) {
     video.poster = video.dataset.posterSrc;
   }
+}
 
+function loadVideoSource(video: HTMLVideoElement) {
+  showVideoPoster(video);
   if (!video.hasAttribute("src") && video.dataset.src) {
     video.src = video.dataset.src;
     video.load();
@@ -50,6 +53,7 @@ function useGalleryVideoController(paused: boolean) {
   const intervalId = useRef<ReturnType<typeof setInterval> | null>(null);
   const currentKey = useRef<string | null>(null);
   const hoveredKey = useRef<string | null>(null);
+  const observeImmediately = useRef(false);
   const loadImmediately = useRef(false);
   const playNext = useRef<() => void>(() => {});
   const playbackQueued = useRef(false);
@@ -66,7 +70,12 @@ function useGalleryVideoController(paused: boolean) {
 
   // Track which cards are visible enough for one-at-a-time playback.
   useEffect(() => {
-    if (!("IntersectionObserver" in window)) return;
+    if (!("IntersectionObserver" in window)) {
+      observeImmediately.current = true;
+      videos.current.forEach((_video, key) => visible.current.add(key));
+      requestPlayback();
+      return;
+    }
 
     observer.current = new IntersectionObserver(
       (entries) => {
@@ -92,11 +101,12 @@ function useGalleryVideoController(paused: boolean) {
     };
   }, [requestPlayback]);
 
-  // Attach media URLs only when a card is in or near the viewport.
+  // Load only posters near the viewport. The active card attaches its video
+  // source just before playback, leaving every inactive card lightweight.
   useEffect(() => {
     if (!("IntersectionObserver" in window)) {
       loadImmediately.current = true;
-      videos.current.forEach(loadVideoSource);
+      videos.current.forEach(showVideoPoster);
       return;
     }
 
@@ -104,7 +114,7 @@ function useGalleryVideoController(paused: boolean) {
       (entries) => {
         for (const entry of entries) {
           const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) loadVideoSource(video);
+          if (entry.isIntersecting) showVideoPoster(video);
           else unloadVideoSource(video);
         }
       },
@@ -124,8 +134,12 @@ function useGalleryVideoController(paused: boolean) {
     videos.current.set(key, el);
     observer.current?.observe(el);
     loadObserver.current?.observe(el);
-    if (loadImmediately.current) loadVideoSource(el);
-  }, []);
+    if (observeImmediately.current) {
+      visible.current.add(key);
+      requestPlayback();
+    }
+    if (loadImmediately.current) showVideoPoster(el);
+  }, [requestPlayback]);
 
   const unregister = useCallback((key: string, el: HTMLVideoElement) => {
     videos.current.delete(key);
@@ -142,8 +156,7 @@ function useGalleryVideoController(paused: boolean) {
 
     if (currentKey.current && currentKey.current !== key) {
       const current = videos.current.get(currentKey.current);
-      current?.pause();
-      try { if (current) current.currentTime = 0; } catch { /* ignore */ }
+      if (current) unloadVideoSource(current);
       currentKey.current = null;
     }
 
@@ -158,8 +171,7 @@ function useGalleryVideoController(paused: boolean) {
     if (hoveredKey.current !== key) return;
 
     const video = videos.current.get(key);
-    video?.pause();
-    try { if (video) video.currentTime = 0; } catch { /* ignore */ }
+    if (video) unloadVideoSource(video);
     hoveredKey.current = null;
     if (currentKey.current === key) currentKey.current = null;
     requestPlayback();
@@ -175,7 +187,8 @@ function useGalleryVideoController(paused: boolean) {
     if (paused) {
       // Pause the currently playing video
       if (currentKey.current) {
-        videos.current.get(currentKey.current)?.pause();
+        const current = videos.current.get(currentKey.current);
+        if (current) unloadVideoSource(current);
         currentKey.current = null;
       }
       return;
@@ -188,8 +201,7 @@ function useGalleryVideoController(paused: boolean) {
       if (currentKey.current) {
         const prev = videos.current.get(currentKey.current);
         if (prev) {
-          prev.pause();
-          try { prev.currentTime = 0; } catch { /* ignore */ }
+          unloadVideoSource(prev);
         }
       }
 
@@ -221,9 +233,14 @@ function useGalleryVideoController(paused: boolean) {
     tick();
     intervalId.current = setInterval(tick, CAROUSEL_INTERVAL_MS);
 
-    // Pause every card when the tab is hidden. The interval resumes playback.
+    // Release decoders when the tab is hidden. Playback resumes on return.
     function onVisChange() {
-      if (document.hidden) videos.current.forEach((video) => video.pause());
+      if (document.hidden) {
+        videos.current.forEach(unloadVideoSource);
+        currentKey.current = null;
+      } else {
+        requestPlayback();
+      }
     }
     document.addEventListener("visibilitychange", onVisChange);
 

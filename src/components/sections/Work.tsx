@@ -226,10 +226,14 @@ export default function Work() {
     let hovered: HTMLVideoElement | null = null;
     let playbackQueued = false;
 
-    const loadVideo = (video: HTMLVideoElement) => {
+    const showPoster = (video: HTMLVideoElement) => {
       if (!video.hasAttribute("poster") && video.dataset.posterSrc) {
         video.poster = video.dataset.posterSrc;
       }
+    };
+
+    const loadVideo = (video: HTMLVideoElement) => {
+      showPoster(video);
       if (!video.hasAttribute("src") && video.dataset.src) {
         video.src = video.dataset.src;
         video.load();
@@ -243,25 +247,30 @@ export default function Work() {
       }
     };
 
+    const unloadVideo = (video: HTMLVideoElement, reset = false) => {
+      pauseVideo(video, reset);
+      if (video.hasAttribute("src")) {
+        video.removeAttribute("src");
+        video.load();
+      }
+    };
+
     const syncSource = (video: HTMLVideoElement) => {
       if (selected || !near.has(video)) {
-        pauseVideo(video);
-        if (video.hasAttribute("src")) {
-          video.removeAttribute("src");
-          video.load();
-        }
+        unloadVideo(video);
         return;
       }
 
-      loadVideo(video);
+      showPoster(video);
+      if (video !== current && video !== hovered) unloadVideo(video);
     };
 
     const playable = () =>
       [...visible].filter((video) => near.has(video) && videos.includes(video));
 
     const start = (video: HTMLVideoElement) => {
-      loadVideo(video);
       current = video;
+      loadVideo(video);
       void video.play().catch(() => {});
     };
 
@@ -270,7 +279,7 @@ export default function Work() {
 
       const candidates = playable();
       if (current && candidates.includes(current)) return;
-      if (current) pauseVideo(current, true);
+      if (current) unloadVideo(current, true);
       current = null;
       if (candidates[0]) start(candidates[0]);
     };
@@ -280,13 +289,13 @@ export default function Work() {
 
       const candidates = playable();
       if (candidates.length === 0) {
-        if (current) pauseVideo(current, true);
+        if (current) unloadVideo(current, true);
         current = null;
         return;
       }
 
       const currentIndex = current ? candidates.indexOf(current) : -1;
-      if (current) pauseVideo(current, true);
+      if (current) unloadVideo(current, true);
       start(candidates[(currentIndex + 1) % candidates.length]);
     };
 
@@ -304,7 +313,7 @@ export default function Work() {
 
       hovered = video;
       if (current && current !== video) {
-        pauseVideo(current, true);
+        unloadVideo(current, true);
         current = null;
       }
       loadVideo(video);
@@ -314,60 +323,72 @@ export default function Work() {
     hoverVideoEnd.current = (video) => {
       if (hovered !== video) return;
 
-      pauseVideo(video, true);
+      unloadVideo(video, true);
       hovered = null;
       if (current === video) current = null;
       scheduleEnsurePlaying();
     };
 
-    const nearObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) near.add(video);
-          else near.delete(video);
-          syncSource(video);
-        });
-        scheduleEnsurePlaying();
-      },
-      { root: el, rootMargin: "0px 300px" },
-    );
-    const visibleObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) visible.add(video);
-          else visible.delete(video);
-          syncSource(video);
-        });
-        scheduleEnsurePlaying();
-      },
-      { root: el },
-    );
-    videos.forEach((video) => {
-      nearObserver.observe(video);
-      visibleObserver.observe(video);
-    });
+    let nearObserver: IntersectionObserver | null = null;
+    let visibleObserver: IntersectionObserver | null = null;
+
+    if ("IntersectionObserver" in window) {
+      nearObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) near.add(video);
+            else near.delete(video);
+            syncSource(video);
+          });
+          scheduleEnsurePlaying();
+        },
+        { root: el, rootMargin: "0px 300px" },
+      );
+      visibleObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) visible.add(video);
+            else visible.delete(video);
+            syncSource(video);
+          });
+          scheduleEnsurePlaying();
+        },
+        { root: el },
+      );
+      videos.forEach((video) => {
+        nearObserver?.observe(video);
+        visibleObserver?.observe(video);
+      });
+    } else {
+      // Preserve the one-at-a-time carousel if viewport observation is absent.
+      videos.forEach((video) => {
+        near.add(video);
+        visible.add(video);
+        showPoster(video);
+      });
+      scheduleEnsurePlaying();
+    }
 
     const intervalId = window.setInterval(advance, VIDEO_CAROUSEL_INTERVAL_MS);
     const onVisibilityChange = () => {
-      if (document.hidden) videos.forEach((video) => pauseVideo(video));
-      else scheduleEnsurePlaying();
+      if (document.hidden) {
+        videos.forEach((video) => unloadVideo(video));
+        current = null;
+        hovered = null;
+      } else scheduleEnsurePlaying();
     };
     document.addEventListener("visibilitychange", onVisibilityChange);
 
     return () => {
-      nearObserver.disconnect();
-      visibleObserver.disconnect();
+      nearObserver?.disconnect();
+      visibleObserver?.disconnect();
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", onVisibilityChange);
       hoverVideoStart.current = () => {};
       hoverVideoEnd.current = () => {};
-      videos.forEach((video) => {
-        pauseVideo(video);
-        video.removeAttribute("src");
-        video.load();
-      });
+      videos.forEach((video) => unloadVideo(video));
     };
   }, [active, selected]);
 

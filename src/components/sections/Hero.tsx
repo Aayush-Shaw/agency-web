@@ -327,27 +327,37 @@ export default function Hero() {
       }
     };
 
-    const loadVideo = (video: HTMLVideoElement) => {
+    const showPoster = (video: HTMLVideoElement) => {
       if (!video.hasAttribute("poster") && video.dataset.posterSrc) {
         video.poster = video.dataset.posterSrc;
       }
+    };
+
+    const loadVideo = (video: HTMLVideoElement) => {
+      showPoster(video);
       if (!video.hasAttribute("src") && video.dataset.src) {
         video.src = video.dataset.src;
         video.load();
       }
     };
 
+    const unloadVideo = (video: HTMLVideoElement, reset = false) => {
+      pauseVideo(video, reset);
+      if (video.hasAttribute("src")) {
+        video.removeAttribute("src");
+        video.load();
+      }
+    };
+
     const syncSource = (video: HTMLVideoElement) => {
       if (past || !near.has(video)) {
-        pauseVideo(video);
-        if (video.hasAttribute("src")) {
-          video.removeAttribute("src");
-          video.load();
-        }
+        unloadVideo(video);
         return;
       }
 
-      loadVideo(video);
+      showPoster(video);
+      const column = columnForVideo.get(video);
+      if (!column || currentByColumn.get(column) !== video) unloadVideo(video);
     };
 
     const playable = (column: HTMLElement) =>
@@ -356,8 +366,8 @@ export default function Hero() {
       );
 
     const start = (column: HTMLElement, video: HTMLVideoElement) => {
-      loadVideo(video);
       currentByColumn.set(column, video);
+      loadVideo(video);
       void video.play().catch(() => {});
     };
 
@@ -367,7 +377,7 @@ export default function Hero() {
       const current = currentByColumn.get(column);
       const candidates = playable(column);
       if (current && candidates.includes(current)) return;
-      if (current) pauseVideo(current, true);
+      if (current) unloadVideo(current, true);
       currentByColumn.set(column, null);
       if (candidates[0]) start(column, candidates[0]);
     };
@@ -378,13 +388,13 @@ export default function Hero() {
       const current = currentByColumn.get(column);
       const candidates = playable(column);
       if (candidates.length === 0) {
-        if (current) pauseVideo(current, true);
+        if (current) unloadVideo(current, true);
         currentByColumn.set(column, null);
         return;
       }
 
       const currentIndex = current ? candidates.indexOf(current) : -1;
-      if (current) pauseVideo(current, true);
+      if (current) unloadVideo(current, true);
       start(column, candidates[(currentIndex + 1) % candidates.length]);
     };
 
@@ -400,41 +410,55 @@ export default function Hero() {
         ensureAllColumnPlayback();
       });
     };
-    const nearObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) near.add(video);
-          else near.delete(video);
-          syncSource(video);
-        });
-        scheduleEnsureAllColumnPlayback();
-      },
-      { root: el, rootMargin: "200px" },
-    );
-    const visibleObserver = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          const video = entry.target as HTMLVideoElement;
-          if (entry.isIntersecting) visible.add(video);
-          else visible.delete(video);
-          syncSource(video);
-        });
-        scheduleEnsureAllColumnPlayback();
-      },
-      { root: el },
-    );
-    videos.forEach((video) => {
-      nearObserver.observe(video);
-      visibleObserver.observe(video);
-    });
+    let nearObserver: IntersectionObserver | null = null;
+    let visibleObserver: IntersectionObserver | null = null;
+
+    if ("IntersectionObserver" in window) {
+      nearObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) near.add(video);
+            else near.delete(video);
+            syncSource(video);
+          });
+          scheduleEnsureAllColumnPlayback();
+        },
+        { root: el, rootMargin: "200px" },
+      );
+      visibleObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            const video = entry.target as HTMLVideoElement;
+            if (entry.isIntersecting) visible.add(video);
+            else visible.delete(video);
+            syncSource(video);
+          });
+          scheduleEnsureAllColumnPlayback();
+        },
+        { root: el },
+      );
+      videos.forEach((video) => {
+        nearObserver?.observe(video);
+        visibleObserver?.observe(video);
+      });
+    } else {
+      // Older browsers still get the poster-first carousel; without viewport
+      // observation, keep one video active in each visible wall column.
+      videos.forEach((video) => {
+        near.add(video);
+        visible.add(video);
+        showPoster(video);
+      });
+      scheduleEnsureAllColumnPlayback();
+    }
 
     const intervalId = window.setInterval(() => {
       columns.forEach(advanceColumnPlayback);
     }, HERO_COLUMN_PLAYBACK_MS);
     const onVisibilityChange = () => {
       if (document.hidden) {
-        videos.forEach((video) => pauseVideo(video));
+        videos.forEach((video) => unloadVideo(video));
         columns.forEach((column) => currentByColumn.set(column, null));
       } else {
         scheduleEnsureAllColumnPlayback();
@@ -466,15 +490,11 @@ export default function Hero() {
     return () => {
       window.removeEventListener("scroll", sync);
       window.removeEventListener("resize", sync);
-      nearObserver.disconnect();
-      visibleObserver.disconnect();
+      nearObserver?.disconnect();
+      visibleObserver?.disconnect();
       window.clearInterval(intervalId);
       document.removeEventListener("visibilitychange", onVisibilityChange);
-      videos.forEach((video) => {
-        pauseVideo(video);
-        video.removeAttribute("src");
-        video.load();
-      });
+      videos.forEach((video) => unloadVideo(video));
       document.documentElement.removeAttribute("data-past-hero");
     };
   }, []);
