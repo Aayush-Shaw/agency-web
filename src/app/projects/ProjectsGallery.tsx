@@ -223,6 +223,7 @@ function useGalleryVideoController(paused: boolean) {
 
       if (nextVideo) {
         currentKey.current = nextKey;
+        loadVideoSource(nextVideo);
         void nextVideo.play().catch(() => {});
       }
     }
@@ -249,7 +250,7 @@ function useGalleryVideoController(paused: boolean) {
       playNext.current = () => {};
       document.removeEventListener("visibilitychange", onVisChange);
     };
-  }, [paused]);
+  }, [paused, requestPlayback]);
 
   return { register, unregister, hoverStart, hoverEnd };
 }
