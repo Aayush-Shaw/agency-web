@@ -47,6 +47,12 @@ export const PROJECTS: Project[] = [
   { title: "Restaurant", cat: "Website", src: "/work/Restaurant.png", href: "https://services0987.github.io/SR/", aspect: 1.6 },
   // Landscape video placed 1st on top of the grid
   videoProject("cars-cinema_AI.mp4", 1.7778, "Cars Cinema"),
+  videoProject("AI-Marketing_AI.mp4", 0.5625, "AI Marketing"),
+  videoProject(
+    "AI-Evolution-of-Marketing-DigiBear_AI.mp4",
+    0.5625,
+    "AI Evolution of Marketing - Digi Bear"
+  ),
   videoProject("bronco-edit_AI.mp4", 1.7792, "Bronco Edit", "Video"),
   videoProject("2026-VAI_AI.mp4", 0.5625),
   videoProject("bronco_AI.mp4", 0.5625),
