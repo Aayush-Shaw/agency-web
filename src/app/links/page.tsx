@@ -10,7 +10,7 @@ import LinkActions from "./LinkActions";
 const SOCIAL_IMAGE = `${SITE_URL}/og-image.jpg?v=1`;
 
 export const metadata: Metadata = {
-  title: "Links | Digi Bear",
+  title: "Links | DIGI BEAR",
   description:
     "All of Digi Bear's official links in one place - website, TikTok, YouTube, Instagram, and Facebook.",
   alternates: { canonical: "/links" },
@@ -18,7 +18,7 @@ export const metadata: Metadata = {
     type: "website",
     url: "/links",
     siteName: "Digi Bear",
-    title: "Links | Digi Bear",
+    title: "Links | DIGI BEAR",
     description:
       "All of Digi Bear's official links in one place - website, TikTok, YouTube, Instagram, and Facebook.",
     images: [
@@ -32,7 +32,7 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: "summary_large_image",
-    title: "Links | Digi Bear",
+    title: "Links | DIGI BEAR",
     description: "All of Digi Bear's official links in one place.",
     images: [SOCIAL_IMAGE],
   },
@@ -98,9 +98,9 @@ export default async function LinksPage(props: {
             />
           </div>
           {/* Brand name */}
-          <span className="font-display text-3xl mt-2 font-bold tracking-tight">
+          <h1 className="font-display text-3xl mt-2 font-bold tracking-tight">
             DIGI <span className="text-gradient">BEAR</span>
-          </span>
+          </h1>
           <span className="text-sm text-text-muted">
             Design, Video &amp; AI Studio
           </span>

@@ -15,6 +15,7 @@ const display = Questrial({
   subsets: ["latin"],
   weight: "400",
   variable: "--font-questrial",
+  display: "swap",
 });
 // Body: Poppins is not a variable font, so only the weights listed here are
 // downloaded - 400 body, 500 nav/labels, 600 buttons and emphasis.
@@ -22,13 +23,17 @@ const sans = Poppins({
   subsets: ["latin"],
   weight: ["400", "500", "600"],
   variable: "--font-poppins",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
-  title: "Digi Bear - Design, Video & AI Studio",
+  title: {
+    default: "Digi Bear - Design, Video & AI Studio",
+    template: "%s | Digi Bear",
+  },
   description:
-    "Digi Bear is an all-in-one digital studio covering Next.js web development, graphic design and branding, video editing, AI avatars and AI-generated video, social media management, and paid digital advertising for ambitious brands in the US, UK, and Europe.",
+    "All-in-one digital studio: web development, graphic design, video editing, AI avatars & video, social media, and paid ads for ambitious brands.",
   // Points at the same file the navbar and footer render, rather than a second
   // copy under app/ as icon.svg - one asset, one place to update it.
   icons: { icon: "/digibear-logo.svg" },
@@ -99,8 +104,8 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${display.variable} ${sans.variable}`}>
       <body className="min-h-dvh">
-        {/* JSON-LD structured data - Organization, Services, FAQPage.
-            Rendered before visual content so crawlers see it immediately. */}
+        {/* JSON-LD structured data - Organization only (global).
+            Service + FAQ schemas render on the homepage exclusively. */}
         <JsonLd />
 
         {/* Film grain - non-interactive, stationary while the page scrolls

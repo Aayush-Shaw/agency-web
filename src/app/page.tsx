@@ -14,10 +14,12 @@ import Faq from "@/components/sections/Faq";
 import Cta from "@/components/sections/Cta";
 import Footer from "@/components/sections/Footer";
 import MeshGradient from "@/components/ui/MeshGradient";
+import { HomeJsonLd } from "@/components/seo/JsonLd";
 
 export default function Home() {
   return (
     <>
+      <HomeJsonLd />
       <Navbar />
       <main>
         <Hero />

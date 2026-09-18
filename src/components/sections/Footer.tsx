@@ -3,12 +3,12 @@ import { SOCIAL_LINKS } from "@/lib/constants";
 import Roll from "@/components/ui/Roll";
 
 const NAV = [
-  { label: "Services", href: "#services" },
-  { label: "Projects", href: "#work" },
-  { label: "Process", href: "#process" },
-  { label: "FAQ", href: "#faq" },
+  { label: "Services", href: "/#services" },
+  { label: "Projects", href: "/#work" },
+  { label: "Process", href: "/#process" },
+  { label: "FAQ", href: "/#faq" },
   { label: "Links", href: "/links" },
-  { label: "Contact", href: "#contact" },
+  { label: "Contact", href: "/#contact" },
 ];
 
 const BrandIcon = ({ viewBox = "0 0 16 16", children }: { viewBox?: string; children: ReactNode }) => (
@@ -67,7 +67,7 @@ export default function Footer() {
       <div className="mx-auto flex max-w-[1600px] flex-col gap-10 md:flex-row md:items-start md:justify-between">
         <div className="max-w-xs">
           <a
-            href="#"
+            href="/"
             className="flex items-center gap-0 lg:gap-1 font-display text-lg font-bold tracking-tight"
           >
             {/* Same plain <img> as the navbar lockup - see the note there. */}

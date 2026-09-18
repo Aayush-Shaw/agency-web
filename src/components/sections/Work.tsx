@@ -533,7 +533,7 @@ export default function Work() {
         <div className="flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
           <Reveal variant="words">
             <h2 className="max-w-3xl text-section font-bold tracking-tight leading-tight">
-              Project we&apos;re <span className="text-gradient">proud to ship.</span>
+              Projects we&apos;re <span className="text-gradient">proud to ship.</span>
             </h2>
           </Reveal>
 

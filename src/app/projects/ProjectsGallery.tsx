@@ -329,6 +329,9 @@ export default function ProjectsGallery() {
 
   return (
     <>
+      {/* Visually hidden page heading for SEO — filter tabs serve as the visible title */}
+      <h1 className="sr-only">All Projects by Digi Bear</h1>
+
       {/* Sticky Navigation bar: Back button (Left) | 3 Filters (Middle / 2nd row on mobile) | Logo (Right) */}
       <header
         className="sticky top-0 z-40 -mx-5 px-5 py-3.5 md:-mx-8 md:px-8"
@@ -656,9 +659,9 @@ function ProjectCard({
       {/* Card footer details */}
       <div className="flex flex-1 items-center justify-between p-2.5 sm:p-4">
         <div className="min-w-0 flex-1 pr-1.5 sm:pr-2">
-          <h3 className="truncate font-display text-xs sm:text-base font-semibold text-text">
+          <h2 className="truncate font-display text-xs sm:text-base font-semibold text-text">
             {project.title}
-          </h3>
+          </h2>
           <p className="mt-0.5 truncate text-[11px] sm:text-xs text-text-muted">
             {project.video ? "Click to play preview" : "Click to view live site"}
           </p>

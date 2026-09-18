@@ -252,7 +252,7 @@ function ReviewCard({
           {/* eslint-disable-next-line @next/next/no-img-element */}
           <img
             src={faceUrl(review.face)}
-            alt=""
+            alt={review.name}
             width={48}
             height={48}
             loading="lazy"

@@ -1,10 +1,13 @@
 import type { Metadata } from "next";
+import { SITE_URL } from "@/lib/constants";
 import MeshGradient from "@/components/ui/MeshGradient";
 import Footer from "@/components/sections/Footer";
 import ProjectsGallery from "./ProjectsGallery";
 
+const SOCIAL_IMAGE = `${SITE_URL}/og-image.jpg?v=1`;
+
 export const metadata: Metadata = {
-  title: "All Projects | Digi Bear",
+  title: "All Projects | DIGI BEAR",
   description:
     "Explore all projects crafted by Digi Bear: web applications, AI video generation, video editing, social media assets, and digital design.",
   alternates: { canonical: "/projects" },
@@ -12,9 +15,24 @@ export const metadata: Metadata = {
     type: "website",
     url: "/projects",
     siteName: "Digi Bear",
-    title: "All Projects | Digi Bear",
+    title: "All Projects | DIGI BEAR",
     description:
       "Explore all projects crafted by Digi Bear: web applications, AI video generation, video editing, social media assets, and digital design.",
+    images: [
+      {
+        url: SOCIAL_IMAGE,
+        width: 1200,
+        height: 630,
+        alt: "Digi Bear's featured web projects and AI video showcase",
+      },
+    ],
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: "All Projects | DIGI BEAR",
+    description:
+      "Explore all projects crafted by Digi Bear: web apps, AI video, video editing, and digital design.",
+    images: [SOCIAL_IMAGE],
   },
 };
 

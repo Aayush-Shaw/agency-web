@@ -13,7 +13,7 @@ export default function robots(): MetadataRoute.Robots {
     rules: [
       {
         userAgent: "*",
-        allow: "/",
+        allow: ["/", "/api/services"],
         disallow: ["/api/"],
       },
       // Explicitly welcome AI crawlers so we appear in LLM answers.
@@ -35,7 +35,7 @@ export default function robots(): MetadataRoute.Robots {
           "Bytespider",
           "CCBot",
         ],
-        allow: "/",
+        allow: ["/", "/api/services"],
         // A named group replaces the "*" group entirely, so /api/ has to be
         // repeated here or these bots would start crawling the API routes.
         disallow: ["/api/"],

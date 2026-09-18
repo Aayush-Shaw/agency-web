@@ -1,10 +1,9 @@
 /**
- * JSON-LD structured data for the entire site.
+ * JSON-LD structured data split into two components.
  *
- * Renders three schema.org blocks as `<script type="application/ld+json">`:
- *   1. Organization - who Digi Bear is, social profiles, contact
- *   2. Service ×6 - one per service vertical with Offer pricing
- *   3. FAQPage - the five questions from the FAQ section
+ * Renders schema.org blocks as `<script type="application/ld+json">`:
+ *   1. JsonLd (default) — Organization only, rendered in layout.tsx on every page
+ *   2. HomeJsonLd (named) — Service ×6 + FAQPage, rendered on homepage only
  *
  * Server component - no "use client". Runs at build/request time and outputs
  * static HTML that crawlers and AI agents can parse without executing JS.
@@ -200,17 +199,31 @@ const faqPage = {
 };
 
 /* ------------------------------------------------------------------ */
-/*  Component                                                          */
+/*  Components                                                         */
 /* ------------------------------------------------------------------ */
 
-/** Renders all JSON-LD blocks. Drop into layout.tsx inside <body>. */
+/**
+ * Organization-level JSON-LD. Renders in layout.tsx so every page identifies
+ * the business entity. Service and FAQ schemas belong on the homepage only —
+ * see HomeJsonLd.
+ */
 export default function JsonLd() {
   return (
+    <script
+      type="application/ld+json"
+      dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
+    />
+  );
+}
+
+/**
+ * Service × 6 + FAQPage JSON-LD. Render on the homepage exclusively —
+ * these schemas must only appear on pages where the corresponding content
+ * is visible in the DOM.
+ */
+export function HomeJsonLd() {
+  return (
     <>
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(organization) }}
-      />
       {serviceSchemas.map((schema) => (
         <script
           key={schema["@id"]}
